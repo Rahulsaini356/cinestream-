@@ -1,21 +1,16 @@
-import nodemailer from "nodemailer";
-
-const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 587,
-  secure: false, // true for 465, false for 587 (STARTTLS)
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-});
-
 export async function sendOTP(email: string, code: string) {
-  const mailOptions = {
-    from: `"CineStream" <${process.env.EMAIL_USER}>`,
-    to: email,
+  const BREVO_API_KEY = process.env.BREVO_API_KEY;
+
+  if (!BREVO_API_KEY) {
+    console.error("BREVO_API_KEY is missing from Environment Variables");
+    throw new Error("Email configuration error");
+  }
+
+  const payload = {
+    sender: { name: "CineStream", email: "rahulsainirs028@gmail.com" },
+    to: [{ email: email }],
     subject: "Your CineStream Verification Code",
-    html: `
+    htmlContent: `
       <div style="font-family: Arial, sans-serif; padding: 30px; color: white; background-color: #0c0c12; border-radius: 12px; max-width: 500px; margin: auto; border: 1px solid rgba(255,255,255,0.05); text-align: center;">
         <h2 style="color: #ea580c; font-size: 24px; margin-bottom: 20px;">Verification Code</h2>
         <p style="color: #a1a1aa; font-size: 14px;">Use the following code to complete your verification.</p>
@@ -29,10 +24,24 @@ export async function sendOTP(email: string, code: string) {
   };
 
   try {
-    const info = await transporter.sendMail(mailOptions);
-    console.log("Email sent successfully:", info.messageId);
+    const res = await fetch("https://api.brevo.com/v3/smtp/email", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "api-key": BREVO_API_KEY,
+      },
+      body: JSON.stringify(payload),
+    });
+
+    if (!res.ok) {
+      const errorData = await res.json();
+      console.error("Brevo API Error Details:", errorData);
+      throw new Error(`Brevo Error: ${res.statusText}`);
+    }
+
+    console.log("Email sent successfully via Brevo API");
   } catch (error) {
-    console.error("Nodemailer Send Error Details:", error);
+    console.error("Brevo Fetch Error:", error);
     throw error;
   }
 }
