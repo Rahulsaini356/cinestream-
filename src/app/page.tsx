@@ -32,7 +32,7 @@ export default async function Home() {
       <HeroSlider movies={trending.slice(0, 5)} />
 
       {/* Rows */}
-      <div className="relative z-10 -mt-16">
+      <div className="relative z-10 mt-4 md:-mt-8">
         {renderRow("Trending Now", trending)}
         {renderRow("Top Rated Movies", topRated)}
         {renderRow("Popular TV Shows", tvShows)}

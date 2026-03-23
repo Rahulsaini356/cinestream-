@@ -6,6 +6,7 @@ import WatchlistButton from "@/components/ui/WatchlistButton";
 import Link from "next/link";
 import { Star, Clock, Calendar, ExternalLink, PlayCircle } from "lucide-react";
 import WatchProviders from "@/components/movies/WatchProviders";
+import ReviewSection from "@/components/reviews/ReviewSection";
 
 export default async function MovieDetail({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = await params;
@@ -42,9 +43,9 @@ export default async function MovieDetail({ params }: { params: Promise<{ id: st
   return (
     <main className="min-h-screen bg-black pb-20">
       {/* Hero Backdrop */}
-      <div className="relative min-h-[60vh] md:min-h-[70vh] h-auto w-full">
+      <div className="relative min-h-[60vh] md:min-h-[75vh] h-auto w-full flex items-center">
         <div
-          className="absolute inset-0 z-0"
+          className="absolute inset-0 z-0 opacity-60"
           style={{
             backgroundImage: `url('${getImageUrl(movie.backdrop_path, "w1280")}')`,
             backgroundSize: "cover",
@@ -52,26 +53,31 @@ export default async function MovieDetail({ params }: { params: Promise<{ id: st
           }}
         />
         <div className="absolute inset-0 bg-gradient-to-r from-black via-black/80 to-transparent z-[1]" />
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent z-[1]" />
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black z-[1]" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent z-[1]" />
 
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col justify-center pt-24 pb-12">
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pt-32 pb-12">
           <div className="flex flex-col md:flex-row gap-8 items-center md:items-start">
             {/* Poster */}
-            <div className="hidden md:block w-64 lg:w-80 shrink-0 mt-8 rounded-xl overflow-hidden shadow-2xl ring-1 ring-white/10 bg-zinc-900">
+            <div className="hidden md:block w-64 lg:w-[320px] shrink-0 rounded-2xl overflow-hidden shadow-[0_30px_60px_-15px_rgba(0,0,0,0.8)] ring-1 ring-white/10 bg-zinc-900 transform lg:-translate-y-8">
               <img src={getImageUrl(movie.poster_path, "w500")} alt={movie.title} className="w-full object-cover" />
             </div>
 
             {/* Details */}
-            <div className="flex-1 mt-8">
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4 tracking-tight drop-shadow-xl">{movie.title}</h1>
+            <div className="flex-1 lg:pl-8">
+              <h1 className="text-5xl md:text-6xl lg:text-7xl font-black text-white mb-6 tracking-tighter leading-[1.1] drop-shadow-2xl font-serif">
+                {movie.title}
+              </h1>
 
-              <div className="flex flex-wrap items-center gap-4 text-sm text-zinc-300 font-medium mb-6">
-                <span className="flex items-center gap-1 text-yellow-500 bg-black/40 px-2 py-1 rounded-md backdrop-blur-sm">
-                  <Star className="w-4 h-4 fill-yellow-500" /> {movie.vote_average?.toFixed(1)}
+              <div className="flex flex-wrap items-center gap-4 text-xs tracking-wider uppercase font-bold text-white/70 mb-8">
+                <span className="flex items-center gap-1.5 text-accent bg-accent/10 px-3 py-1.5 rounded-full border border-accent/20">
+                  <Star className="w-4 h-4 fill-accent" /> {movie.vote_average?.toFixed(1)}
                 </span>
-                <span className="flex items-center gap-1 bg-black/40 px-2 py-1 rounded-md mb-0"><Calendar className="w-4 h-4" /> {movie.release_date}</span>
-                <span className="flex items-center gap-1 bg-black/40 px-2 py-1 rounded-md mb-0"><Clock className="w-4 h-4" /> {movie.runtime} min</span>
+                <span className="flex items-center gap-1.5 bg-white/10 px-3 py-1.5 rounded-full border border-white/10 backdrop-blur-md">
+                  <Calendar className="w-4 h-4" /> {movie.release_date}
+                </span>
+                <span className="flex items-center gap-1.5 bg-white/10 px-3 py-1.5 rounded-full border border-white/10 backdrop-blur-md">
+                  <Clock className="w-4 h-4" /> {movie.runtime} min
+                </span>
               </div>
 
               <div className="flex flex-wrap gap-2 mb-8">
@@ -127,7 +133,7 @@ export default async function MovieDetail({ params }: { params: Promise<{ id: st
           </div>
 
           <div className="space-y-6">
-            <WatchProviders providers={providers} />
+            <WatchProviders providers={providers} title={movie.title} />
           </div>
         </div>
 
@@ -179,6 +185,9 @@ export default async function MovieDetail({ params }: { params: Promise<{ id: st
             </div>
           </div>
         )}
+
+        {/* Reviews Section */}
+        <ReviewSection tmdbId={id} type="movie" />
 
       </div>
     </main>
