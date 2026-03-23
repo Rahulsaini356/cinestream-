@@ -95,16 +95,16 @@ export default function HeroSlider({ movies }: { movies: any[] }) {
             </div>
           </motion.div>
         </AnimatePresence>
+      </div>
 
-        {/* Dots indicators */}
-        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex gap-2 z-20">
-          {movies.map((_, i) => (
-            <div
-              key={i}
-              className={`h-1.5 rounded-full transition-all duration-300 ${i === currentIndex ? "w-8 bg-red-600" : "w-3 bg-zinc-600"}`}
-            />
-          ))}
-        </div>
+      {/* Dots indicators */}
+      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2 z-20">
+        {movies.map((_, i) => (
+          <div
+            key={i}
+            className={`h-1.5 rounded-full transition-all duration-300 ${i === currentIndex ? "w-8 bg-red-600" : "w-3 bg-zinc-600"}`}
+          />
+        ))}
       </div>
     </div>
   );

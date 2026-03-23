@@ -58,7 +58,7 @@ export default async function MovieDetail({ params }: { params: Promise<{ id: st
   return (
     <main className="min-h-screen bg-black pb-20">
       {/* Hero Backdrop */}
-      <div className="relative h-[60vh] md:h-[70vh] w-full">
+      <div className="relative min-h-[60vh] md:min-h-[70vh] h-auto w-full">
         <div
           className="absolute inset-0 z-0"
           style={{
@@ -69,8 +69,9 @@ export default async function MovieDetail({ params }: { params: Promise<{ id: st
         />
         <div className="absolute inset-0 bg-gradient-to-r from-black via-black/80 to-transparent z-[1]" />
         <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent z-[1]" />
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black z-[1]" />
 
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex flex-col justify-center pt-20">
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col justify-center pt-24 pb-12">
           <div className="flex flex-col md:flex-row gap-8 items-center md:items-start">
             {/* Poster */}
             <div className="hidden md:block w-64 lg:w-80 shrink-0 mt-8 rounded-xl overflow-hidden shadow-2xl ring-1 ring-white/10 bg-zinc-900">
