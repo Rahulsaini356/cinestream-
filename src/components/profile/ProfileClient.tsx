@@ -36,12 +36,27 @@ export default function ProfileClient({ user, stats }: { user: any, stats: any }
   };
 
   const handleNameSave = async () => {
-    // Simplified local save for now.
+    if (!name.trim()) return;
     setIsSaving(true);
-    setTimeout(() => {
-      setIsEditing(false);
+    try {
+      const res = await fetch("/api/user/update-profile", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name }),
+      });
+
+      if (res.ok) {
+        setIsEditing(false);
+        await update(); // Refresh session
+      } else {
+        alert("Failed to update name. Please try again.");
+      }
+    } catch (error) {
+      console.error("Profile update error:", error);
+      alert("Something went wrong. Please try again.");
+    } finally {
       setIsSaving(false);
-    }, 500);
+    }
   };
 
   return (
