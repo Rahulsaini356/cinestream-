@@ -1,6 +1,7 @@
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
-import prisma from "@/lib/prisma"; import { redirect } from "next/navigation";
+import prisma from "@/lib/prisma";
+import { redirect } from "next/navigation";
 import ProfileClient from "@/components/profile/ProfileClient";
 
 export default async function ProfilePage() {
@@ -10,13 +11,14 @@ export default async function ProfilePage() {
     redirect("/login");
   }
 
-  const user = await prisma.user.findUnique({
-    where: { id: session.user.id },
-  });
-
-  const watchlistCount = await prisma.watchlist.count({
-    where: { userId: session.user.id },
-  });
+  const [user, watchlistCount] = await Promise.all([
+    prisma.user.findUnique({
+      where: { id: session.user.id },
+    }),
+    prisma.watchlist.count({
+      where: { userId: session.user.id },
+    }),
+  ]);
 
   return (
     <main className="min-h-screen pt-24 pb-20 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
