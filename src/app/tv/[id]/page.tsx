@@ -1,10 +1,11 @@
-import { fetchTMDB, getImageUrl } from "@/lib/tmdb";
+import { fetchTMDB, getImageUrl, getProviders } from "@/lib/tmdb";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import WatchlistButton from "@/components/ui/WatchlistButton";
 import Link from "next/link";
 import { Star, Clock, Calendar, ExternalLink, PlayCircle } from "lucide-react";
+import WatchProviders from "@/components/movies/WatchProviders";
 
 export default async function TVDetail({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = await params;
@@ -35,25 +36,8 @@ export default async function TVDetail({ params }: { params: Promise<{ id: strin
     (v: any) => v.type === "Trailer" && v.site === "YouTube"
   );
 
-  // Get US Providers
-  const providers = tv["watch/providers"]?.results?.US;
-
-  const providerLinks: { [key: string]: string } = {
-    "Netflix": "https://www.netflix.com",
-    "Amazon Prime Video": "https://www.primevideo.com",
-    "Disney+": "https://www.disneyplus.com",
-    "Apple TV": "https://tv.apple.com",
-    "Apple TV Plus": "https://tv.apple.com",
-    "Hulu": "https://www.hulu.com",
-    "Max": "https://www.max.com",
-    "HBO Max": "https://www.max.com",
-    "Peacock": "https://www.peacocktv.com",
-    "Paramount+": "https://www.paramountplus.com",
-  };
-
-  const getProviderLink = (name: string) => {
-    return providerLinks[name] || `https://www.google.com/search?q=watch+${encodeURIComponent(tv.name)}+online`;
-  };
+  // Get Providers
+  const providers = await getProviders("tv", id);
 
   return (
     <main className="min-h-screen bg-black pb-20">
@@ -143,23 +127,7 @@ export default async function TVDetail({ params }: { params: Promise<{ id: strin
           </div>
 
           <div className="space-y-6">
-            <h2 className="text-2xl font-bold text-white">Where to Watch</h2>
-            <div className="bg-zinc-900/50 backdrop-blur border border-white/5 p-6 rounded-2xl space-y-6 min-h-[250px]">
-              {providers?.flatrate ? (
-                <div>
-                  <h3 className="text-sm font-medium text-zinc-400 mb-3 uppercase tracking-wider">Streaming</h3>
-                  <div className="flex flex-wrap gap-3">
-                    {providers.flatrate.map((p: any) => (
-                      <a href={getProviderLink(p.provider_name)} target="_blank" rel="noreferrer" key={p.provider_id} className="w-12 h-12 rounded-xl overflow-hidden hover:scale-110 active:scale-95 transition-all cursor-pointer ring-1 ring-white/10 hover:ring-white/30" title={p.provider_name}>
-                        <img src={getImageUrl(p.logo_path, "w500")} alt={p.provider_name} />
-                      </a>
-                    ))}
-                  </div>
-                </div>
-              ) : (
-                <p className="text-zinc-500">Not available for streaming in US.</p>
-              )}
-            </div>
+            <WatchProviders providers={providers} />
           </div>
         </div>
 

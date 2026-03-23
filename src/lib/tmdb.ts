@@ -20,3 +20,24 @@ export function getImageUrl(path: string | null | undefined, size: "w500" | "ori
   if (!path) return "https://via.placeholder.com/500x750?text=No+Image"; 
   return `https://image.tmdb.org/t/p/${size}${path}`;
 }
+
+export async function getProviders(type: "movie" | "tv", id: string) {
+  try {
+    const data = await fetchTMDB(`/${type}/${id}/watch/providers`);
+    // Defaulting to US or IN if available, fallback to first available
+    const results = data.results || {};
+    const regionData = results["IN"] || results["US"] || Object.values(results)[0];
+    
+    if (!regionData) return null;
+
+    return {
+      stream: regionData.flatrate || [],
+      rent: regionData.rent || [],
+      buy: regionData.buy || [],
+      link: regionData.link || ""
+    };
+  } catch (error) {
+    console.error("Error fetching providers:", error);
+    return null;
+  }
+}
