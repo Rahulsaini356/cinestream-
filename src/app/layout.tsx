@@ -22,7 +22,10 @@ export const metadata: Metadata = {
   title: "CineStream | Movies & TV",
   description: "A premium movie streaming discovery app",
   verification: {
-    google: "DYO8goukVOSqBS-7I5txsw0B8Lk5LRo5lFIyv9m-wz8",
+    google: "eBgT2koe6w9ks8rV2J55i1piuItGO6DTlCuLqmfVMf8",
+  },
+  other: {
+    "google-adsense-account": "ca-pub-2523996128478722",
   },
 };
 
