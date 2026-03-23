@@ -206,9 +206,9 @@ export default async function MovieDetail({ params }: { params: Promise<{ id: st
             <h2 className="text-2xl font-bold text-white">Similar Movies</h2>
             <div className="flex gap-4 overflow-x-auto pb-6 scrollbar-hide snap-x snap-mandatory">
               {movie.similar.results.map((item: any) => (
-                <Link 
-                  key={item.id} 
-                  href={`/movie/${item.id}`} 
+                <Link
+                  key={item.id}
+                  href={`/movie/${item.id}`}
                   className="min-w-[160px] sm:min-w-[200px] md:min-w-[220px] snap-start group relative flex flex-col gap-2 "
                 >
                   <div className="relative aspect-[2/3] w-full rounded-xl overflow-hidden bg-zinc-900 border border-white/5 shadow-xl transition-all duration-300 group-hover:scale-105 group-hover:shadow-[0_20px_40px_-15px_rgba(229,9,20,0.3)] ring-accent hover-glow">
