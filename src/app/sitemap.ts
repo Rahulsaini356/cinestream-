@@ -1,7 +1,8 @@
 import { MetadataRoute } from 'next';
 import { blogPosts } from '@/lib/blog';
+import { fetchTMDB } from '@/lib/tmdb';
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = 'https://cinestream.digital';
 
   const blogUrls: MetadataRoute.Sitemap = blogPosts.map((post) => ({
@@ -10,6 +11,30 @@ export default function sitemap(): MetadataRoute.Sitemap {
     changeFrequency: 'monthly' as const,
     priority: 0.7,
   }));
+
+  let movieUrls: MetadataRoute.Sitemap = [];
+  let tvUrls: MetadataRoute.Sitemap = [];
+
+  try {
+    const trendingMovies = await fetchTMDB('/trending/movie/week');
+    const trendingTv = await fetchTMDB('/trending/tv/week');
+    
+    movieUrls = (trendingMovies.results || []).map((item: any) => ({
+      url: `${baseUrl}/movie/${item.id}`,
+      lastModified: new Date(),
+      changeFrequency: 'daily' as const,
+      priority: 0.8,
+    }));
+
+    tvUrls = (trendingTv.results || []).map((item: any) => ({
+      url: `${baseUrl}/tv/${item.id}`,
+      lastModified: new Date(),
+      changeFrequency: 'daily' as const,
+      priority: 0.8,
+    }));
+  } catch (error) {
+    console.error("Sitemap dynamic fetch failed:", error);
+  }
 
   return [
     {
@@ -37,6 +62,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.9,
     },
     ...blogUrls,
+    ...movieUrls,
+    ...tvUrls,
     {
       url: `${baseUrl}/login`,
       lastModified: new Date(),
