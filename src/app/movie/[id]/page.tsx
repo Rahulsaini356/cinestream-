@@ -7,6 +7,7 @@ import Link from "next/link";
 import { Star, Clock, Calendar, ExternalLink, PlayCircle } from "lucide-react";
 import WatchProviders from "@/components/movies/WatchProviders";
 import ReviewSection from "@/components/reviews/ReviewSection";
+import StreamPlayer from "@/components/movies/StreamPlayer";
 
 export default async function MovieDetail({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = await params;
@@ -91,6 +92,7 @@ export default async function MovieDetail({ params }: { params: Promise<{ id: st
               <p className="text-lg text-zinc-300 max-w-3xl leading-relaxed mb-8 drop-shadow-md">{movie.overview}</p>
 
               <div className="flex flex-wrap items-center gap-4">
+                <StreamPlayer id={id} type="movie" title={movie.title} />
                 <WatchlistButton
                   movieId={id}
                   title={movie.title}
@@ -108,6 +110,7 @@ export default async function MovieDetail({ params }: { params: Promise<{ id: st
           </div>
         </div>
       </div>
+
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-16 md:mt-32 space-y-16">
 

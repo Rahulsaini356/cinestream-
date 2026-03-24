@@ -7,6 +7,7 @@ import Link from "next/link";
 import { Star, Clock, Calendar, ExternalLink, PlayCircle } from "lucide-react";
 import WatchProviders from "@/components/movies/WatchProviders";
 import ReviewSection from "@/components/reviews/ReviewSection";
+import StreamPlayer from "@/components/movies/StreamPlayer";
 
 export default async function TVDetail({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = await params;
@@ -91,6 +92,7 @@ export default async function TVDetail({ params }: { params: Promise<{ id: strin
               <p className="text-lg text-zinc-300 max-w-3xl leading-relaxed mb-8 drop-shadow-md">{tv.overview}</p>
 
               <div className="flex flex-wrap items-center gap-4">
+                <StreamPlayer id={id} type="tv" title={tv.name} seasonsData={tv.seasons} />
                 <WatchlistButton
                   movieId={id}
                   title={tv.name}

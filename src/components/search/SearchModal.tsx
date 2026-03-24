@@ -70,6 +70,12 @@ export default function SearchModal({ isOpen, onClose }: { isOpen: boolean; onCl
     setRecents(updated);
   }, [recents]);
 
+  const removeRecent = useCallback((q: string) => {
+    const updated = recents.filter(r => r !== q);
+    localStorage.setItem(RECENT_KEY, JSON.stringify(updated));
+    setRecents(updated);
+  }, [recents]);
+
   const navigate = useCallback((item: SearchResult) => {
     saveRecent(item.title || item.name || "");
     onClose();
@@ -217,13 +223,23 @@ export default function SearchModal({ isOpen, onClose }: { isOpen: boolean; onCl
                 <p className="text-xs text-zinc-600 uppercase font-bold tracking-wider px-2 mb-2">Recent Searches</p>
                 <ul>
                   {recents.map((r) => (
-                    <li key={r}>
+                    <li key={r} className="group flex items-center justify-between rounded-xl hover:bg-white/5 transition-all">
                       <button
                         onClick={() => setQuery(r)}
-                        className="w-full flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-white/5 transition-all text-left"
+                        className="flex-1 flex items-center gap-3 px-3 py-2 text-left"
                       >
                         <Clock className="w-4 h-4 text-zinc-600 flex-shrink-0" />
                         <span className="text-sm text-zinc-400">{r}</span>
+                      </button>
+                      <button 
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          removeRecent(r);
+                        }}
+                        className="opacity-0 group-hover:opacity-100 p-2 hover:bg-white/10 rounded-full transition-all text-zinc-500 hover:text-white mr-2"
+                        title="Remove"
+                      >
+                        <X className="w-3.5 h-3.5" />
                       </button>
                     </li>
                   ))}
