@@ -51,6 +51,7 @@ export default function Navbar() {
     { name: "Home", href: "/" },
     { name: "Movies", href: "/movies" },
     { name: "TV Shows", href: "/tv" },
+    { name: "Blog", href: "/blog" },
     { name: "My List", href: "/watchlist" },
   ];
 
