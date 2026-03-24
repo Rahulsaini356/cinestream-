@@ -46,8 +46,24 @@ export default function ForgotPasswordModal({ isOpen, onClose }: { isOpen: boole
       setError("Please enter a valid 6-digit OTP");
       return;
     }
-    setStep(3); // Just advance to step 3; actual validation happens at submission layer
+    setLoading(true);
+    try {
+      // Server-side OTP validation — prevents step bypass attacks
+      const res = await fetch("/api/auth/verify-otp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, otp }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Invalid OTP");
+      setStep(3);
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
   };
+
 
   const handleResetPassword = async (e: React.FormEvent) => {
     e.preventDefault();
