@@ -13,104 +13,100 @@ export interface BlogPost {
 
 export const blogPosts: BlogPost[] = [
   {
-    slug: "top-10-movies-2024",
-    title: "Top 10 Movies of 2024 You Must Watch Before Year Ends",
-    excerpt: "From breathtaking sci-fi epics to emotional dramas, 2024 has been a remarkable year for cinema. Here are the 10 films that defined the year.",
+    slug: "top-10-movies-2025",
+    title: "Top 10 Movies of 2025 You Must Watch This Year",
+    excerpt: "From breathtaking sci-fi epics to emotional dramas, 2025 has been a remarkable year for cinema. Here are the 10 films that are defining the year.",
     category: "Top Lists",
     readTime: "6 min read",
-    date: "2024-12-10",
+    date: "2025-10-10",
     author: "CineStream Editorial",
     coverImage: "https://image.tmdb.org/t/p/w1280/xOMo8BRK7PfcJv9JCnx7s5hj0PX.jpg",
-    tags: ["Top Movies", "2024", "Must Watch", "Best Films"],
+    tags: ["Top Movies", "2025", "Must Watch", "Best Films"],
     content: `
-      <p>2024 has been one of the most exciting years for film lovers globally. With studios pushing creative boundaries and streaming platforms funding ambitious projects, the cinematic landscape has never been richer. Here are the 10 must-watch movies of 2024 that every film enthusiast should have on their list.</p>
+      <p>2025 is turning out to be one of the most exciting years for film lovers globally. With studios pushing creative boundaries and streaming platforms funding ambitious projects, the cinematic landscape has never been richer. Here are the 10 must-watch movies of 2025 that every film enthusiast should have on their list.</p>
 
-      <h2>1. Dune: Part Two</h2>
-      <p>Denis Villeneuve's epic conclusion to his Dune adaptation is nothing short of a masterpiece. With stunning desert cinematography, incredible performances from Timothée Chalamet and Zendaya, and a haunting Hans Zimmer score, this film sets the bar impossibly high for sci-fi blockbusters. The film's exploration of messianic mythology and political manipulation feels eerily relevant today.</p>
-      <p><strong>Why Watch:</strong> Breathtaking IMAX visuals, complex characters, thought-provoking themes.</p>
+      <h2>1. Avatar: Fire and Ash</h2>
+      <p>James Cameron returns to Pandora with another visual masterpiece. This time exploring the Ash People, the film raises the emotional and visual stakes even higher than the previous installments. The cinematography and motion capture are groundbreaking.</p>
+      <p><strong>Why Watch:</strong> Breathtaking visuals, immersive world-building, emotional storytelling.</p>
 
-      <h2>2. Inside Out 2</h2>
-      <p>Pixar returns to form with this emotionally devastating sequel. The introduction of Anxiety as a character resonates deeply with audiences of all ages, making this not just a kids' film but a profound exploration of adolescence and the complexity of human emotions.</p>
-      <p><strong>Why Watch:</strong> Emotional depth, stunning animation, universal themes about growing up.</p>
+      <h2>2. Superman (2025)</h2>
+      <p>James Gunn kicks off the new DC Universe with a fresh, hopeful take on the Man of Steel. Balancing human vulnerability with grand superheroics, this is a heartwarming return to form for the iconic character.</p>
+      <p><strong>Why Watch:</strong> Inspiring heroics, great character dynamics, visually striking.</p>
 
-      <h2>3. Alien: Romulus</h2>
-      <p>Fede Álvarez reinvigorates the Alien franchise with this claustrophobic, terrifying installment. Set between the events of the original two films, it brings back the raw horror of the original while adding fresh young protagonists whose survival instincts keep you on the edge of your seat.</p>
-      <p><strong>Why Watch:</strong> Pure horror, practical effects, faithful to franchise lore.</p>
+      <h2>3. Mickey 17</h2>
+      <p>Bong Joon-ho’s sci-fi thriller starring Robert Pattinson is pure mind-bending cinema. A man sent to colonize an ice world discovers he is expendable, leading to a dark, satirical, and intense storyline.</p>
+      <p><strong>Why Watch:</strong> Brilliant direction, engaging dark humor, strong atmosphere.</p>
 
-      <h2>4. Deadpool & Wolverine</h2>
-      <p>The MCU's first R-rated adventure is a love letter to Marvel fans and a meta-commentary on superhero cinema itself. Ryan Reynolds and Hugh Jackman have electric chemistry, and the film balances its irreverent humor with surprisingly touching emotional beats.</p>
-      <p><strong>Why Watch:</strong> Pure entertainment, incredible action, nostalgia done right.</p>
+      <h2>4. Captain America: Brave New World</h2>
+      <p>Sam Wilson takes the shield in a high-stakes political thriller within the MCU. The action is grounded, and the story explores themes of power, trust, and the burden of the mantle in a modern landscape.</p>
+      <p><strong>Why Watch:</strong> Intense action, intricate plot, great lead performance.</p>
 
-      <h2>5. The Wild Robot</h2>
-      <p>DreamWorks Animation's most beautiful film in years. The story of a robot learning to be a mother in the wild is visually stunning and emotionally resonant. It's a meditation on love, identity, and what it means to belong.</p>
-      <p><strong>Why Watch:</strong> Gorgeous animation, moving story, perfect for all ages.</p>
+      <h2>5. Fantastic Four: First Steps</h2>
+      <p>The first family of Marvel makes a grand entrance with a retro-futuristic aesthetic. The family dynamic is perfectly captured, making this one of the most fun and engaging superhero films in years.</p>
+      <p><strong>Why Watch:</strong> Great cast chemistry, unique style, exciting action.</p>
 
-      <h2>6. Conclave</h2>
-      <p>Edward Berger's taut thriller about the election of a new Pope is one of 2024's most underrated gems. With Ralph Fiennes delivering a career-best performance, this film is a masterclass in building tension through dialogue and ceremony.</p>
-      <p><strong>Why Watch:</strong> Brilliant acting, intelligent screenplay, gripping suspense.</p>
+      <h2>6. Ballerina</h2>
+      <p>Ana de Armas shines in this high-octane spin-off set in the John Wick universe. The film delivers the same visceral action choreography we love, combined with a compelling revenge storyline and style.</p>
+      <p><strong>Why Watch:</strong> Top-tier action, fast-paced story, stylish visuals.</p>
 
-      <h2>7. Gladiator II</h2>
-      <p>Ridley Scott returns to ancient Rome with epic grandeur. Paul Mescal steps into the arena with commanding presence, and the film delivers the spectacle audiences expect while adding moral complexity through Denzel Washington's scene-stealing villain.</p>
-      <p><strong>Why Watch:</strong> Epic scale, stunning production design, memorable performances.</p>
+      <h2>7. Jurassic World Rebirth</h2>
+      <p>The franchise takes a wild new turn with a focus on survival and corporate ethics in a world where dinosaurs and humans co-exist. The suspense is dialed up to eleven with an atmosphere that rivals the original film.</p>
+      <p><strong>Why Watch:</strong> Great suspense, classic dinosaur action, high stakes.</p>
 
-      <h2>8. Wicked</h2>
-      <p>Jon M. Chu's adaptation of the beloved Broadway musical is a visual feast. Cynthia Erivo and Ariana Grande are magnetic as Elphaba and Glinda, and the musical numbers are executed with extraordinary craft and emotional power.</p>
-      <p><strong>Why Watch:</strong> Spectacular musical numbers, incredible production design, powerful performances.</p>
+      <h2>8. The Amateur</h2>
+      <p>Rami Malek stars as a CIA cryptographer seeking justice in this smart, slow-burn thriller. It’s a masterclass in building tension through intelligence rather than just gunfights.</p>
+      <p><strong>Why Watch:</strong> Engaging plot, tense atmosphere, brilliant lead acting.</p>
 
-      <h2>9. A Quiet Place: Day One</h2>
-      <p>This prequel expands the A Quiet Place universe in unexpected ways. Set in New York City on the first day of the alien invasion, it focuses on a terminally ill woman making one final journey, giving the familiar premise fresh emotional weight.</p>
-      <p><strong>Why Watch:</strong> Tight thriller, emotional core, expands the lore brilliantly.</p>
+      <h2>9. Thunderbolts*</h2>
+      <p>Marvel's anti-heroes team up for a chaotic, fun, and fast-paced adventure. The chemistry between Florence Pugh, David Harbour, and Sebastian Stan is electric, providing great comedic and action beats.</p>
+      <p><strong>Why Watch:</strong> Fun character dynamics, great action, entertaining throughout.</p>
 
-      <h2>10. Furiosa: A Mad Max Saga</h2>
-      <p>George Miller's origin story for Furiosa is an operatic, visually inventive action epic. Spanning decades, it traces the journey of a young woman stolen from her paradise and her quest for revenge, with Anya Taylor-Joy commanding every frame she appears in.</p>
-      <p><strong>Why Watch:</strong> Visionary action filmmaking, powerful female protagonist, stunning world-building.</p>
+      <h2>10. Beetlejuice Beetlejuice</h2>
+      <p>Tim Burton brings back the beloved ghost with modern flair. It’s a hilarious, weird, and visually creative journey into the afterlife that respects the original while expanding the universe beautifully.</p>
+      <p><strong>Why Watch:</strong> Nostalgia with fresh humor, incredible world-building, fun visual effects.</p>
 
       <h2>Final Thoughts</h2>
-      <p>2024 proved that cinema is far from dead. Whether you prefer intimate character studies or massive blockbusters, this year had something extraordinary for every film lover. Which of these have you watched? Let us know in the comments below!</p>
+      <p>2025 is proving that cinema continues to evolve and surprise. Whether you prefer intimate character studies or massive blockbusters, this year has something extraordinary for every film lover.</p>
     `,
   },
   {
-    slug: "best-hindi-web-series-2024",
-    title: "Best Hindi Web Series of 2024: What to Binge Right Now",
-    excerpt: "Indian streaming content has reached new heights in 2024. From gripping crime thrillers to heartwarming family dramas, here are the series you need to watch.",
+    slug: "best-hindi-web-series-2025",
+    title: "Best Hindi Web Series of 2025: What to Binge Right Now",
+    excerpt: "Indian streaming content has reached new heights in 2025. From gripping crime thrillers to heartwarming family dramas, here are the series you need to watch.",
     category: "Hindi Content",
     readTime: "5 min read",
-    date: "2024-11-20",
+    date: "2025-09-20",
     author: "CineStream Editorial",
     coverImage: "https://image.tmdb.org/t/p/w1280/3V4kLQg0kSqe6yYRfJZakARheIn.jpg",
-    tags: ["Hindi", "Web Series", "Netflix", "Prime Video", "2024"],
+    tags: ["Hindi", "Web Series", "Netflix", "Prime Video", "2025"],
     content: `
-      <p>Indian streaming content has exploded in quality and ambition over the past few years, and 2024 has been the best year yet. Here are the absolute best Hindi web series you should add to your watchlist immediately.</p>
+      <p>Indian streaming content has exploded in quality and ambition over the past few years, and 2025 is shaping up perfectly. Here are the absolute best Hindi web series you should add to your watchlist immediately.</p>
 
-      <h2>1. Panchayat Season 3 (Amazon Prime Video)</h2>
-      <p>The most beloved show on Indian streaming returns for a third season that exceeds all expectations. Jitendra Kumar continues to be the perfect everyman hero, and the show's gentle humor and heartfelt moments about rural India resonate deeply. Season 3 raises the emotional stakes significantly while maintaining the warmth that fans love.</p>
-      <p><strong>Verdict:</strong> Essential viewing. One of the best shows India has ever produced.</p>
-
-      <h2>2. Heeramandi: The Diamond Bazaar (Netflix)</h2>
-      <p>Sanjay Leela Bhansali brings his opulent visual style to the world of Lahore's courtesans during the independence movement. Stunning to look at and anchored by powerhouse performances from Manisha Koirala, Sonakshi Sinha, and Aditi Rao Hydari, it's a landmark in Indian television production values.</p>
-      <p><strong>Verdict:</strong> A visual masterpiece with compelling drama.</p>
-
-      <h2>3. Mirzapur Season 3 (Amazon Prime Video)</h2>
+      <h2>1. Mirzapur Season 3 (Amazon Prime Video)</h2>
       <p>The saga of Purvanchal's power struggle continues with its most ambitious season yet. The show has evolved beyond simple gangster drama into a complex exploration of power, loyalty, and consequence. Ali Fazal and Shweta Tripathi Sharma deliver career-defining work.</p>
       <p><strong>Verdict:</strong> Gripping return to Mirzapur with satisfying character development.</p>
 
-      <h2>4. IC 814: The Kandahar Hijack (Netflix)</h2>
-      <p>Anubhav Sinha's taut dramatization of the 1999 Indian Airlines hijacking is edge-of-your-seat television. The seven-day crisis is depicted with incredible restraint and realism, making it feel more like a documentary than a drama. Vijay Varma is outstanding as the lead negotiator.</p>
+      <h2>2. Panchayat Season 3 (Amazon Prime Video)</h2>
+      <p>The most beloved show on Indian streaming returns for a third season that exceeds all expectations. Jitendra Kumar continues to be the perfect everyman hero, and the show's gentle humor and heartfelt moments about rural India resonate deeply.</p>
+      <p><strong>Verdict:</strong> Essential viewing. One of the best shows India has ever produced.</p>
+
+      <h2>3. IC 814: The Kandahar Hijack (Netflix)</h2>
+      <p>Anubhav Sinha's taut dramatization of the 1999 Indian Airlines hijacking is edge-of-your-seat television. The seven-day crisis is depicted with incredible restraint and realism, making it feel more like a documentary than a drama.</p>
       <p><strong>Verdict:</strong> Masterful thriller — one of Netflix India's best originals.</p>
 
-      <h2>5. The Family Man Season 3 (Amazon Prime Video)</h2>
-      <p>Manoj Bajpayee's Srikant Tiwari returns in what might be the most ambitious season of the franchise. Raj and DK push the boundaries of spy thriller storytelling while keeping the humanity at the show's center. The geopolitical storyline is its most relevant yet.</p>
+      <h2>4. The Family Man Season 3 (Amazon Prime Video)</h2>
+      <p>Manoj Bajpayee's Srikant Tiwari returns in what might be the most ambitious season of the franchise. Raj and DK push the boundaries of spy thriller storytelling while keeping the humanity at the show's center.</p>
       <p><strong>Verdict:</strong> The gold standard of Indian spy thrillers returns in peak form.</p>
 
       <h2>Quick Picks</h2>
       <ul>
-        <li><strong>Scam 2003</strong> – The Telgi Story continues the SonyLIV scam franchise brilliantly</li>
-        <li><strong>Silo Season 2</strong> – Not Hindi but worth watching for sci-fi fans</li>
-        <li><strong>Jamtara Season 3</strong> – The Netflix cyber crime drama returns</li>
-        <li><strong>Delhi Crime Season 3</strong> – Netflix's acclaimed crime drama</li>
+        <li><strong>Heeramandi</strong> – Sanjay Leela Bhansali's opulent visual masterpiece on Netflix</li>
+        <li><strong>Scam 2003</strong> – The Telgi Story on SonyLIV</li>
+        <li><strong>Farzi Season 2</strong> – High demand continuation coming soon</li>
+        <li><strong>Kota Factory Season 3</strong> – Emotional and grounding</li>
       </ul>
 
-      <p>Indian streaming is in its golden age. These shows demonstrate that Indian creators can compete with the best content in the world. Which is your favorite? Drop a comment below!</p>
+      <p>Indian streaming shows demonstrate that Indian creators can compete with the best content in the world. Which is your favorite? Drop a comment below!</p>
     `,
   },
   {
@@ -176,20 +172,20 @@ export const blogPosts: BlogPost[] = [
     `,
   },
   {
-    slug: "netflix-vs-prime-vs-hotstar-2024",
-    title: "Netflix vs Amazon Prime vs Disney+ Hotstar: Which Is Worth It in India 2024?",
+    slug: "netflix-vs-prime-vs-hotstar-2025",
+    title: "Netflix vs Amazon Prime vs Disney+ Hotstar: Which Is Worth It in India 2025?",
     excerpt: "With streaming subscriptions getting more expensive, which platform gives you the best value for money in India? We break down the content, pricing, and features.",
     category: "Streaming Guide",
     readTime: "7 min read",
-    date: "2024-09-05",
+    date: "2025-09-05",
     author: "CineStream Editorial",
     coverImage: "https://image.tmdb.org/t/p/w1280/hZkgoQYus5vegHoetLkCJzb17zJ.jpg",
     tags: ["Netflix", "Amazon Prime", "Hotstar", "Streaming", "India"],
     content: `
-      <p>In 2024, Indian households are faced with an important question: with limited entertainment budgets, which streaming platform deserves your money? We've spent months analyzing content libraries, pricing, and user experience to give you the definitive answer.</p>
+      <p>In 2025, Indian households are faced with an important question: with limited entertainment budgets, which streaming platform deserves your money? We've spent months analyzing content libraries, pricing, and user experience to give you the definitive answer.</p>
 
       <h2>Netflix India</h2>
-      <h3>Pricing (2024)</h3>
+      <h3>Pricing (2025)</h3>
       <ul>
         <li>Mobile: ₹149/month</li>
         <li>Basic: ₹199/month</li>
@@ -198,22 +194,22 @@ export const blogPosts: BlogPost[] = [
       </ul>
 
       <h3>Best Content</h3>
-      <p>Netflix remains the prestige content king. Sacred Games, Delhi Crime, IC 814, Heeramandi — the quality of Netflix India originals is consistently high. International content is unmatched: Squid Game, Stranger Things, Ozark, Wednesday. If you want the best Indian originals + best international content, Netflix is your answer.</p>
+      <p>Netflix remains the prestige content king. Sacred Games, Delhi Crime, IC 814, Heeramandi — the quality of Netflix India originals is consistently high. International content is unmatched: Squid Game, Stranger Things, Wednesday. If you want the best Indian originals + best international content, Netflix is your answer.</p>
       <p><strong>Score: 9/10</strong></p>
 
       <h2>Amazon Prime Video</h2>
-      <h3>Pricing (2024)</h3>
+      <h3>Pricing (2025)</h3>
       <ul>
         <li>₹299/month or ₹1,499/year</li>
         <li>Includes Prime Shopping + Music benefits</li>
       </ul>
 
       <h3>Best Content</h3>
-      <p>Prime Video's value proposition is incredible. Panchayat, Mirzapur, The Family Man, Four More Shots Please — some of India's most beloved shows are Prime exclusives. International offerings like The Boys, Reacher, The Rings of Power, and Citadel are substantial. The bundled Prime membership adds enormous value.</p>
+      <p>Prime Video's value proposition is incredible. Panchayat, Mirzapur, The Family Man — some of India's most beloved shows are Prime exclusives. International offerings like The Boys, Reacher, and Citadel are substantial. The bundled Prime membership adds enormous value.</p>
       <p><strong>Score: 8.5/10</strong></p>
 
       <h2>Disney+ Hotstar</h2>
-      <h3>Pricing (2024)</h3>
+      <h3>Pricing (2025)</h3>
       <ul>
         <li>Mobile: ₹299/month</li>
         <li>Super: ₹899/month</li>
@@ -221,7 +217,7 @@ export const blogPosts: BlogPost[] = [
       </ul>
 
       <h3>Best Content</h3>
-      <p>Hotstar's superpower is sports — IPL, ICC tournaments, and Premier League make it essential for sports fans. Star content (Hindi GECs dubbed in HD), Marvel, Star Wars, and Pixar films make it attractive for families. However, original series quality lags behind Netflix and Prime.</p>
+      <p>Hotstar's superpower is sports — IPL, ICC tournaments, and Premier League make it essential for sports fans. Marvel, Star Wars, and Pixar films make it attractive for families. However, original series quality lags behind Netflix and Prime.</p>
       <p><strong>Score: 7.5/10</strong></p>
 
       <h2>The Verdict</h2>
