@@ -1,8 +1,7 @@
 import { fetchTMDB } from "@/lib/tmdb";
-import Link from "next/link";
-import { Play, Star } from "lucide-react";
 import MovieCard from "@/components/ui/MovieCard";
 import FilterBar from "@/components/ui/FilterBar";
+import { Tv } from "lucide-react";
 
 type SearchParams = Promise<{ [key: string]: string | string[] | undefined }>;
 
@@ -17,28 +16,53 @@ export default async function TVShowsPage({ searchParams }: { searchParams: Sear
     include_adult: "false",
     sort_by: sort,
   };
-  
+
   if (genre) pageParams.with_genres = genre;
   if (year) pageParams.first_air_date_year = year;
 
-  const data = await fetchTMDB("/discover/tv", pageParams);
-  const shows = data.results || [];
+  const [data, genreData] = await Promise.all([
+    fetchTMDB("/discover/tv", pageParams),
+    fetchTMDB("/genre/tv/list"),
+  ]);
 
-  const genreData = await fetchTMDB("/genre/tv/list");
+  const shows = data.results || [];
   const genres = genreData.genres || [];
 
   return (
-    <main className="min-h-screen pt-24 pb-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 bg-black">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
-        <h1 className="text-3xl font-bold bg-gradient-to-r from-white to-zinc-400 bg-clip-text text-transparent tracking-tight">TV Shows</h1>
-      </div>
+    <main className="min-h-screen bg-[#060608] pt-24 pb-20">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Header */}
+        <div className="flex items-center gap-3 mb-6">
+          <div className="w-10 h-10 rounded-xl bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center flex-shrink-0">
+            <Tv className="w-5 h-5 text-indigo-400" />
+          </div>
+          <div>
+            <h1 className="text-3xl font-black text-white tracking-tight">TV Shows</h1>
+            <p className="text-sm text-zinc-500 mt-0.5">{shows.length} series</p>
+          </div>
+        </div>
 
-      <FilterBar type="tv" genres={genres} />
+        <FilterBar type="tv" genres={genres} />
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-x-6 gap-y-10">
-        {shows.map((item: any) => (
-          <MovieCard key={item.id} item={item} className="min-w-0" />
-        ))}
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 md:gap-6">
+          {shows.map((item: any, i: number) => (
+            <div
+              key={item.id}
+              style={{ animationDelay: `${i * 40}ms` }}
+              className="animate-fade-up"
+            >
+              <MovieCard item={item} className="w-full" />
+            </div>
+          ))}
+        </div>
+
+        {shows.length === 0 && (
+          <div className="text-center py-32 text-zinc-500">
+            <Tv className="w-12 h-12 mx-auto mb-4 opacity-20" />
+            <p className="text-xl font-semibold">No shows found</p>
+            <p className="text-sm mt-1">Try adjusting your filters</p>
+          </div>
+        )}
       </div>
     </main>
   );

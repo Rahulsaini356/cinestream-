@@ -3,7 +3,7 @@
 import { useSession, signOut } from "next-auth/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Film, User, LogOut, Search, Menu, X } from "lucide-react";
+import { Clapperboard, User, LogOut, Search, Menu, X, Bookmark, ChevronDown } from "lucide-react";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import SearchModal from "@/components/search/SearchModal";
@@ -15,19 +15,18 @@ export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
 
   useEffect(() => {
-    const handleScroll = () => setIsScrolled(window.scrollY > 0);
+    const handleScroll = () => setIsScrolled(window.scrollY > 20);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   useEffect(() => {
     if (session?.user?.id) {
-      const savedAvatar = localStorage.getItem(`avatar_${session.user.id}`);
-      if (savedAvatar) {
-        setAvatarUrl(savedAvatar);
-      }
+      const saved = localStorage.getItem(`avatar_${session.user.id}`);
+      if (saved) setAvatarUrl(saved);
     }
   }, [session?.user?.id]);
 
@@ -36,6 +35,10 @@ export default function Navbar() {
       if ((e.ctrlKey || e.metaKey) && e.key === "k") {
         e.preventDefault();
         setSearchOpen(true);
+      }
+      if (e.key === "Escape") {
+        setMobileMenuOpen(false);
+        setDropdownOpen(false);
       }
     };
     window.addEventListener("keydown", handleKeyDown);
@@ -55,128 +58,213 @@ export default function Navbar() {
     <>
       <header
         className={`fixed top-0 w-full z-40 transition-all duration-500 ${
-          isScrolled ? "glass-nav shadow-lg" : "bg-gradient-to-b from-black/95 via-black/50 to-transparent"
+          isScrolled
+            ? "glass-nav shadow-lg shadow-black/20"
+            : "bg-gradient-to-b from-black/80 via-black/30 to-transparent"
         }`}
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
+          {/* Logo */}
           <div className="flex items-center gap-8">
-            <Link href="/" className="flex items-center gap-2 text-accent group">
-              <Film className="w-8 h-8 group-hover:scale-110 transition-transform duration-300" />
-              <span className="text-xl font-bold text-white tracking-tighter hidden sm:block">CineStream</span>
+            <Link href="/" className="flex items-center gap-2.5 group flex-shrink-0">
+              <div className="w-8 h-8 rounded-xl gradient-accent flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
+                <Clapperboard className="w-4.5 h-4.5 text-white" />
+              </div>
+              <span className="text-lg font-black tracking-tight hidden sm:block">
+                <span className="gradient-accent-text">Cine</span>
+                <span className="text-white">Stream</span>
+              </span>
             </Link>
-            
-            <nav className="hidden md:flex items-center gap-6">
+
+            {/* Desktop nav */}
+            <nav className="hidden md:flex items-center gap-1">
               {navLinks.map((link) => (
                 <Link
                   key={link.name}
                   href={link.href}
-                  className={`text-sm font-medium relative py-1 transition-colors group ${
-                    pathname === link.href ? "text-white" : "text-zinc-400 hover:text-white"
+                  className={`px-3 py-2 rounded-lg text-sm font-medium transition-all ${
+                    pathname === link.href
+                      ? "text-white bg-white/10"
+                      : "text-zinc-400 hover:text-white hover:bg-white/5"
                   }`}
                 >
                   {link.name}
-                  <span className={`absolute bottom-0 left-0 h-0.5 bg-accent transition-all duration-300 group-hover:w-full ${pathname === link.href ? "w-full" : "w-0"}`} />
                 </Link>
               ))}
             </nav>
           </div>
 
-          <div className="flex items-center gap-4">
+          {/* Right side */}
+          <div className="flex items-center gap-2">
+            {/* Search button */}
             <button
               onClick={() => setSearchOpen(true)}
-              className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-zinc-400 hover:text-white hover:bg-white/10 transition-colors"
+              className="flex items-center gap-2 px-3 py-2 rounded-xl bg-white/5 border border-white/8 text-zinc-400 hover:text-white hover:bg-white/10 transition-all text-sm"
             >
               <Search className="w-4 h-4" />
-              <span className="text-sm hidden sm:block">Search...</span>
-              <kbd className="hidden sm:inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-mono bg-white/10 text-zinc-300">
-                <span className="text-xs">⌘</span>K
+              <span className="hidden sm:block text-sm">Search</span>
+              <kbd className="hidden sm:inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10px] font-mono bg-white/10 text-zinc-400 ml-1">
+                ⌘K
               </kbd>
             </button>
 
             {session ? (
-              <div className="relative group">
-                <Link href="/profile" className="flex items-center justify-center w-8 h-8 rounded-full bg-accent/20 text-accent overflow-hidden border border-white/10 hover-glow">
-                  {avatarUrl || session.user?.image ? (
-                    <img src={(avatarUrl || session.user?.image) as string} alt="Profile" className="w-full h-full object-cover" />
-                  ) : (
-                    <User className="w-5 h-5" />
-                  )}
-                </Link>
-                <div className="absolute right-0 mt-2 w-48 py-2 bg-zinc-900 border border-white/10 rounded-xl shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
-                  <div className="px-4 py-2 border-b border-white/10 mb-1">
-                    <p className="text-sm text-white font-medium truncate">{session.user?.name || "User"}</p>
-                    <p className="text-xs text-zinc-400 truncate">{session.user?.email}</p>
+              <div className="relative">
+                <button
+                  onClick={() => setDropdownOpen(!dropdownOpen)}
+                  className="flex items-center gap-2 pl-1 pr-2 py-1 rounded-xl hover:bg-white/5 transition-all"
+                >
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#e50914] to-[#ff6b35] flex items-center justify-center overflow-hidden border border-white/10 flex-shrink-0">
+                    {avatarUrl || session.user?.image ? (
+                      <img
+                        src={(avatarUrl || session.user?.image) as string}
+                        alt="Profile"
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <User className="w-4 h-4 text-white" />
+                    )}
                   </div>
-                  <Link href="/profile" className="flex items-center gap-2 px-4 py-2 text-sm text-zinc-300 hover:text-white hover:bg-white/5">
-                    <User className="w-4 h-4" /> Profile
-                  </Link>
-                  <button
-                    onClick={() => signOut()}
-                    className="w-full flex items-center gap-2 px-4 py-2 text-sm text-red-400 hover:text-red-300 hover:bg-red-400/10 text-left"
-                  >
-                    <LogOut className="w-4 h-4" /> Sign Out
-                  </button>
-                </div>
+                  <ChevronDown className={`w-3.5 h-3.5 text-zinc-400 transition-transform hidden sm:block ${dropdownOpen ? "rotate-180" : ""}`} />
+                </button>
+
+                <AnimatePresence>
+                  {dropdownOpen && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 8, scale: 0.95 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: 8, scale: 0.95 }}
+                      transition={{ duration: 0.15 }}
+                      className="absolute right-0 mt-2 w-56 glass rounded-2xl shadow-2xl shadow-black/50 overflow-hidden"
+                      onMouseLeave={() => setDropdownOpen(false)}
+                    >
+                      <div className="px-4 py-3 border-b border-white/8">
+                        <p className="text-sm font-semibold text-white truncate">{session.user?.name || "CineStream User"}</p>
+                        <p className="text-xs text-zinc-400 truncate mt-0.5">{session.user?.email}</p>
+                      </div>
+                      <div className="p-1.5">
+                        <Link
+                          href="/profile"
+                          onClick={() => setDropdownOpen(false)}
+                          className="flex items-center gap-3 px-3 py-2 text-sm text-zinc-300 hover:text-white hover:bg-white/5 rounded-lg transition-all"
+                        >
+                          <User className="w-4 h-4" /> Profile
+                        </Link>
+                        <Link
+                          href="/watchlist"
+                          onClick={() => setDropdownOpen(false)}
+                          className="flex items-center gap-3 px-3 py-2 text-sm text-zinc-300 hover:text-white hover:bg-white/5 rounded-lg transition-all"
+                        >
+                          <Bookmark className="w-4 h-4" /> My Watchlist
+                        </Link>
+                        <div className="h-px bg-white/5 my-1.5" />
+                        <button
+                          onClick={() => { setDropdownOpen(false); signOut(); }}
+                          className="w-full flex items-center gap-3 px-3 py-2 text-sm text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-lg transition-all text-left"
+                        >
+                          <LogOut className="w-4 h-4" /> Sign Out
+                        </button>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
             ) : (
               <Link
                 href="/login"
-                className="px-4 py-2 rounded-lg bg-accent hover:bg-accent-hover text-white text-sm font-medium transition-colors"
+                className="px-4 py-2 rounded-xl gradient-accent text-white text-sm font-bold hover:opacity-90 hover:scale-105 active:scale-95 transition-all shadow-lg"
               >
                 Sign In
               </Link>
             )}
 
+            {/* Mobile hamburger */}
             <button
-              className="md:hidden text-zinc-400 hover:text-white"
+              className="md:hidden w-9 h-9 rounded-lg bg-white/5 flex items-center justify-center text-zinc-400 hover:text-white hover:bg-white/10 transition-all"
               onClick={() => setMobileMenuOpen(true)}
             >
-              <Menu className="w-6 h-6" />
+              <Menu className="w-5 h-5" />
             </button>
           </div>
         </div>
       </header>
 
+      {/* Mobile menu */}
       <AnimatePresence>
         {mobileMenuOpen && (
           <motion.div
-            initial={{ opacity: 0, x: "100%" }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: "100%" }}
-            transition={{ type: "spring", damping: 25, stiffness: 200 }}
-            className="fixed inset-0 z-50 bg-black/95 flex flex-col pt-20 px-6"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 bg-[#060608]/98 backdrop-blur-xl"
           >
-            <button
-              onClick={() => setMobileMenuOpen(false)}
-              className="absolute top-6 right-6 text-zinc-400 hover:text-white"
+            <motion.div
+              initial={{ x: "100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "100%" }}
+              transition={{ type: "spring", damping: 30, stiffness: 250 }}
+              className="absolute inset-0 flex flex-col pt-6 px-6"
             >
-              <X className="w-8 h-8" />
-            </button>
-            <nav className="flex flex-col gap-6 text-xl">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.name}
-                  href={link.href}
-                  onClick={() => setMobileMenuOpen(false)}
-                  className={`${
-                    pathname === link.href ? "text-white font-bold" : "text-zinc-400"
-                  }`}
-                >
-                  {link.name}
+              <div className="flex items-center justify-between mb-10">
+                <Link href="/" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-xl gradient-accent flex items-center justify-center">
+                    <Clapperboard className="w-4 h-4 text-white" />
+                  </div>
+                  <span className="text-lg font-black">
+                    <span className="gradient-accent-text">Cine</span>
+                    <span className="text-white">Stream</span>
+                  </span>
                 </Link>
-              ))}
-              {session && (
                 <button
-                  onClick={() => {
-                    setMobileMenuOpen(false);
-                    signOut();
-                  }}
-                  className="flex items-center gap-2 text-red-500 hover:text-red-400 font-bold text-left mt-4 pt-4 border-t border-white/10"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="w-9 h-9 rounded-lg bg-white/5 flex items-center justify-center text-zinc-400 hover:text-white"
                 >
-                  <LogOut className="w-5 h-5" /> Sign Out
+                  <X className="w-5 h-5" />
                 </button>
-              )}
-            </nav>
+              </div>
+
+              <nav className="flex flex-col gap-1">
+                {navLinks.map((link, i) => (
+                  <motion.div
+                    key={link.name}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: i * 0.07 }}
+                  >
+                    <Link
+                      href={link.href}
+                      onClick={() => setMobileMenuOpen(false)}
+                      className={`block px-4 py-3.5 rounded-xl text-lg font-semibold transition-all ${
+                        pathname === link.href
+                          ? "text-white bg-white/10"
+                          : "text-zinc-400 hover:text-white hover:bg-white/5"
+                      }`}
+                    >
+                      {link.name}
+                    </Link>
+                  </motion.div>
+                ))}
+              </nav>
+
+              <div className="mt-auto pb-10">
+                {session ? (
+                  <button
+                    onClick={() => { setMobileMenuOpen(false); signOut(); }}
+                    className="w-full flex items-center gap-3 px-4 py-3.5 text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-xl text-lg font-semibold transition-all"
+                  >
+                    <LogOut className="w-5 h-5" /> Sign Out
+                  </button>
+                ) : (
+                  <Link
+                    href="/login"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="block w-full text-center px-4 py-3.5 rounded-xl gradient-accent text-white font-bold text-lg"
+                  >
+                    Sign In
+                  </Link>
+                )}
+              </div>
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
