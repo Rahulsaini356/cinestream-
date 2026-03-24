@@ -56,7 +56,7 @@ export default function HeroSlider({ movies }: { movies: any[] }) {
   const href = `/${mediaType}/${currentMovie.id}`;
 
   return (
-    <div className="relative h-[95vh] min-h-[600px] max-h-[900px] w-full overflow-hidden bg-black">
+    <div className="relative h-[80vh] sm:h-[88vh] md:h-[92vh] min-h-[520px] max-h-[900px] w-full overflow-hidden bg-black">
       {/* Background layers */}
       <AnimatePresence mode="wait">
         <motion.div
@@ -181,7 +181,7 @@ export default function HeroSlider({ movies }: { movies: any[] }) {
       </button>
 
       {/* Progress indicators */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2">
+      <div className="absolute bottom-5 sm:bottom-8 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2">
         {movies.map((_, i) => (
           <button
             key={i}

@@ -3,7 +3,7 @@
 import { useSession, signOut } from "next-auth/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Clapperboard, User, LogOut, Search, Menu, X, Bookmark, ChevronDown } from "lucide-react";
+import { User, LogOut, Search, Menu, X, Bookmark, ChevronDown } from "lucide-react";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import SearchModal from "@/components/search/SearchModal";
@@ -68,7 +68,7 @@ export default function Navbar() {
           <div className="flex items-center gap-8">
             <Link href="/" className="flex items-center gap-2.5 group flex-shrink-0">
               <div className="w-8 h-8 rounded-xl gradient-accent flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
-                <Clapperboard className="w-4.5 h-4.5 text-white" />
+                <img src="/icon.svg" alt="CineStream" className="w-5 h-5" />
               </div>
               <span className="text-lg font-black tracking-tight hidden sm:block">
                 <span className="gradient-accent-text">Cine</span>
@@ -208,7 +208,7 @@ export default function Navbar() {
               <div className="flex items-center justify-between mb-10">
                 <Link href="/" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-2.5">
                   <div className="w-8 h-8 rounded-xl gradient-accent flex items-center justify-center">
-                    <Clapperboard className="w-4 h-4 text-white" />
+                    <img src="/icon.svg" alt="CineStream" className="w-5 h-5" />
                   </div>
                   <span className="text-lg font-black">
                     <span className="gradient-accent-text">Cine</span>
