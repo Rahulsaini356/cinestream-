@@ -4,10 +4,11 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Mail, Lock, ShieldCheck, X, Loader2, Eye, EyeOff } from "lucide-react";
 
-export default function ForgotPasswordModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
+export default function ForgotPasswordModal({ isOpen, onClose, prefillEmail }: { isOpen: boolean; onClose: () => void; prefillEmail?: string }) {
   const [step, setStep] = useState(1); // 1: Email, 2: OTP, 3: New Password
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState(prefillEmail || "");
   const [otp, setOtp] = useState("");
+
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -172,9 +173,17 @@ export default function ForgotPasswordModal({ isOpen, onClose }: { isOpen: boole
                   placeholder="Email Address"
                   required
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="w-full bg-white/5 border border-white/10 rounded-xl py-3 pl-12 pr-4 text-white placeholder-zinc-500 focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-all"
+                  onChange={(e) => !prefillEmail && setEmail(e.target.value)}
+                  readOnly={!!prefillEmail}
+                  className={`w-full border rounded-xl py-3 pl-12 pr-4 text-white placeholder-zinc-500 focus:outline-none transition-all ${
+                    prefillEmail
+                      ? "bg-white/5 border-white/5 text-zinc-400 cursor-not-allowed"
+                      : "bg-white/5 border-white/10 focus:border-red-500 focus:ring-1 focus:ring-red-500"
+                  }`}
                 />
+                {prefillEmail && (
+                  <div className="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] text-zinc-600 font-medium uppercase tracking-wider">Locked</div>
+                )}
               </div>
               <button
                 type="submit"

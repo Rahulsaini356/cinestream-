@@ -144,7 +144,7 @@ export default function ProfileClient({ user, stats }: { user: any, stats: any }
           </div>
         </div>
       </div>
-      <ForgotPasswordModal isOpen={isForgotModalOpen} onClose={() => setIsForgotModalOpen(false)} />
+      <ForgotPasswordModal isOpen={isForgotModalOpen} onClose={() => setIsForgotModalOpen(false)} prefillEmail={user.email} />
     </div>
   );
 }
