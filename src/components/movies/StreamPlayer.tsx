@@ -133,7 +133,6 @@ export default function StreamPlayer({ id, type, title, seasonsData }: StreamPla
                 allow="autoplay; encrypted-media"
                 title="Movie Player"
                 frameBorder="0"
-                sandbox="allow-scripts allow-same-origin allow-forms allow-presentation"
               />
             </div>
 
