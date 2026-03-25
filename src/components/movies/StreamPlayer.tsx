@@ -20,17 +20,30 @@ export default function StreamPlayer({ id, type, title, seasonsData }: StreamPla
     { label: "Server 1 (Default)", value: "vidsrc.to" },
     { label: "Server 2 (Backup)", value: "vidsrc.me" },
     { label: "Server 3 (Vidsrc.xyz)", value: "vidsrc.xyz" },
+    { label: "Server 4 (SuperEmbed)", value: "superembed" },
+    { label: "Server 5 (Embed.su)", value: "embed.su" },
+    { label: "Server 6 (MoviesAPI)", value: "moviesapi" },
   ];
 
   const currentSeasonData = seasonsData?.find((s) => s.season_number === season);
   const maxEpisodes = currentSeasonData?.episode_count || 1;
 
   const getEmbedUrl = () => {
-    if (type === "movie") {
-      return `https://${server}/embed/movie/${id}`;
-    } else {
-      return `https://${server}/embed/tv/${id}/${season}/${episode}`;
+    if (server === "superembed") {
+      if (type === "movie") return `https://multiembed.mov/?video_id=${id}&tmdb=1`;
+      return `https://multiembed.mov/?video_id=${id}&tmdb=1&s=${season}&e=${episode}`;
     }
+    if (server === "embed.su") {
+      if (type === "movie") return `https://embed.su/embed/movie/${id}`;
+      return `https://embed.su/embed/tv/${id}/${season}/${episode}`;
+    }
+    if (server === "moviesapi") {
+      if (type === "movie") return `https://moviesapi.club/movie/${id}`;
+      return `https://moviesapi.club/tv/${id}-${season}-${episode}`;
+    }
+    // Default vidsrc pattern
+    if (type === "movie") return `https://${server}/embed/movie/${id}`;
+    return `https://${server}/embed/tv/${id}/${season}/${episode}`;
   };
 
   return (
