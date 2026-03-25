@@ -15,39 +15,23 @@ export default function StreamPlayer({ id, type, title, seasonsData }: StreamPla
   const [season, setSeason] = useState(1);
   const [episode, setEpisode] = useState(1);
   const [server, setServer] = useState("vidsrc.to");
-  const [lang, setLang] = useState("en");
 
-  // Servers grouped by language support
   const servers = [
-    { label: "Server 1 – vidsrc.to", value: "vidsrc.to", langs: ["en", "hi"] },
-    { label: "Server 2 – vidsrc.me", value: "vidsrc.me", langs: ["en", "hi"] },
-    { label: "Server 3 – vidsrc.xyz", value: "vidsrc.xyz", langs: ["en"] },
-    { label: "Server 4 – MultiEmbed", value: "multiembed.mov", langs: ["hi", "en"] },
+    { label: "Server 1 (Default)", value: "vidsrc.to" },
+    { label: "Server 2 (Backup)", value: "vidsrc.me" },
+    { label: "Server 3 (Vidsrc.xyz)", value: "vidsrc.xyz" },
   ];
-
-  // Filter servers by selected language
-  const filteredServers = servers.filter((s) => s.langs.includes(lang));
-
-  // If current server not available for selected lang, reset to first available
-  const effectiveServer = filteredServers.find((s) => s.value === server)
-    ? server
-    : filteredServers[0]?.value || server;
-
-  const getEmbedUrl = () => {
-    const s = effectiveServer;
-    
-    if (s === "multiembed.mov") {
-      if (type === "movie") return `https://multiembed.mov/?video_id=${id}&tmdb=1`;
-      return `https://multiembed.mov/?video_id=${id}&tmdb=1&s=${season}&e=${episode}`;
-    }
-
-    // Default vidsrc pattern
-    if (type === "movie") return `https://${s}/embed/movie/${id}`;
-    return `https://${s}/embed/tv/${id}/${season}/${episode}`;
-  };
 
   const currentSeasonData = seasonsData?.find((s) => s.season_number === season);
   const maxEpisodes = currentSeasonData?.episode_count || 1;
+
+  const getEmbedUrl = () => {
+    if (type === "movie") {
+      return `https://${server}/embed/movie/${id}`;
+    } else {
+      return `https://${server}/embed/tv/${id}/${season}/${episode}`;
+    }
+  };
 
   return (
     <>
@@ -109,33 +93,15 @@ export default function StreamPlayer({ id, type, title, seasonsData }: StreamPla
                   </div>
                 )}
 
-                {/* 🌐 Language Selector */}
-                <div className="flex items-center gap-1.5 border-l border-white/10 pl-3">
-                  <span className="text-xs text-zinc-400">🌐 Lang</span>
-                  <select
-                    value={lang}
-                    onChange={(e) => {
-                      setLang(e.target.value);
-                      // Reset server to first available for new lang
-                      const available = servers.filter((s) => s.langs.includes(e.target.value));
-                      if (available.length > 0) setServer(available[0].value);
-                    }}
-                    className="bg-black border border-white/10 rounded-md px-2 py-1 text-sm text-white focus:outline-none"
-                  >
-                    <option value="en">🇬🇧 English</option>
-                    <option value="hi">🇮🇳 Hindi</option>
-                  </select>
-                </div>
-
                 {/* Server Selector */}
                 <div className="flex items-center gap-1.5 border-l border-white/10 pl-3">
                   <span className="text-xs text-zinc-400">Server</span>
                   <select
-                    value={effectiveServer}
+                    value={server}
                     onChange={(e) => setServer(e.target.value)}
                     className="bg-black border border-white/10 rounded-md px-2 py-1 text-sm text-white focus:outline-none"
                   >
-                    {filteredServers.map((s) => (
+                    {servers.map((s) => (
                       <option key={s.value} value={s.value}>{s.label}</option>
                     ))}
                   </select>
@@ -170,9 +136,6 @@ export default function StreamPlayer({ id, type, title, seasonsData }: StreamPla
 
             {/* Bottom Banner */}
             <div className="p-3 text-center bg-zinc-900/50 border-t border-white/5 space-y-1">
-              <p className="text-[11px] text-emerald-400 font-medium">
-                💡 To watch in Hindi: Select <strong>🌐 Lang → Hindi</strong> above, or use the Gear ⚙️ icon inside the player to switch audio tracks.
-              </p>
               <p className="text-[10px] text-zinc-500">
                 Disclaimer: Video stream is provided by highly trusted third-party servers. We do not host any content.{" "}
                 <span className="text-red-400">Please use an adblocker for safe browsing.</span>
