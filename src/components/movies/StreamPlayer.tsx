@@ -19,13 +19,10 @@ export default function StreamPlayer({ id, type, title, seasonsData }: StreamPla
 
   // Servers grouped by language support
   const servers = [
-    // English / Multi-audio (has gear icon for lang switch inside player)
     { label: "Server 1 – vidsrc.to", value: "vidsrc.to", langs: ["en", "hi"] },
     { label: "Server 2 – vidsrc.me", value: "vidsrc.me", langs: ["en", "hi"] },
     { label: "Server 3 – vidsrc.xyz", value: "vidsrc.xyz", langs: ["en"] },
-    // Hindi dubbed focused servers
-    { label: "Server 4 – Hindi (2embed)", value: "2embed.cc", langs: ["hi", "en"] },
-    { label: "Server 5 – Hindi (autoembed)", value: "autoembed.cc", langs: ["hi", "en"] },
+    { label: "Server 4 – MultiEmbed", value: "multiembed.mov", langs: ["hi", "en"] },
   ];
 
   // Filter servers by selected language
@@ -38,14 +35,12 @@ export default function StreamPlayer({ id, type, title, seasonsData }: StreamPla
 
   const getEmbedUrl = () => {
     const s = effectiveServer;
-    if (s === "2embed.cc") {
-      if (type === "movie") return `https://www.2embed.cc/embed/${id}`;
-      return `https://www.2embed.cc/embedtv/${id}&s=${season}&e=${episode}`;
+    
+    if (s === "multiembed.mov") {
+      if (type === "movie") return `https://multiembed.mov/?video_id=${id}&tmdb=1`;
+      return `https://multiembed.mov/?video_id=${id}&tmdb=1&s=${season}&e=${episode}`;
     }
-    if (s === "autoembed.cc") {
-      if (type === "movie") return `https://player.autoembed.cc/embed/movie/${id}`;
-      return `https://player.autoembed.cc/embed/tv/${id}/${season}/${episode}`;
-    }
+
     // Default vidsrc pattern
     if (type === "movie") return `https://${s}/embed/movie/${id}`;
     return `https://${s}/embed/tv/${id}/${season}/${episode}`;
@@ -179,8 +174,8 @@ export default function StreamPlayer({ id, type, title, seasonsData }: StreamPla
                 💡 To watch in Hindi: Select <strong>🌐 Lang → Hindi</strong> above, or use the Gear ⚙️ icon inside the player to switch audio tracks.
               </p>
               <p className="text-[10px] text-zinc-500">
-                Disclaimer: Video stream third-party servers se provided hai. We do not host any content.{" "}
-                <span className="text-red-400">Ads ke liye adblocker use karein.</span>
+                Disclaimer: Video stream is provided by highly trusted third-party servers. We do not host any content.{" "}
+                <span className="text-red-400">Please use an adblocker for safe browsing.</span>
               </p>
             </div>
 
