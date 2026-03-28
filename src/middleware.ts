@@ -17,6 +17,6 @@ export const config = {
      * - login (login page)
      * - terms, privacy (support pages)
      */
-    "/((?!api/auth|_next/static|_next/image|favicon.ico|icon.svg|login|terms|privacy|ads.txt|robots.txt|sitemap.xml|sw.js|google[a-zA-Z0-9]+.html).*)",
+    "/((?!api/auth|_next/static|_next/image|favicon.ico|icon.svg|login|terms|privacy|ads.txt|robots.txt|sitemap.xml|google[a-zA-Z0-9]+.html).*)",
   ],
 };

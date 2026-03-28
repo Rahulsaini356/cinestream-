@@ -7,7 +7,6 @@ import AuthProvider from "@/components/providers/AuthProvider";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import NextTopLoader from "nextjs-toploader";
-import Script from "next/script";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -27,7 +26,6 @@ export const metadata: Metadata = {
   },
   other: {
     "google-adsense-account": "ca-pub-2523996128478722",
-    "monetag": "a33aaf7d9ca5b9ed584dc220d4af745e",
   },
 };
 
@@ -44,12 +42,6 @@ export default function RootLayout({
       data-scroll-behavior="smooth"
     >
       <body className="min-h-full flex flex-col bg-[var(--color-background)] text-[var(--color-foreground)]" suppressHydrationWarning>
-        <Script
-          src="https://quge5.com/88/tag.min.js"
-          data-zone="223594"
-          strategy="afterInteractive"
-          data-cfasync="false"
-        />
         <NextTopLoader 
           color="#e11d48" 
           initialPosition={0.08}
