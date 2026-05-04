@@ -63,16 +63,22 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       fetchPages(tvEndpoints, 3)     // ~240 unique TV shows
     ]);
     
+    const safeDate = (dateStr: string | undefined) => {
+      if (!dateStr) return new Date();
+      const parsed = new Date(dateStr);
+      return isNaN(parsed.getTime()) ? new Date() : parsed;
+    };
+
     movieUrls = allMovies.map((item: any) => ({
       url: `${baseUrl}/movie/${item.id}`,
-      lastModified: item.release_date ? new Date(item.release_date) : new Date(),
+      lastModified: safeDate(item.release_date),
       changeFrequency: 'weekly' as const,
       priority: 0.8,
     }));
 
     tvUrls = allTvShows.map((item: any) => ({
       url: `${baseUrl}/tv/${item.id}`,
-      lastModified: item.first_air_date ? new Date(item.first_air_date) : new Date(),
+      lastModified: safeDate(item.first_air_date),
       changeFrequency: 'weekly' as const,
       priority: 0.8,
     }));
