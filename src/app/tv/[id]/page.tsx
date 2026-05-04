@@ -8,6 +8,37 @@ import { Star, Clock, Calendar, ExternalLink, PlayCircle } from "lucide-react";
 import WatchProviders from "@/components/movies/WatchProviders";
 import ReviewSection from "@/components/reviews/ReviewSection";
 import StreamPlayer from "@/components/movies/StreamPlayer";
+import { Metadata } from "next";
+
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
+  const resolvedParams = await params;
+  const tv = await fetchTMDB(`/tv/${resolvedParams.id}`);
+  
+  if (!tv || tv.success === false) {
+    return { title: 'TV Show Not Found - CineStream' };
+  }
+
+  const title = `${tv.name} - Watch TV Show Online | CineStream`;
+  const description = tv.overview || `Watch ${tv.name} online on CineStream. Discover movies and TV shows.`;
+  const imageUrl = getImageUrl(tv.backdrop_path || tv.poster_path, "w1280");
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      type: "video.tv_show",
+      images: imageUrl ? [{ url: imageUrl }] : [],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: imageUrl ? [imageUrl] : [],
+    },
+  };
+}
 
 export default async function TVDetail({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = await params;
@@ -41,8 +72,39 @@ export default async function TVDetail({ params }: { params: Promise<{ id: strin
   // Get Providers
   const providers = await getProviders("tv", id);
 
+  // Schema.org Structured Data
+  const schemaData = {
+    "@context": "https://schema.org",
+    "@type": "TVSeries",
+    "name": tv.name,
+    "image": getImageUrl(tv.poster_path, "w500"),
+    "description": tv.overview,
+    "startDate": tv.first_air_date,
+    "numberOfSeasons": tv.number_of_seasons,
+    "numberOfEpisodes": tv.number_of_episodes,
+    "aggregateRating": tv.vote_average ? {
+      "@type": "AggregateRating",
+      "ratingValue": tv.vote_average,
+      "bestRating": "10",
+      "worstRating": "1",
+      "ratingCount": tv.vote_count || 1
+    } : undefined,
+    "creator": tv.created_by?.slice(0, 3).map((c: any) => ({
+      "@type": "Person",
+      "name": c.name
+    })),
+    "actor": tv.credits?.cast?.slice(0, 3).map((a: any) => ({
+      "@type": "Person",
+      "name": a.name
+    }))
+  };
+
   return (
     <main className="min-h-screen bg-black pb-20">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaData) }}
+      />
       {/* Hero Backdrop */}
       <div className="relative min-h-[60vh] md:min-h-[75vh] h-auto w-full flex items-center">
         <div
