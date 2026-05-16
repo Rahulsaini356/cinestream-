@@ -57,18 +57,19 @@ export default function StreamPlayer({ id, type, title, seasonsData }: StreamPla
   };
 
   const handleDownload = () => {
-    // Generate an advanced search query for open directories to download the specific episode
-    const searchQuery = type === "tv" 
-      ? `Index of ${title} S${season.toString().padStart(2, "0")}E${episode.toString().padStart(2, "0")} mkv`
-      : `Index of ${title} 1080p mp4 mkv`;
+    // We use vidsrc.cc opened in a new tab because it is unblocked and has a native download button.
+    // If we try to use a direct download API, it gets blocked by ISPs.
+    const url = type === "movie" 
+      ? `https://vidsrc.cc/v2/embed/movie/${id}` 
+      : `https://vidsrc.cc/v2/embed/tv/${id}/${season}/${episode}`;
       
-    // Alternate method: use dl.vidsrc.vip
-    const dlUrl = type === "movie" 
-      ? `https://dl.vidsrc.vip/movie/${id}` 
-      : `https://dl.vidsrc.vip/tv/${id}/${season}/${episode}`;
-      
-    // Open the download proxy in a new window
-    window.open(dlUrl, "_blank");
+    window.open(url, "_blank");
+    
+    // Fallback: If they still complain, we can also provide an 'Index of' Google Search which is 100% unblockable.
+    // const query = type === "tv" 
+    //   ? `Index of "${title}" S${season.toString().padStart(2, "0")}E${episode.toString().padStart(2, "0")} (mp4|mkv)`
+    //   : `Index of "${title}" 1080p (mp4|mkv)`;
+    // window.open(`https://www.google.com/search?q=${encodeURIComponent(query)}`, "_blank");
   };
 
   return (
