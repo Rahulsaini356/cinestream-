@@ -14,39 +14,61 @@ export default function StreamPlayer({ id, type, title, seasonsData }: StreamPla
   const [isOpen, setIsOpen] = useState(false);
   const [season, setSeason] = useState(1);
   const [episode, setEpisode] = useState(1);
-  const [server, setServer] = useState("vidsrc.to");
+  const [server, setServer] = useState("vidlink");
 
   const servers = [
-    { label: "Server 1 (Default)", value: "vidsrc.to" },
-    { label: "Server 2 (Backup)", value: "vidsrc.me" },
-    { label: "Server 3 (Vidsrc.xyz)", value: "vidsrc.xyz" },
-    { label: "Server 4 (SuperEmbed)", value: "superembed" },
-    { label: "Server 5 (MoviesAPI)", value: "moviesapi" },
+    { label: "Server 1 (VidLink - Fast)", value: "vidlink" },
+    { label: "Server 2 (Vidsrc.cc)", value: "vidsrc.cc" },
+    { label: "Server 3 (AutoEmbed)", value: "autoembed" },
+    { label: "Server 4 (Vidsrc.pm)", value: "vidsrc.pm" },
+    { label: "Server 5 (2Embed)", value: "2embed" },
+    { label: "Server 6 (MoviesAPI)", value: "moviesapi" },
   ];
 
   const currentSeasonData = seasonsData?.find((s) => s.season_number === season);
   const maxEpisodes = currentSeasonData?.episode_count || 1;
 
   const getEmbedUrl = () => {
-    if (server === "superembed") {
-      if (type === "movie") return `https://multiembed.mov/?video_id=${id}&tmdb=1`;
-      return `https://multiembed.mov/?video_id=${id}&tmdb=1&s=${season}&e=${episode}`;
+    if (server === "vidlink") {
+      if (type === "movie") return `https://vidlink.pro/movie/${id}`;
+      return `https://vidlink.pro/tv/${id}/${season}/${episode}`;
+    }
+    if (server === "autoembed") {
+      if (type === "movie") return `https://autoembed.co/movie/tmdb/${id}`;
+      return `https://autoembed.co/tv/tmdb/${id}-${season}-${episode}`;
+    }
+    if (server === "2embed") {
+      if (type === "movie") return `https://www.2embed.cc/embed/${id}`;
+      return `https://www.2embed.cc/embedtv/${id}&s=${season}&e=${episode}`;
+    }
+    if (server === "vidsrc.cc") {
+      if (type === "movie") return `https://vidsrc.cc/v2/embed/movie/${id}`;
+      return `https://vidsrc.cc/v2/embed/tv/${id}/${season}/${episode}`;
+    }
+    if (server === "vidsrc.pm") {
+      if (type === "movie") return `https://vidsrc.pm/embed/movie/${id}`;
+      return `https://vidsrc.pm/embed/tv/${id}/${season}/${episode}`;
     }
     if (server === "moviesapi") {
       if (type === "movie") return `https://moviesapi.club/movie/${id}`;
       return `https://moviesapi.club/tv/${id}-${season}-${episode}`;
     }
-    // Default vidsrc pattern
-    if (type === "movie") return `https://${server}/embed/movie/${id}`;
-    return `https://${server}/embed/tv/${id}/${season}/${episode}`;
+    return `https://vidlink.pro/movie/${id}`; // fallback
   };
 
   const handleDownload = () => {
-    // Open vidsrc in new tab where native download button is fully accessible
-    const url = type === "movie" 
-      ? `https://vidsrc.to/embed/movie/${id}` 
-      : `https://vidsrc.to/embed/tv/${id}/${season}/${episode}`;
-    window.open(url, "_blank");
+    // Generate an advanced search query for open directories to download the specific episode
+    const searchQuery = type === "tv" 
+      ? `Index of ${title} S${season.toString().padStart(2, "0")}E${episode.toString().padStart(2, "0")} mkv`
+      : `Index of ${title} 1080p mp4 mkv`;
+      
+    // Alternate method: use dl.vidsrc.vip
+    const dlUrl = type === "movie" 
+      ? `https://dl.vidsrc.vip/movie/${id}` 
+      : `https://dl.vidsrc.vip/tv/${id}/${season}/${episode}`;
+      
+    // Open the download proxy in a new window
+    window.open(dlUrl, "_blank");
   };
 
   return (
