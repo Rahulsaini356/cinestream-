@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Play } from "lucide-react";
+import { Play, Download } from "lucide-react";
 
 interface StreamPlayerProps {
   id: string;
@@ -21,8 +21,7 @@ export default function StreamPlayer({ id, type, title, seasonsData }: StreamPla
     { label: "Server 2 (Backup)", value: "vidsrc.me" },
     { label: "Server 3 (Vidsrc.xyz)", value: "vidsrc.xyz" },
     { label: "Server 4 (SuperEmbed)", value: "superembed" },
-    { label: "Server 5 (Embed.su)", value: "embed.su" },
-    { label: "Server 6 (MoviesAPI)", value: "moviesapi" },
+    { label: "Server 5 (MoviesAPI)", value: "moviesapi" },
   ];
 
   const currentSeasonData = seasonsData?.find((s) => s.season_number === season);
@@ -33,10 +32,6 @@ export default function StreamPlayer({ id, type, title, seasonsData }: StreamPla
       if (type === "movie") return `https://multiembed.mov/?video_id=${id}&tmdb=1`;
       return `https://multiembed.mov/?video_id=${id}&tmdb=1&s=${season}&e=${episode}`;
     }
-    if (server === "embed.su") {
-      if (type === "movie") return `https://embed.su/embed/movie/${id}`;
-      return `https://embed.su/embed/tv/${id}/${season}/${episode}`;
-    }
     if (server === "moviesapi") {
       if (type === "movie") return `https://moviesapi.club/movie/${id}`;
       return `https://moviesapi.club/tv/${id}-${season}-${episode}`;
@@ -46,15 +41,31 @@ export default function StreamPlayer({ id, type, title, seasonsData }: StreamPla
     return `https://${server}/embed/tv/${id}/${season}/${episode}`;
   };
 
+  const handleDownload = () => {
+    // Open vidsrc in new tab where native download button is fully accessible
+    const url = type === "movie" 
+      ? `https://vidsrc.to/embed/movie/${id}` 
+      : `https://vidsrc.to/embed/tv/${id}/${season}/${episode}`;
+    window.open(url, "_blank");
+  };
+
   return (
     <>
-      {/* Trigger Button */}
-      <button
-        onClick={() => setIsOpen(true)}
-        className="flex items-center gap-2 px-6 py-3 font-semibold rounded-xl bg-gradient-to-r from-[#e50914] to-[#ff6b35] text-white hover:scale-105 hover:shadow-[0_0_30px_rgba(229,9,20,0.5)] transition-all duration-300"
-      >
-        <Play className="w-5 h-5 fill-current" /> Watch Now
-      </button>
+      {/* Trigger Buttons */}
+      <div className="flex flex-wrap items-center gap-3">
+        <button
+          onClick={() => setIsOpen(true)}
+          className="flex items-center gap-2 px-6 py-3 font-semibold rounded-xl bg-gradient-to-r from-[#e50914] to-[#ff6b35] text-white hover:scale-105 hover:shadow-[0_0_30px_rgba(229,9,20,0.5)] transition-all duration-300"
+        >
+          <Play className="w-5 h-5 fill-current" /> Watch Now
+        </button>
+        <button
+          onClick={handleDownload}
+          className="flex items-center gap-2 px-6 py-3 font-semibold rounded-xl bg-white/10 hover:bg-white/20 text-white hover:scale-105 transition-all duration-300 border border-white/10"
+        >
+          <Download className="w-5 h-5" /> Download
+        </button>
+      </div>
 
       {/* Modal */}
       {isOpen && (
