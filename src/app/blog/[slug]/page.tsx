@@ -4,6 +4,17 @@ import { notFound } from "next/navigation";
 import { Clock, Tag, ArrowLeft, ArrowRight, BookOpen } from "lucide-react";
 import type { Metadata } from "next";
 
+const categoryColors: Record<string, string> = {
+  "Top Lists": "bg-yellow-500/20 text-yellow-400",
+  "Hindi Content": "bg-orange-500/20 text-orange-400",
+  "Best Of": "bg-blue-500/20 text-blue-400",
+  "Streaming Guide": "bg-purple-500/20 text-purple-400",
+  "Director Spotlight": "bg-rose-500/20 text-rose-400",
+  "Guides": "bg-green-500/20 text-green-400",
+  "Horror": "bg-red-500/20 text-red-400",
+  "Film Education": "bg-indigo-500/20 text-indigo-400",
+};
+
 type Params = Promise<{ slug: string }>;
 
 export async function generateStaticParams() {
@@ -58,7 +69,7 @@ export default async function BlogPostPage({ params }: { params: Params }) {
 
         {/* Meta */}
         <div className="flex flex-wrap items-center gap-3 mb-4">
-          <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-rose-500/20 text-rose-400">
+          <span className={`text-xs font-bold px-2.5 py-1 rounded-full ${categoryColors[post.category] || "bg-white/10 text-white"}`}>
             {post.category}
           </span>
           <span className="flex items-center gap-1 text-xs text-zinc-500">
@@ -123,7 +134,7 @@ export default async function BlogPostPage({ params }: { params: Params }) {
                   <img src={r.coverImage} alt={r.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                 </div>
                 <div className="p-5">
-                  <span className="text-[11px] font-bold text-rose-400">{r.category}</span>
+                  <span className={`text-[11px] font-bold ${categoryColors[r.category]?.split(" ")[1] || "text-[#ff6b35]"}`}>{r.category}</span>
                   <h3 className="text-white font-bold text-sm leading-snug mt-1 line-clamp-2 group-hover:text-[#ff6b35] transition-colors">
                     {r.title}
                   </h3>
