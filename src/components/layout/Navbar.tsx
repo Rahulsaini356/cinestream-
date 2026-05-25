@@ -3,7 +3,7 @@
 import { useSession, signOut } from "next-auth/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { User, LogOut, Search, Menu, X, Bookmark, ChevronDown } from "lucide-react";
+import { User, LogOut, Search, Menu, X, Bookmark, ChevronDown, Send } from "lucide-react";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import SearchModal from "@/components/search/SearchModal";
@@ -109,6 +109,19 @@ export default function Navbar() {
                 ⌘K
               </kbd>
             </button>
+
+            {/* Telegram Link (Desktop) */}
+            <a
+              href={process.env.NEXT_PUBLIC_TELEGRAM_URL || "https://t.me/cinestreamdigital"}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hidden sm:flex items-center justify-center w-10 h-10 rounded-xl bg-white/5 border border-white/8 text-zinc-400 hover:text-[#229ED9] hover:bg-blue-500/10 hover:border-blue-500/20 hover:scale-105 transition-all relative group"
+              title="Join our Telegram Community"
+            >
+              <Send className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+              {/* Subtle active notification dot */}
+              <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse shadow-[0_0_8px_#229ED9]" />
+            </a>
 
             {session ? (
               <div className="relative">
@@ -248,7 +261,39 @@ export default function Navbar() {
                 ))}
               </nav>
 
-              <div className="mt-auto pb-10">
+              {/* Mobile Telegram Link banner */}
+              <motion.div 
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3 }}
+                className="mt-auto mb-6 animate-fade-up"
+              >
+                <a
+                  href={process.env.NEXT_PUBLIC_TELEGRAM_URL || "https://t.me/cinestreamdigital"}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center justify-between p-4 rounded-2xl bg-gradient-to-r from-blue-500/10 to-indigo-500/5 border border-blue-500/20 hover:border-blue-500/40 transition-all group"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-blue-500/20 flex items-center justify-center text-[#229ED9]">
+                      <Send className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                    </div>
+                    <div className="text-left">
+                      <div className="text-white text-sm font-extrabold flex items-center gap-1">
+                        CineStream Telegram
+                        <span className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse" />
+                      </div>
+                      <div className="text-zinc-400 text-xs font-medium">Join for instant movie drops!</div>
+                    </div>
+                  </div>
+                  <div className="w-8 h-8 rounded-lg bg-white/5 border border-white/8 flex items-center justify-center text-zinc-400 group-hover:text-white group-hover:bg-white/10 transition-all">
+                    →
+                  </div>
+                </a>
+              </motion.div>
+
+              <div className="pb-10">
                 {session ? (
                   <button
                     onClick={() => { setMobileMenuOpen(false); signOut(); }}

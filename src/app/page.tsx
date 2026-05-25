@@ -3,6 +3,7 @@ import MovieCard from "@/components/ui/MovieCard";
 import HeroSlider from "@/components/ui/HeroSlider";
 import Link from "next/link";
 import { TrendingUp, Sparkles, Star, Tv, Zap, ArrowRight } from "lucide-react";
+import TelegramSection from "@/components/ui/TelegramSection";
 
 interface RowProps {
   title: string;
@@ -106,6 +107,9 @@ export default async function Home() {
           />
         )}
       </div>
+
+      {/* Telegram Channel Section */}
+      <TelegramSection />
     </main>
   );
 }

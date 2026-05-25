@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Film, PlayCircle } from "lucide-react";
+import { Film, PlayCircle, Send } from "lucide-react";
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
@@ -26,6 +26,15 @@ export default function Footer() {
           <Link href="/disclaimer" className="hover:text-white transition-colors">
             Disclaimer
           </Link>
+          <a
+            href={process.env.NEXT_PUBLIC_TELEGRAM_URL || "https://t.me/cinestreamdigital"}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-1.5 text-zinc-400 hover:text-[#229ED9] hover:scale-105 active:scale-95 transition-all font-semibold"
+          >
+            <Send className="w-3.5 h-3.5" />
+            Telegram
+          </a>
         </div>
       </div>
     </footer>
