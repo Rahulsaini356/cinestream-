@@ -42,8 +42,8 @@ export default function StreamPlayer({ id, type, title, seasonsData }: StreamPla
       return `https://www.2embed.cc/embedtv/${id}&s=${season}&e=${episode}`;
     }
     if (server === "vidsrc.cc") {
-      if (type === "movie") return `https://vidsrc.cc/v2/embed/movie/${id}`;
-      return `https://vidsrc.cc/v2/embed/tv/${id}/${season}/${episode}`;
+      if (type === "movie") return `https://vidsrc.xyz/embed/movie/${id}`;
+      return `https://vidsrc.xyz/embed/tv/${id}/${season}/${episode}`;
     }
     if (server === "vidsrc.pm") {
       if (type === "movie") return `https://vidsrc.pm/embed/movie/${id}`;
