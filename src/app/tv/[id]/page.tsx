@@ -154,7 +154,7 @@ export default async function TVDetail({ params }: { params: Promise<{ id: strin
               <p className="text-lg text-zinc-300 max-w-3xl leading-relaxed mb-8 drop-shadow-md">{tv.overview}</p>
 
               <div className="flex flex-wrap items-center gap-4">
-                <StreamPlayer id={id} type="tv" title={tv.name} seasonsData={tv.seasons} />
+                <StreamPlayer id={id} imdbId={tv.external_ids?.imdb_id} type="tv" title={tv.name} seasonsData={tv.seasons} />
                 <WatchlistButton
                   movieId={id}
                   title={tv.name}

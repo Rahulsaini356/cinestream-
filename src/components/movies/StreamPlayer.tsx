@@ -4,13 +4,14 @@ import { useState } from "react";
 import { Play, Download } from "lucide-react";
 
 interface StreamPlayerProps {
-  id: string;
+  id: string; // tmdb id
+  imdbId?: string; // imdb id
   type: "movie" | "tv";
   title?: string;
   seasonsData?: { season_number: number; episode_count: number }[];
 }
 
-export default function StreamPlayer({ id, type, title, seasonsData }: StreamPlayerProps) {
+export default function StreamPlayer({ id, imdbId, type, title, seasonsData }: StreamPlayerProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [season, setSeason] = useState(1);
   const [episode, setEpisode] = useState(1);
@@ -18,7 +19,7 @@ export default function StreamPlayer({ id, type, title, seasonsData }: StreamPla
 
   const servers = [
     { label: "Server 1 (VidLink - Fast)", value: "vidlink" },
-    { label: "Server 2 (Vidsrc.cc)", value: "vidsrc.cc" },
+    { label: "Server 2 (Vidsrc.xyz - Dual Audio)", value: "vidsrc.cc" },
     { label: "Server 3 (AutoEmbed)", value: "autoembed" },
     { label: "Server 4 (Vidsrc.pm)", value: "vidsrc.pm" },
     { label: "Server 5 (2Embed)", value: "2embed" },
@@ -29,47 +30,49 @@ export default function StreamPlayer({ id, type, title, seasonsData }: StreamPla
   const maxEpisodes = currentSeasonData?.episode_count || 1;
 
   const getEmbedUrl = () => {
+    const movieIdentifier = imdbId || id;
+    const tvIdentifier = imdbId || id;
+
     if (server === "vidlink") {
-      if (type === "movie") return `https://vidlink.pro/movie/${id}`;
+      if (type === "movie") return `https://vidlink.pro/movie/${movieIdentifier}`;
       return `https://vidlink.pro/tv/${id}/${season}/${episode}`;
     }
     if (server === "autoembed") {
-      if (type === "movie") return `https://autoembed.co/movie/tmdb/${id}`;
+      if (type === "movie") {
+        if (imdbId) return `https://autoembed.co/movie/imdb/${imdbId}`;
+        return `https://autoembed.co/movie/tmdb/${id}`;
+      }
       return `https://autoembed.co/tv/tmdb/${id}-${season}-${episode}`;
     }
     if (server === "2embed") {
-      if (type === "movie") return `https://www.2embed.cc/embed/${id}`;
-      return `https://www.2embed.cc/embedtv/${id}&s=${season}&e=${episode}`;
+      if (type === "movie") return `https://www.2embed.cc/embed/${movieIdentifier}`;
+      return `https://www.2embed.cc/embedtv/${movieIdentifier}&s=${season}&e=${episode}`;
     }
     if (server === "vidsrc.cc") {
-      if (type === "movie") return `https://vidsrc.xyz/embed/movie/${id}`;
-      return `https://vidsrc.xyz/embed/tv/${id}/${season}/${episode}`;
+      if (type === "movie") return `https://vidsrc.xyz/embed/movie/${movieIdentifier}`;
+      return `https://vidsrc.xyz/embed/tv/${tvIdentifier}/${season}/${episode}`;
     }
     if (server === "vidsrc.pm") {
-      if (type === "movie") return `https://vidsrc.pm/embed/movie/${id}`;
-      return `https://vidsrc.pm/embed/tv/${id}/${season}/${episode}`;
+      if (type === "movie") return `https://vidsrc.pm/embed/movie/${movieIdentifier}`;
+      return `https://vidsrc.pm/embed/tv/${tvIdentifier}/${season}/${episode}`;
     }
     if (server === "moviesapi") {
-      if (type === "movie") return `https://moviesapi.club/movie/${id}`;
+      if (type === "movie") return `https://moviesapi.club/movie/${movieIdentifier}`;
       return `https://moviesapi.club/tv/${id}-${season}-${episode}`;
     }
-    return `https://vidlink.pro/movie/${id}`; // fallback
+    return `https://vidlink.pro/movie/${movieIdentifier}`; // fallback
   };
 
   const handleDownload = () => {
-    // We use vidsrc.cc opened in a new tab because it is unblocked and has a native download button.
-    // If we try to use a direct download API, it gets blocked by ISPs.
+    const movieIdentifier = imdbId || id;
+    const tvIdentifier = imdbId || id;
+
+    // We use vidsrc.xyz opened in a new tab because it is unblocked and has a native download button.
     const url = type === "movie" 
-      ? `https://vidsrc.cc/v2/embed/movie/${id}` 
-      : `https://vidsrc.cc/v2/embed/tv/${id}/${season}/${episode}`;
+      ? `https://vidsrc.xyz/embed/movie/${movieIdentifier}` 
+      : `https://vidsrc.xyz/embed/tv/${tvIdentifier}/${season}/${episode}`;
       
     window.open(url, "_blank");
-    
-    // Fallback: If they still complain, we can also provide an 'Index of' Google Search which is 100% unblockable.
-    // const query = type === "tv" 
-    //   ? `Index of "${title}" S${season.toString().padStart(2, "0")}E${episode.toString().padStart(2, "0")} (mp4|mkv)`
-    //   : `Index of "${title}" 1080p (mp4|mkv)`;
-    // window.open(`https://www.google.com/search?q=${encodeURIComponent(query)}`, "_blank");
   };
 
   return (

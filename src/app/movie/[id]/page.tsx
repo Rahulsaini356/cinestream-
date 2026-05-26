@@ -149,7 +149,7 @@ export default async function MovieDetail({ params }: { params: Promise<{ id: st
               <p className="text-lg text-zinc-300 max-w-3xl leading-relaxed mb-8 drop-shadow-md">{movie.overview}</p>
 
               <div className="flex flex-wrap items-center gap-4">
-                <StreamPlayer id={id} type="movie" title={movie.title} />
+                <StreamPlayer id={id} imdbId={movie.imdb_id} type="movie" title={movie.title} />
                 <WatchlistButton
                   movieId={id}
                   title={movie.title}
