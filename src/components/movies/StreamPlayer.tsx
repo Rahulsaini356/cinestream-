@@ -19,7 +19,7 @@ export default function StreamPlayer({ id, imdbId, type, title, seasonsData }: S
 
   const servers = [
     { label: "Server 1 (VidLink - Fast)", value: "vidlink" },
-    { label: "Server 2 (Vidsrc.xyz - Dual Audio)", value: "vidsrc.cc" },
+    { label: "Server 2 (Vidsrc.su - Multi Audio)", value: "vidsrc.cc" },
     { label: "Server 3 (AutoEmbed)", value: "autoembed" },
     { label: "Server 4 (Vidsrc.pm)", value: "vidsrc.pm" },
     { label: "Server 5 (2Embed)", value: "2embed" },
@@ -49,8 +49,8 @@ export default function StreamPlayer({ id, imdbId, type, title, seasonsData }: S
       return `https://www.2embed.cc/embedtv/${movieIdentifier}&s=${season}&e=${episode}`;
     }
     if (server === "vidsrc.cc") {
-      if (type === "movie") return `https://vidsrc.xyz/embed/movie/${movieIdentifier}`;
-      return `https://vidsrc.xyz/embed/tv/${tvIdentifier}/${season}/${episode}`;
+      if (type === "movie") return `https://vidsrc.su/embed/movie/${movieIdentifier}`;
+      return `https://vidsrc.su/embed/tv/${tvIdentifier}/${season}/${episode}`;
     }
     if (server === "vidsrc.pm") {
       if (type === "movie") return `https://vidsrc.pm/embed/movie/${movieIdentifier}`;
@@ -67,10 +67,10 @@ export default function StreamPlayer({ id, imdbId, type, title, seasonsData }: S
     const movieIdentifier = imdbId || id;
     const tvIdentifier = imdbId || id;
 
-    // We use vidsrc.xyz opened in a new tab because it is unblocked and has a native download button.
+    // We use vidsrc.su opened in a new tab because it is unblocked and has a native download button.
     const url = type === "movie" 
-      ? `https://vidsrc.xyz/embed/movie/${movieIdentifier}` 
-      : `https://vidsrc.xyz/embed/tv/${tvIdentifier}/${season}/${episode}`;
+      ? `https://vidsrc.su/embed/movie/${movieIdentifier}` 
+      : `https://vidsrc.su/embed/tv/${tvIdentifier}/${season}/${episode}`;
       
     window.open(url, "_blank");
   };
