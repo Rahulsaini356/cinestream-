@@ -31,10 +31,9 @@ export default function StreamPlayer({ id, imdbId, type, title, seasonsData }: S
 
   const getEmbedUrl = () => {
     const movieIdentifier = imdbId || id;
-    const tvIdentifier = imdbId || id;
 
     if (server === "vidlink") {
-      if (type === "movie") return `https://vidlink.pro/movie/${movieIdentifier}`;
+      if (type === "movie") return `https://vidlink.pro/movie/${id}`;
       return `https://vidlink.pro/tv/${id}/${season}/${episode}`;
     }
     if (server === "autoembed") {
@@ -45,32 +44,31 @@ export default function StreamPlayer({ id, imdbId, type, title, seasonsData }: S
       return `https://autoembed.co/tv/tmdb/${id}-${season}-${episode}`;
     }
     if (server === "2embed") {
-      if (type === "movie") return `https://www.2embed.cc/embed/${movieIdentifier}`;
-      return `https://www.2embed.cc/embedtv/${movieIdentifier}&s=${season}&e=${episode}`;
+      if (type === "movie") return `https://www.2embed.cc/embed/${id}`;
+      return `https://www.2embed.cc/embedtv/${id}&s=${season}&e=${episode}`;
     }
     if (server === "vidsrc.cc") {
       if (type === "movie") return `https://vidsrc.su/embed/movie/${movieIdentifier}`;
-      return `https://vidsrc.su/embed/tv/${tvIdentifier}/${season}/${episode}`;
+      return `https://vidsrc.su/embed/tv/${id}/${season}/${episode}`;
     }
     if (server === "vidsrc.pm") {
       if (type === "movie") return `https://vidsrc.pm/embed/movie/${movieIdentifier}`;
-      return `https://vidsrc.pm/embed/tv/${tvIdentifier}/${season}/${episode}`;
+      return `https://vidsrc.pm/embed/tv/${id}/${season}/${episode}`;
     }
     if (server === "moviesapi") {
-      if (type === "movie") return `https://moviesapi.club/movie/${movieIdentifier}`;
+      if (type === "movie") return `https://moviesapi.club/movie/${id}`;
       return `https://moviesapi.club/tv/${id}-${season}-${episode}`;
     }
-    return `https://vidlink.pro/movie/${movieIdentifier}`; // fallback
+    return `https://vidlink.pro/movie/${id}`; // fallback
   };
 
   const handleDownload = () => {
     const movieIdentifier = imdbId || id;
-    const tvIdentifier = imdbId || id;
 
     // We use vidsrc.su opened in a new tab because it is unblocked and has a native download button.
     const url = type === "movie" 
       ? `https://vidsrc.su/embed/movie/${movieIdentifier}` 
-      : `https://vidsrc.su/embed/tv/${tvIdentifier}/${season}/${episode}`;
+      : `https://vidsrc.su/embed/tv/${id}/${season}/${episode}`;
       
     window.open(url, "_blank");
   };
