@@ -19,11 +19,11 @@ export default function StreamPlayer({ id, imdbId, type, title, seasonsData }: S
 
   const servers = [
     { label: "Server 1 (VidLink - Fast)", value: "vidlink" },
-    { label: "Server 2 (Vidsrc.su - Multi Audio)", value: "vidsrc.cc" },
+    { label: "Server 2 (VidSrc.to - High Quality)", value: "vidsrc.to" },
     { label: "Server 3 (AutoEmbed)", value: "autoembed" },
     { label: "Server 4 (Vidsrc.pm)", value: "vidsrc.pm" },
     { label: "Server 5 (2Embed)", value: "2embed" },
-    { label: "Server 6 (MoviesAPI)", value: "moviesapi" },
+    { label: "Server 6 (Embed.su - Multi Audio & 4K)", value: "embed.su" },
   ];
 
   const currentSeasonData = seasonsData?.find((s) => s.season_number === season);
@@ -47,17 +47,17 @@ export default function StreamPlayer({ id, imdbId, type, title, seasonsData }: S
       if (type === "movie") return `https://www.2embed.cc/embed/${id}`;
       return `https://www.2embed.cc/embedtv/${id}&s=${season}&e=${episode}`;
     }
-    if (server === "vidsrc.cc") {
-      if (type === "movie") return `https://vidsrc.su/embed/movie/${movieIdentifier}`;
-      return `https://vidsrc.su/embed/tv/${id}/${season}/${episode}`;
+    if (server === "vidsrc.to") {
+      if (type === "movie") return `https://vidsrc.to/embed/movie/${movieIdentifier}`;
+      return `https://vidsrc.to/embed/tv/${id}/${season}/${episode}`;
     }
     if (server === "vidsrc.pm") {
       if (type === "movie") return `https://vidsrc.pm/embed/movie/${movieIdentifier}`;
       return `https://vidsrc.pm/embed/tv/${id}/${season}/${episode}`;
     }
-    if (server === "moviesapi") {
-      if (type === "movie") return `https://moviesapi.club/movie/${id}`;
-      return `https://moviesapi.club/tv/${id}-${season}-${episode}`;
+    if (server === "embed.su") {
+      if (type === "movie") return `https://embed.su/embed/movie/${id}`;
+      return `https://embed.su/embed/tv/${id}/${season}/${episode}`;
     }
     return `https://vidlink.pro/movie/${id}`; // fallback
   };
