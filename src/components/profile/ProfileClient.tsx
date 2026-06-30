@@ -14,6 +14,7 @@ interface ProfileClientProps {
     id?: string;
     name?: string | null;
     email?: string | null;
+    image?: string | null;
     createdAt?: Date | string | null;
     points?: number;
     watchTime?: number;
@@ -27,7 +28,7 @@ interface ProfileClientProps {
 
 export default function ProfileClient({ user, stats }: ProfileClientProps) {
   const { update } = useSession();
-  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(user.image || null);
   const [name, setName] = useState(user.name || "");
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -35,23 +36,42 @@ export default function ProfileClient({ user, stats }: ProfileClientProps) {
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
-    if (user.id) {
+    if (user.image) {
+      setAvatarUrl(user.image);
+    } else if (user.id) {
       const savedAvatar = localStorage.getItem(`avatar_${user.id}`);
       if (savedAvatar) {
         setAvatarUrl(savedAvatar);
       }
     }
-  }, [user.id]);
+  }, [user.id, user.image]);
 
   const handleAvatarUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file && user.id) {
       const reader = new FileReader();
-      reader.onloadend = () => {
+      reader.onloadend = async () => {
         const result = reader.result as string;
         setAvatarUrl(result);
+        
+        // Save to localStorage as a fast client-side fallback/cache
         localStorage.setItem(`avatar_${user.id}`, result);
-        update({ image: result });
+        
+        try {
+          // Save to database!
+          const res = await fetch("/api/user/update-profile", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ image: result }),
+          });
+          if (res.ok) {
+            await update({ image: result });
+          } else {
+            console.error("Failed to save avatar to database");
+          }
+        } catch (error) {
+          console.error("Error saving avatar to database:", error);
+        }
       };
       reader.readAsDataURL(file);
     }
@@ -180,7 +200,7 @@ export default function ProfileClient({ user, stats }: ProfileClientProps) {
                   className="text-3xl sm:text-4xl font-black text-white tracking-tight cursor-pointer hover:text-red-400 transition-colors flex items-center justify-center md:justify-start gap-2 group"
                   title="Click to edit name"
                 >
-                  {name}
+                  {name || "Add Name"}
                   {user.isKing && (
                     <Crown className="w-6 h-6 text-yellow-400 fill-yellow-400 filter drop-shadow-[0_0_4px_rgba(250,204,21,0.6)] animate-pulse" />
                   )}

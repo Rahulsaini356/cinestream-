@@ -29,18 +29,24 @@ export default async function ProfilePage() {
     }),
   ]);
 
+  if (!user) {
+    // If the database user doesn't exist anymore, redirect to login
+    redirect("/login");
+  }
+
   const isKing = topUser?.id === session.user.id;
 
   return (
     <main className="min-h-screen pt-24 pb-20 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
       <ProfileClient
         user={{
-          id: user?.id,
-          name: user?.name,
-          email: user?.email,
-          createdAt: user?.createdAt,
-          points: user?.points || 0,
-          watchTime: user?.watchTime || 0,
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          image: user.image,
+          createdAt: user.createdAt,
+          points: user.points || 0,
+          watchTime: user.watchTime || 0,
           isKing,
         }}
         stats={{ watchlistCount, reviewCount }}

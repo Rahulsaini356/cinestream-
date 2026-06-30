@@ -11,19 +11,28 @@ export async function POST(request: Request) {
   }
 
   try {
-    const { name } = await request.json();
+    const { name, image } = await request.json();
 
-    if (!name || name.trim().length === 0) {
-      return NextResponse.json({ error: "Name is required" }, { status: 400 });
+    const dataToUpdate: any = {};
+    if (name !== undefined) {
+      if (name.trim().length === 0) {
+        return NextResponse.json({ error: "Name cannot be empty" }, { status: 400 });
+      }
+      dataToUpdate.name = name.trim();
+    }
+    
+    if (image !== undefined) {
+      dataToUpdate.image = image;
     }
 
     const updatedUser = await prisma.user.update({
       where: { id: session.user.id },
-      data: { name: name.trim() },
+      data: dataToUpdate,
     });
 
     return NextResponse.json({ success: true, user: updatedUser });
   } catch (error) {
+    console.error("Update profile API error:", error);
     return NextResponse.json({ error: "Failed to update profile" }, { status: 500 });
   }
 }
