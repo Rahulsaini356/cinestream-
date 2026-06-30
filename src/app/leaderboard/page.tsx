@@ -92,7 +92,7 @@ export default async function LeaderboardPage() {
             
             {/* Rank 2 (Silver) */}
             {leaderboard[1] && (
-              <div className="order-2 md:order-1 bg-gradient-to-t from-zinc-950 via-[#0d0d14] to-zinc-900/30 border border-white/8 p-6 rounded-3xl text-center flex flex-col items-center gap-3 md:h-[220px] justify-center relative overflow-hidden">
+              <Link href={`/user/${leaderboard[1].id}`} className="order-2 md:order-1 bg-gradient-to-t from-zinc-950 via-[#0d0d14] to-zinc-900/30 border border-white/8 p-6 rounded-3xl text-center flex flex-col items-center gap-3 md:h-[220px] justify-center relative overflow-hidden hover:scale-102 hover:border-zinc-400/40 transition-all duration-300">
                 <div className="absolute top-3 left-3 bg-zinc-400/10 border border-zinc-400/20 text-zinc-300 text-xs px-2.5 py-1 rounded-lg font-bold">#2</div>
                 <div className="w-16 h-16 rounded-full bg-zinc-800 flex items-center justify-center border-2 border-zinc-400 shadow-lg overflow-hidden">
                   {leaderboard[1].image ? (
@@ -108,12 +108,12 @@ export default async function LeaderboardPage() {
                     <Clock className="w-3 h-3" /> {formatWatchTime(leaderboard[1].watchTime)}
                   </p>
                 </div>
-              </div>
+              </Link>
             )}
 
             {/* Rank 1 (Gold / King) */}
             {leaderboard[0] && (
-              <div className="order-1 md:order-2 bg-gradient-to-t from-zinc-950 via-[#0d0d14] to-yellow-950/20 border border-yellow-500/20 p-6 md:p-8 rounded-3xl text-center flex flex-col items-center gap-4 md:h-[260px] justify-center relative overflow-hidden shadow-[0_20px_50px_rgba(250,204,21,0.15)] ring-1 ring-yellow-500/10 scale-100 md:scale-105">
+              <Link href={`/user/${leaderboard[0].id}`} className="order-1 md:order-2 bg-gradient-to-t from-zinc-950 via-[#0d0d14] to-yellow-950/20 border border-yellow-500/20 p-6 md:p-8 rounded-3xl text-center flex flex-col items-center gap-4 md:h-[260px] justify-center relative overflow-hidden shadow-[0_20px_50px_rgba(250,204,21,0.15)] ring-1 ring-yellow-500/10 scale-100 md:scale-105 hover:scale-107 hover:border-yellow-500/40 transition-all duration-300">
                 {/* Floating Crown over PFP */}
                 <div className="absolute top-2 left-1/2 -translate-x-1/2 animate-bounce" style={{ animationDuration: "3s" }}>
                   <Crown className="w-7 h-7 text-yellow-400 fill-yellow-400 filter drop-shadow-[0_0_6px_rgba(250,204,21,0.6)]" />
@@ -135,12 +135,12 @@ export default async function LeaderboardPage() {
                     <Clock className="w-3.5 h-3.5" /> {formatWatchTime(leaderboard[0].watchTime)}
                   </p>
                 </div>
-              </div>
+              </Link>
             )}
 
             {/* Rank 3 (Bronze) */}
             {leaderboard[2] && (
-              <div className="order-3 bg-gradient-to-t from-zinc-950 via-[#0d0d14] to-zinc-900/30 border border-white/8 p-6 rounded-3xl text-center flex flex-col items-center gap-3 md:h-[220px] justify-center relative overflow-hidden">
+              <Link href={`/user/${leaderboard[2].id}`} className="order-3 bg-gradient-to-t from-zinc-950 via-[#0d0d14] to-zinc-900/30 border border-white/8 p-6 rounded-3xl text-center flex flex-col items-center gap-3 md:h-[220px] justify-center relative overflow-hidden hover:scale-102 hover:border-amber-700/40 transition-all duration-300">
                 <div className="absolute top-3 left-3 bg-amber-700/10 border border-amber-700/20 text-amber-600 text-xs px-2.5 py-1 rounded-lg font-bold">#3</div>
                 <div className="w-16 h-16 rounded-full bg-zinc-800 flex items-center justify-center border-2 border-amber-600 shadow-lg overflow-hidden">
                   {leaderboard[2].image ? (
@@ -156,7 +156,7 @@ export default async function LeaderboardPage() {
                     <Clock className="w-3 h-3" /> {formatWatchTime(leaderboard[2].watchTime)}
                   </p>
                 </div>
-              </div>
+              </Link>
             )}
 
           </div>
@@ -180,10 +180,11 @@ export default async function LeaderboardPage() {
               {leaderboard.map((u, i) => {
                 const isCurrentUser = session?.user?.id === u.id;
                 return (
-                  <div 
+                  <Link 
+                    href={`/user/${u.id}`}
                     key={u.id} 
                     className={`flex items-center justify-between p-4 transition-colors ${
-                      isCurrentUser ? "bg-white/[0.03]" : "hover:bg-white/[0.01]"
+                      isCurrentUser ? "bg-white/[0.03]" : "hover:bg-white/[0.02]"
                     }`}
                   >
                     <div className="flex items-center gap-4 min-w-0">
@@ -226,7 +227,7 @@ export default async function LeaderboardPage() {
                       <p className="text-[10px] text-zinc-500 font-medium">Rank #{i + 1}</p>
                     </div>
 
-                  </div>
+                  </Link>
                 );
               })}
             </div>
