@@ -44,7 +44,7 @@ export default async function ProfilePage() {
           name: user.name,
           email: user.email,
           image: user.image,
-          createdAt: user.createdAt,
+          createdAt: user.createdAt ? user.createdAt.toISOString() : null,
           points: user.points || 0,
           watchTime: user.watchTime || 0,
           isKing,
