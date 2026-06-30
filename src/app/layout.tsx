@@ -8,6 +8,7 @@ import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import NextTopLoader from "nextjs-toploader";
 import Script from "next/script";
+import LeaderboardAnnouncement from "@/components/ui/LeaderboardAnnouncement";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -62,6 +63,7 @@ export default function RootLayout({
         />
         <AuthProvider>
           <Navbar />
+          <LeaderboardAnnouncement />
           <div className="flex-1">{children}</div>
           <Footer />
         </AuthProvider>
