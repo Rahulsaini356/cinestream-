@@ -28,7 +28,6 @@ export default function HeroSlider({ movies }: { movies: any[] }) {
   }, [movies, goNext]);
 
   useEffect(() => {
-    setProgress(0);
     const start = Date.now();
     const frame = () => {
       const elapsed = Date.now() - start;

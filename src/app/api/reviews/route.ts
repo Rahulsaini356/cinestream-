@@ -43,6 +43,17 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Invalid data" }, { status: 400 });
     }
 
+    // Check if review already exists
+    const existingReview = await prisma.review.findUnique({
+      where: {
+        userId_tmdbId_type: {
+          userId: session.user.id,
+          tmdbId,
+          type
+        }
+      }
+    });
+
     // Upsert the review (Create if not exist, Update if it does)
     const review = await prisma.review.upsert({
       where: {
@@ -64,6 +75,14 @@ export async function POST(request: Request) {
         content: content || null
       }
     });
+
+    // If it's a new review, award 50 points to the user
+    if (!existingReview) {
+      await prisma.user.update({
+        where: { id: session.user.id },
+        data: { points: { increment: 50 } }
+      });
+    }
 
     return NextResponse.json({ success: true, review });
   } catch (error) {

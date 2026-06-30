@@ -3,7 +3,7 @@
 import { useSession, signOut } from "next-auth/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { User, LogOut, Search, Menu, X, Bookmark, ChevronDown, Send } from "lucide-react";
+import { User, LogOut, Search, Menu, X, Bookmark, ChevronDown, Send, Crown } from "lucide-react";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import SearchModal from "@/components/search/SearchModal";
@@ -16,6 +16,7 @@ export default function Navbar() {
   const [searchOpen, setSearchOpen] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [isKing, setIsKing] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 20);
@@ -26,7 +27,28 @@ export default function Navbar() {
   useEffect(() => {
     if (session?.user?.id) {
       const saved = localStorage.getItem(`avatar_${session.user.id}`);
-      if (saved) setAvatarUrl(saved);
+      if (saved) {
+        Promise.resolve().then(() => {
+          setAvatarUrl(saved);
+        });
+      }
+    }
+  }, [session?.user?.id]);
+
+  useEffect(() => {
+    if (session?.user?.id) {
+      fetch("/api/leaderboard")
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.success && data.leaderboard?.length > 0) {
+            setIsKing(data.leaderboard[0].id === session.user.id);
+          }
+        })
+        .catch((err) => console.error("Error fetching leaderboard in navbar:", err));
+    } else {
+      Promise.resolve().then(() => {
+        setIsKing(false);
+      });
     }
   }, [session?.user?.id]);
 
@@ -52,6 +74,7 @@ export default function Navbar() {
     { name: "Movies", href: "/movies" },
     { name: "TV Shows", href: "/tv" },
     { name: "Anime", href: "/anime" },
+    { name: "Leaderboard", href: "/leaderboard" },
     { name: "Blog", href: "/blog" },
     { name: "My List", href: "/watchlist" },
   ];
@@ -127,9 +150,18 @@ export default function Navbar() {
               <div className="relative">
                 <button
                   onClick={() => setDropdownOpen(!dropdownOpen)}
-                  className="flex items-center gap-2 pl-1 pr-2 py-1 rounded-xl hover:bg-white/5 transition-all"
+                  className="flex items-center gap-2 pl-1 pr-2 py-1 rounded-xl hover:bg-white/5 transition-all relative"
                 >
-                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#e50914] to-[#ff6b35] flex items-center justify-center overflow-hidden border border-white/10 flex-shrink-0">
+                  {isKing && (
+                    <div className="absolute -top-3.5 left-2.5 z-20">
+                      <Crown className="w-4 h-4 text-yellow-400 fill-yellow-400 filter drop-shadow-[0_0_2px_rgba(250,204,21,0.6)]" />
+                    </div>
+                  )}
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center overflow-hidden flex-shrink-0 ${
+                    isKing 
+                      ? "bg-gradient-to-br from-yellow-400 to-amber-500 border border-yellow-400 shadow-[0_0_8px_rgba(250,204,21,0.4)]" 
+                      : "bg-gradient-to-br from-[#e50914] to-[#ff6b35] border border-white/10"
+                  }`}>
                     {avatarUrl || session.user?.image ? (
                       <img
                         src={(avatarUrl || session.user?.image) as string}

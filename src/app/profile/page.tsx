@@ -4,6 +4,8 @@ import prisma from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import ProfileClient from "@/components/profile/ProfileClient";
 
+export const dynamic = "force-dynamic";
+
 export default async function ProfilePage() {
   const session = await getServerSession(authOptions);
 
@@ -11,25 +13,37 @@ export default async function ProfilePage() {
     redirect("/login");
   }
 
-  const [user, watchlistCount] = await Promise.all([
+  const [user, watchlistCount, reviewCount, topUser] = await Promise.all([
     prisma.user.findUnique({
       where: { id: session.user.id },
     }),
     prisma.watchlist.count({
       where: { userId: session.user.id },
     }),
+    prisma.review.count({
+      where: { userId: session.user.id },
+    }),
+    prisma.user.findFirst({
+      orderBy: { points: "desc" },
+      select: { id: true },
+    }),
   ]);
 
+  const isKing = topUser?.id === session.user.id;
+
   return (
-    <main className="min-h-screen pt-24 pb-20 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-      <h1 className="text-3xl font-bold text-white tracking-tight mb-8">My Profile</h1>
+    <main className="min-h-screen pt-24 pb-20 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
       <ProfileClient
         user={{
           id: user?.id,
           name: user?.name,
           email: user?.email,
+          createdAt: user?.createdAt,
+          points: user?.points || 0,
+          watchTime: user?.watchTime || 0,
+          isKing,
         }}
-        stats={{ watchlistCount }}
+        stats={{ watchlistCount, reviewCount }}
       />
     </main>
   );

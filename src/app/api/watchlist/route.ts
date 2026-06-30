@@ -41,22 +41,34 @@ export async function POST(req: Request) {
     });
 
     if (existing) {
-      // Remove from watchlist
-      await prisma.watchlist.delete({
-        where: { id: existing.id },
-      });
+      // Remove from watchlist and decrement points
+      await prisma.$transaction([
+        prisma.watchlist.delete({
+          where: { id: existing.id },
+        }),
+        prisma.user.update({
+          where: { id: session.user.id },
+          data: { points: { decrement: 15 } },
+        }),
+      ]);
       return NextResponse.json({ message: "Removed from watchlist", added: false });
     } else {
-      // Add to watchlist
-      await prisma.watchlist.create({
-        data: {
-          userId: session.user.id,
-          movieId: String(movieId),
-          title,
-          poster,
-          type,
-        },
-      });
+      // Add to watchlist and increment points
+      await prisma.$transaction([
+        prisma.watchlist.create({
+          data: {
+            userId: session.user.id,
+            movieId: String(movieId),
+            title,
+            poster,
+            type,
+          },
+        }),
+        prisma.user.update({
+          where: { id: session.user.id },
+          data: { points: { increment: 15 } },
+        }),
+      ]);
       return NextResponse.json({ message: "Added to watchlist", added: true });
     }
   } catch (error) {

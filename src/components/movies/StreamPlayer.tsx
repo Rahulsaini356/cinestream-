@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Play, Download } from "lucide-react";
 
 interface StreamPlayerProps {
@@ -16,6 +16,19 @@ export default function StreamPlayer({ id, imdbId, type, title, seasonsData }: S
   const [season, setSeason] = useState(1);
   const [episode, setEpisode] = useState(1);
   const [server, setServer] = useState("vidlink");
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    // Ping immediately when opened
+    fetch("/api/user/ping-watch", { method: "POST" }).catch(err => console.error("Ping error:", err));
+
+    const interval = setInterval(() => {
+      fetch("/api/user/ping-watch", { method: "POST" }).catch(err => console.error("Ping error:", err));
+    }, 60000); // every 60 seconds
+
+    return () => clearInterval(interval);
+  }, [isOpen]);
 
   const servers = [
     { label: "Server 1 (VidLink - Fast)", value: "vidlink" },

@@ -215,7 +215,7 @@ export default function SearchModal({ isOpen, onClose }: { isOpen: boolean; onCl
             ) : query.length >= 2 && !isLoading ? (
               <div className="py-16 text-center text-zinc-500">
                 <Search className="w-10 h-10 mx-auto mb-3 opacity-20" />
-                <p className="font-medium">No results for "{query}"</p>
+                <p className="font-medium">No results for &quot;{query}&quot;</p>
                 <p className="text-sm mt-1 text-zinc-600">Try a different keyword</p>
               </div>
             ) : !query && recents.length > 0 ? (

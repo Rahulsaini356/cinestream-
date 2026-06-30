@@ -1,8 +1,9 @@
 import { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
-import prisma from "@/lib/prisma";
 import bcrypt from "bcryptjs";
+
+const getPrisma = async () => (await import("./prisma")).default;
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -24,6 +25,7 @@ export const authOptions: NextAuthOptions = {
           throw new Error("Missing credentials");
         }
 
+        const prisma = await getPrisma();
         const user = await prisma.user.findUnique({
           where: { email: credentials.email },
         });
@@ -58,6 +60,7 @@ export const authOptions: NextAuthOptions = {
     // Auto-create user in DB on first Google sign-in
     async signIn({ user, account }) {
       if (account?.provider === "google") {
+        const prisma = await getPrisma();
         const existingUser = await prisma.user.findUnique({
           where: { email: user.email! },
         });
@@ -95,6 +98,7 @@ export const authOptions: NextAuthOptions = {
       }
       // For Google users, get the DB id
       if (account?.provider === "google" && token.email) {
+        const prisma = await getPrisma();
         const dbUser = await prisma.user.findUnique({
           where: { email: token.email },
         });
