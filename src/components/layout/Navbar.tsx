@@ -107,13 +107,19 @@ export default function Navbar() {
                 <Link
                   key={link.name}
                   href={link.href}
-                  className={`px-3 py-2 rounded-lg text-sm font-medium transition-all ${
+                  className={`px-3 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-1.5 ${
                     pathname === link.href
                       ? "text-white bg-white/10"
                       : "text-zinc-400 hover:text-white hover:bg-white/5"
                   }`}
                 >
                   {link.name}
+                  {link.name === "Leaderboard" && (
+                    <span className="relative flex h-2 w-2">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-yellow-400 opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-2 w-2 bg-yellow-500"></span>
+                    </span>
+                  )}
                 </Link>
               ))}
             </nav>
@@ -281,13 +287,18 @@ export default function Navbar() {
                     <Link
                       href={link.href}
                       onClick={() => setMobileMenuOpen(false)}
-                      className={`block px-4 py-3.5 rounded-xl text-lg font-semibold transition-all ${
+                      className={`px-4 py-3.5 rounded-xl text-lg font-semibold transition-all flex items-center justify-between ${
                         pathname === link.href
                           ? "text-white bg-white/10"
                           : "text-zinc-400 hover:text-white hover:bg-white/5"
                       }`}
                     >
-                      {link.name}
+                      <span>{link.name}</span>
+                      {link.name === "Leaderboard" && (
+                        <span className="text-[10px] bg-yellow-500/20 border border-yellow-500/30 text-yellow-400 font-extrabold px-1.5 py-0.5 rounded-md uppercase tracking-wider animate-pulse">
+                          New
+                        </span>
+                      )}
                     </Link>
                   </motion.div>
                 ))}
