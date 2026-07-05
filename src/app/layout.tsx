@@ -9,6 +9,7 @@ import Footer from "@/components/layout/Footer";
 import NextTopLoader from "nextjs-toploader";
 import Script from "next/script";
 import LeaderboardAnnouncement from "@/components/ui/LeaderboardAnnouncement";
+import AdSenseProvider from "@/components/providers/AdSenseProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -44,12 +45,7 @@ export default function RootLayout({
       data-scroll-behavior="smooth"
     >
       <body className="min-h-full flex flex-col bg-[var(--color-background)] text-[var(--color-foreground)]" suppressHydrationWarning>
-        <Script
-          async
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2523996128478722"
-          crossOrigin="anonymous"
-          strategy="afterInteractive"
-        />
+        <AdSenseProvider />
         <NextTopLoader 
           color="#e11d48" 
           initialPosition={0.08}
