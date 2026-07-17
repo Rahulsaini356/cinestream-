@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { Play, Download } from "lucide-react";
+import { useSession } from "next-auth/react";
+import Link from "next/link";
 
 interface StreamPlayerProps {
   id: string; // tmdb id
@@ -12,6 +14,7 @@ interface StreamPlayerProps {
 }
 
 export default function StreamPlayer({ id, imdbId, type, title, seasonsData }: StreamPlayerProps) {
+  const { data: session } = useSession();
   const [isOpen, setIsOpen] = useState(false);
   const [season, setSeason] = useState(1);
   const [episode, setEpisode] = useState(1);
@@ -88,6 +91,19 @@ export default function StreamPlayer({ id, imdbId, type, title, seasonsData }: S
       
     window.open(url, "_blank");
   };
+
+  if (!session) {
+    return (
+      <div className="flex flex-wrap items-center gap-3">
+        <Link
+          href="/login"
+          className="flex items-center gap-2 px-6 py-3 font-semibold rounded-xl bg-gradient-to-r from-[#e50914] to-[#ff6b35] text-white hover:scale-105 hover:shadow-[0_0_30px_rgba(229,9,20,0.5)] transition-all duration-300"
+        >
+          <Play className="w-5 h-5 fill-current" /> Login to Watch
+        </Link>
+      </div>
+    );
+  }
 
   return (
     <>
