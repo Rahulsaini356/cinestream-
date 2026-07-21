@@ -7,6 +7,8 @@ import { Play } from "lucide-react";
 import { getImageUrl } from "@/lib/tmdb";
 import FilterBar from "@/components/ui/FilterBar";
 
+export const dynamic = "force-dynamic";
+
 type SearchParams = Promise<{ [key: string]: string | string[] | undefined }>;
 
 export default async function WatchlistPage({ searchParams }: { searchParams: SearchParams }) {
