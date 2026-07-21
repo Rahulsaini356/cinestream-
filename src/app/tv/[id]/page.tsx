@@ -11,33 +11,37 @@ import StreamPlayer from "@/components/movies/StreamPlayer";
 import { Metadata } from "next";
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
-  const resolvedParams = await params;
-  const tv = await fetchTMDB(`/tv/${resolvedParams.id}`);
-  
-  if (!tv || tv.success === false) {
-    return { title: 'TV Show Not Found - CineStream' };
+  try {
+    const resolvedParams = await params;
+    const tv = await fetchTMDB(`/tv/${resolvedParams.id}`);
+    
+    if (!tv || tv.success === false || !tv.name) {
+      return { title: 'TV Show - CineStream' };
+    }
+
+    const title = `${tv.name} - Watch TV Show Online | CineStream`;
+    const description = tv.overview || `Watch ${tv.name} online on CineStream. Discover movies and TV shows.`;
+    const imageUrl = getImageUrl(tv.backdrop_path || tv.poster_path, "w1280");
+
+    return {
+      title,
+      description,
+      openGraph: {
+        title,
+        description,
+        type: "video.tv_show",
+        images: imageUrl ? [{ url: imageUrl }] : [],
+      },
+      twitter: {
+        card: "summary_large_image",
+        title,
+        description,
+        images: imageUrl ? [imageUrl] : [],
+      },
+    };
+  } catch (error) {
+    return { title: 'TV Show - CineStream' };
   }
-
-  const title = `${tv.name} - Watch TV Show Online | CineStream`;
-  const description = tv.overview || `Watch ${tv.name} online on CineStream. Discover movies and TV shows.`;
-  const imageUrl = getImageUrl(tv.backdrop_path || tv.poster_path, "w1280");
-
-  return {
-    title,
-    description,
-    openGraph: {
-      title,
-      description,
-      type: "video.tv_show",
-      images: imageUrl ? [{ url: imageUrl }] : [],
-    },
-    twitter: {
-      card: "summary_large_image",
-      title,
-      description,
-      images: imageUrl ? [imageUrl] : [],
-    },
-  };
 }
 
 export default async function TVDetail({ params }: { params: Promise<{ id: string }> }) {

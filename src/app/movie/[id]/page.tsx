@@ -11,33 +11,37 @@ import StreamPlayer from "@/components/movies/StreamPlayer";
 import { Metadata } from "next";
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
-  const resolvedParams = await params;
-  const movie = await fetchTMDB(`/movie/${resolvedParams.id}`);
-  
-  if (!movie || movie.success === false) {
-    return { title: 'Movie Not Found - CineStream' };
+  try {
+    const resolvedParams = await params;
+    const movie = await fetchTMDB(`/movie/${resolvedParams.id}`);
+    
+    if (!movie || movie.success === false || !movie.title) {
+      return { title: 'Movie - CineStream' };
+    }
+
+    const title = `${movie.title} - Watch Full Movie Online | CineStream`;
+    const description = movie.overview || `Watch ${movie.title} online on CineStream. Discover movies and TV shows.`;
+    const imageUrl = getImageUrl(movie.backdrop_path || movie.poster_path, "w1280");
+
+    return {
+      title,
+      description,
+      openGraph: {
+        title,
+        description,
+        type: "video.movie",
+        images: imageUrl ? [{ url: imageUrl }] : [],
+      },
+      twitter: {
+        card: "summary_large_image",
+        title,
+        description,
+        images: imageUrl ? [imageUrl] : [],
+      },
+    };
+  } catch (error) {
+    return { title: 'Movie - CineStream' };
   }
-
-  const title = `${movie.title} - Watch Full Movie Online | CineStream`;
-  const description = movie.overview || `Watch ${movie.title} online on CineStream. Discover movies and TV shows.`;
-  const imageUrl = getImageUrl(movie.backdrop_path || movie.poster_path, "w1280");
-
-  return {
-    title,
-    description,
-    openGraph: {
-      title,
-      description,
-      type: "video.movie",
-      images: imageUrl ? [{ url: imageUrl }] : [],
-    },
-    twitter: {
-      card: "summary_large_image",
-      title,
-      description,
-      images: imageUrl ? [imageUrl] : [],
-    },
-  };
 }
 
 export default async function MovieDetail({ params }: { params: Promise<{ id: string }> }) {

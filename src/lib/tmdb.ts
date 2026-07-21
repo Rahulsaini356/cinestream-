@@ -1,3 +1,11 @@
+import dns from "node:dns";
+
+try {
+  dns.setDefaultResultOrder("ipv4first");
+} catch {
+  // Fallback if environment doesn't allow setting DNS order
+}
+
 const TMDB_API_KEY = process.env.TMDB_API_KEY;
 const BASE_URL = "https://api.themoviedb.org/3";
 
@@ -8,12 +16,22 @@ export async function fetchTMDB(endpoint: string, params: Record<string, string>
 
   const url = `${BASE_URL}${endpoint}?${searchParams.toString()}`;
 
-  const res = await fetch(url, { next: { revalidate: 3600 } });
-  if (!res.ok) {
-    console.error("TMDB error on:", url);
-    throw new Error(`TMDB Error: ${res.statusText}`);
+  try {
+    const res = await fetch(url, {
+      next: { revalidate: 3600 },
+      signal: AbortSignal.timeout(8000), // 8 seconds timeout to prevent IPv6 ETIMEDOUT hangs
+    });
+
+    if (!res.ok) {
+      console.error(`TMDB HTTP Error ${res.status}: ${res.statusText} on ${endpoint}`);
+      return { results: [], success: false };
+    }
+
+    return await res.json();
+  } catch (error: any) {
+    console.error(`TMDB fetch failed on ${endpoint}:`, error?.message || error);
+    return { results: [], success: false };
   }
-  return res.json();
 }
 
 export function getImageUrl(path: string | null | undefined, size: "w500" | "original" | "w780" | "w1280" = "w500") {
@@ -24,8 +42,7 @@ export function getImageUrl(path: string | null | undefined, size: "w500" | "ori
 export async function getProviders(type: "movie" | "tv", id: string) {
   try {
     const data = await fetchTMDB(`/${type}/${id}/watch/providers`);
-    // Defaulting to US or IN if available, fallback to first available
-    const results = data.results || {};
+    const results = data?.results || {};
     const regionData = results["IN"] || results["US"] || Object.values(results)[0];
     
     if (!regionData) return null;
