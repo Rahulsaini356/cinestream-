@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "prisma generate && rm -rf .next && next build",
+    "build": "prisma generate && next build",
     "start": "next start -H 0.0.0.0 -p ${PORT:-3000}",
     "lint": "eslint",
     "postinstall": "prisma generate"
@@ -16,7 +16,7 @@
     "date-fns": "^4.1.0",
     "framer-motion": "^12.38.0",
     "lucide-react": "^0.577.0",
-    "next": "16.2.1-canary.5",
+    "next": "^16.2.10",
     "next-auth": "^4.24.13",
     "nextjs-toploader": "^3.9.17",
     "nodemailer": "^8.0.3",
@@ -35,7 +35,7 @@
     "@types/react-dom": "^19",
     "dotenv": "^17.3.1",
     "eslint": "^9",
-    "eslint-config-next": "16.2.1-canary.5",
+    "eslint-config-next": "^16.2.10",
     "tailwindcss": "^4",
     "typescript": "^5"
   }
