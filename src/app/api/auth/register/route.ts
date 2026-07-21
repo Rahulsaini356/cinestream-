@@ -1,9 +1,20 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma"; 
 import bcrypt from "bcryptjs";
+import { checkRateLimit } from "@/lib/rate-limit";
+import { handleApiError } from "@/lib/errors";
 
 export async function POST(req: Request) {
   try {
+    const ip = req.headers.get("x-forwarded-for") || "unknown";
+    const limiter = checkRateLimit(`register_${ip}`, 5, 60000); // 5 attempts per min
+    if (!limiter.success) {
+      return NextResponse.json(
+        { error: "Too many registration attempts. Please wait 1 minute." },
+        { status: 429 }
+      );
+    }
+
     const { name, email, password, otp } = await req.json();
 
     if (!email || !password || !otp) {
@@ -33,7 +44,7 @@ export async function POST(req: Request) {
     const hashedPassword = await bcrypt.hash(password, 12);
 
     // Create user
-    const user = await prisma.user.create({
+    await prisma.user.create({
       data: {
         email,
         password: hashedPassword,
@@ -46,7 +57,6 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ message: "User registered successfully" });
   } catch (error) {
-    console.error("Registration Error:", error);
-    return NextResponse.json({ error: "Failed to register" }, { status: 500 });
+    return handleApiError("Registration", error, "Failed to register account.");
   }
 }

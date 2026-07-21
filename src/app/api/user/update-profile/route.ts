@@ -30,7 +30,9 @@ export async function POST(request: Request) {
       data: dataToUpdate,
     });
 
-    return NextResponse.json({ success: true, user: updatedUser });
+    const { password, ...sanitizedUser } = updatedUser;
+
+    return NextResponse.json({ success: true, user: sanitizedUser });
   } catch (error) {
     console.error("Update profile API error:", error);
     return NextResponse.json({ error: "Failed to update profile" }, { status: 500 });

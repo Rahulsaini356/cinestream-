@@ -29,6 +29,18 @@ To learn more about Next.js, take a look at the following resources:
 
 You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
+## Environment & Security Setup
+
+1. Copy `.env.example` to `.env.local`:
+   ```bash
+   cp .env.example .env.local
+   ```
+2. Populate `.env.local` with your actual development secrets (Database URLs, API keys, OAuth credentials).
+
+> [!WARNING]
+> **Git History Secret Rotation Notice**
+> If any API keys, database credentials, SMTP passwords, or secret tokens were previously hardcoded or committed to git history at any point, **rotate those secrets immediately in their respective provider consoles** (Supabase, Google Cloud, Brevo, TMDB, etc.) before deploying this application to production.
+
 ## Deploy on Vercel
 
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.

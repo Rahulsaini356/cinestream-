@@ -1,8 +1,19 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
+import { checkRateLimit } from "@/lib/rate-limit";
+import { handleApiError } from "@/lib/errors";
 
 export async function POST(req: Request) {
   try {
+    const ip = req.headers.get("x-forwarded-for") || "unknown";
+    const limiter = checkRateLimit(`verify_otp_${ip}`, 5, 60000); // 5 attempts per min
+    if (!limiter.success) {
+      return NextResponse.json(
+        { error: "Too many verification attempts. Please wait 1 minute." },
+        { status: 429 }
+      );
+    }
+
     const { email, otp } = await req.json();
 
     if (!email || !otp) {
@@ -24,7 +35,6 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ message: "OTP verified" });
   } catch (error) {
-    console.error("Verify OTP Error:", error);
-    return NextResponse.json({ error: "Verification failed" }, { status: 500 });
+    return handleApiError("VerifyOTP", error, "Verification failed.");
   }
 }

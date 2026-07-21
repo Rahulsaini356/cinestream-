@@ -85,7 +85,7 @@ export default function LoginPage() {
         <div className="hidden lg:block absolute bottom-40 right-20 text-white max-w-sm transition-all duration-1000">
           <span className="px-2 py-1 bg-red-600/20 text-red-500 rounded text-xs font-bold tracking-wider mb-2 inline-block">NOW STREAMING</span>
           <h2 className="text-5xl font-extrabold tracking-tight mb-2">{currentMovie.title}</h2>
-          <p className="text-zinc-400 text-sm" dangerouslySetInnerHTML={{ __html: currentMovie.category }} />
+          <p className="text-zinc-400 text-sm">{currentMovie.category}</p>
         </div>
       </main>
 

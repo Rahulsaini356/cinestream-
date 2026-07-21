@@ -3,7 +3,8 @@ import { useState, useEffect } from "react";
 import { 
   User, Copy, Mail, Camera, Save, Loader2, 
   Calendar, Shield, Award, Film, MessageSquare, 
-  Check, Key, LogOut, ArrowRight, Crown, Clock
+  Check, Key, LogOut, ArrowRight, Crown, Clock,
+  Trash2, AlertTriangle
 } from "lucide-react";
 import { useSession, signOut } from "next-auth/react";
 import Link from "next/link";
@@ -33,7 +34,29 @@ export default function ProfileClient({ user, stats }: ProfileClientProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [isForgotModalOpen, setIsForgotModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   const [copied, setCopied] = useState(false);
+
+  const handleDeleteAccount = async () => {
+    setIsDeleting(true);
+    try {
+      const res = await fetch("/api/user/delete-account", { method: "DELETE" });
+      if (res.ok) {
+        if (user.id) {
+          localStorage.removeItem(`avatar_${user.id}`);
+        }
+        await signOut({ callbackUrl: "/" });
+      } else {
+        alert("Failed to delete account. Please try again.");
+      }
+    } catch (error) {
+      console.error("Account deletion error:", error);
+      alert("An error occurred during account deletion.");
+    } finally {
+      setIsDeleting(false);
+    }
+  };
 
   useEffect(() => {
     if (user.image) {
@@ -286,12 +309,22 @@ export default function ProfileClient({ user, stats }: ProfileClientProps) {
 
                 <button 
                   onClick={() => signOut({ callbackUrl: "/" })}
-                  className="w-full flex items-center justify-between px-4 py-3 bg-red-500/5 border border-red-500/10 hover:border-red-500/25 text-red-400 font-bold rounded-2xl text-xs hover:bg-red-500/10 active:scale-98 transition-all group cursor-pointer"
+                  className="w-full flex items-center justify-between px-4 py-3 bg-white/5 border border-white/8 hover:border-white/15 text-zinc-300 font-bold rounded-2xl text-xs hover:bg-white/10 active:scale-98 transition-all group cursor-pointer"
                 >
                   <span className="flex items-center gap-2">
-                    <LogOut className="w-4 h-4 text-red-500/70" /> Sign Out Session
+                    <LogOut className="w-4 h-4 text-zinc-400" /> Sign Out Session
                   </span>
-                  <ArrowRight className="w-3.5 h-3.5 text-red-500/50 group-hover:translate-x-1 transition-transform" />
+                  <ArrowRight className="w-3.5 h-3.5 text-zinc-500 group-hover:translate-x-1 transition-transform" />
+                </button>
+
+                <button 
+                  onClick={() => setIsDeleteModalOpen(true)}
+                  className="w-full flex items-center justify-between px-4 py-3 bg-red-500/10 border border-red-500/20 hover:border-red-500/40 text-red-400 font-bold rounded-2xl text-xs hover:bg-red-500/20 active:scale-98 transition-all group cursor-pointer"
+                >
+                  <span className="flex items-center gap-2">
+                    <Trash2 className="w-4 h-4 text-red-400" /> Delete Personal Data & Account
+                  </span>
+                  <ArrowRight className="w-3.5 h-3.5 text-red-400/70 group-hover:translate-x-1 transition-transform" />
                 </button>
               </div>
 
@@ -404,6 +437,54 @@ export default function ProfileClient({ user, stats }: ProfileClientProps) {
         onClose={() => setIsForgotModalOpen(false)} 
         prefillEmail={user.email || ""} 
       />
+
+      {/* 3. ACCOUNT DELETION CONFIRMATION MODAL */}
+      {isDeleteModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in">
+          <div className="w-full max-w-md bg-[#0d0d14] border border-red-500/30 rounded-3xl p-6 sm:p-8 space-y-6 relative overflow-hidden shadow-2xl">
+            <div className="flex items-center gap-3 text-red-400">
+              <div className="w-12 h-12 rounded-2xl bg-red-500/10 border border-red-500/20 flex items-center justify-center">
+                <AlertTriangle className="w-6 h-6 text-red-400" />
+              </div>
+              <div>
+                <h3 className="text-xl font-black text-white">Delete Account?</h3>
+                <p className="text-xs text-red-400/80 font-medium">This action cannot be undone.</p>
+              </div>
+            </div>
+
+            <p className="text-xs text-zinc-400 leading-relaxed">
+              Permanently delete your CineStream account, watch history, reviews, watchlists, points, and all associated personal data from our servers.
+            </p>
+
+            <div className="flex items-center gap-3 pt-2">
+              <button
+                type="button"
+                onClick={() => setIsDeleteModalOpen(false)}
+                disabled={isDeleting}
+                className="flex-1 py-3 bg-white/5 hover:bg-white/10 text-white font-bold rounded-2xl text-xs transition-all border border-white/8 cursor-pointer disabled:opacity-50"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleDeleteAccount}
+                disabled={isDeleting}
+                className="flex-1 py-3 bg-gradient-to-r from-red-600 to-red-500 text-white font-bold rounded-2xl text-xs shadow-lg hover:shadow-red-500/20 hover:scale-[1.02] active:scale-98 transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+              >
+                {isDeleting ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" /> Deleting...
+                  </>
+                ) : (
+                  <>
+                    <Trash2 className="w-4 h-4" /> Delete Account
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

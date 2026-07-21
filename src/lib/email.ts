@@ -48,13 +48,12 @@ export async function sendOTP(email: string, code: string) {
 
     if (!res.ok) {
       const errorData = await res.json();
-      console.error("Brevo API Error Details:", errorData);
+      const sanitized = JSON.stringify(errorData).replace(/"email"\s*:\s*"[^"]+"/gi, '"email":"[REDACTED]"');
+      console.error("Brevo API Error Status:", res.status, sanitized);
       throw new Error(`Brevo Error: ${res.statusText}`);
     }
-
-    console.log("Email sent successfully via Brevo API");
-  } catch (error) {
-    console.error("Brevo Fetch Error:", error);
+  } catch (error: any) {
+    console.error("Brevo Fetch Error:", error?.message || "[REDACTED_ERROR]");
     throw error;
   }
 }

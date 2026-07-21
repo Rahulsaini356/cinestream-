@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { sendOTP } from "@/lib/email";
-
-const ipMap = new Map<string, number>();
+import { checkRateLimit } from "@/lib/rate-limit";
+import { handleApiError } from "@/lib/errors";
 
 export async function POST(req: Request) {
   try {
@@ -12,22 +12,25 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Email is required" }, { status: 400 });
     }
 
-    // IP-based Rate Limiting (1 request per minute per IP)
     const ip = req.headers.get("x-forwarded-for") || "unknown";
-    const now = Date.now();
-    if (ip !== "unknown") {
-      const lastRequest = ipMap.get(ip);
-      if (lastRequest && now - lastRequest < 60000) {
-        return NextResponse.json({ error: "Too many requests. Please wait 1 minute." }, { status: 429 });
-      }
-      ipMap.set(ip, now);
+
+    // For forgot-password OTP, limit to 3 requests per hour
+    // For registration OTP, limit to 5 requests per hour
+    const limit = type === "forgot-password" ? 3 : 5;
+    const limiter = checkRateLimit(`send_otp_${type}_${ip}`, limit, 3600000);
+
+    if (!limiter.success) {
+      return NextResponse.json(
+        { error: `Too many OTP requests. Please wait 1 hour before trying again.` },
+        { status: 429 }
+      );
     }
 
     // Email-based Rate Limiting (1 request per minute per email)
     const recentOtp = await prisma.oTP.findFirst({
       where: {
         email,
-        createdAt: { gt: new Date(Date.now() - 60000) }, // created within last 60 seconds
+        createdAt: { gt: new Date(Date.now() - 60000) },
       },
     });
 
@@ -69,7 +72,6 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ message: "OTP sent successfully" });
   } catch (error) {
-    console.error("OTP Error:", error);
-    return NextResponse.json({ error: "Failed to send OTP" }, { status: 500 });
+    return handleApiError("SendOTP", error, "Failed to send OTP.");
   }
 }

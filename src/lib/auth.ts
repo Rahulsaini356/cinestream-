@@ -9,8 +9,8 @@ export const authOptions: NextAuthOptions = {
   providers: [
     // Google OAuth
     GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID || "missing_client_id",
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET || "missing_client_secret",
+      clientId: process.env.GOOGLE_CLIENT_ID || "",
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET || "",
     }),
 
     // Email + Password (credentials)
@@ -52,6 +52,19 @@ export const authOptions: NextAuthOptions = {
 
   session: {
     strategy: "jwt",
+  },
+
+  useSecureCookies: process.env.NODE_ENV === "production",
+  cookies: {
+    sessionToken: {
+      name: process.env.NODE_ENV === "production" ? `__Secure-next-auth.session-token` : `next-auth.session-token`,
+      options: {
+        httpOnly: true,
+        sameSite: "lax",
+        path: "/",
+        secure: process.env.NODE_ENV === "production",
+      },
+    },
   },
 
   secret: process.env.NEXTAUTH_SECRET,

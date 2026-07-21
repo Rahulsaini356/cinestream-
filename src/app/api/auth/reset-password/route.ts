@@ -1,9 +1,20 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import bcrypt from "bcryptjs";
+import { checkRateLimit } from "@/lib/rate-limit";
+import { handleApiError } from "@/lib/errors";
 
 export async function POST(req: Request) {
   try {
+    const ip = req.headers.get("x-forwarded-for") || "unknown";
+    const limiter = checkRateLimit(`reset_pass_${ip}`, 3, 3600000); // 3 attempts per hour
+    if (!limiter.success) {
+      return NextResponse.json(
+        { error: "Too many password reset attempts. Please wait 1 hour." },
+        { status: 429 }
+      );
+    }
+
     const { email, otp, password } = await req.json();
 
     if (!email || !otp || !password) {
@@ -42,7 +53,6 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ message: "Password reset successful" });
   } catch (error) {
-    console.error("Reset Password Error:", error);
-    return NextResponse.json({ error: "Failed to reset password" }, { status: 500 });
+    return handleApiError("ResetPassword", error, "Failed to reset password.");
   }
 }

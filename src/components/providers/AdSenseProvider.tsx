@@ -25,10 +25,12 @@ export default function AdSenseProvider() {
     return null;
   }
 
+  const adsenseClientId = process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID || "ca-pub-2523996128478722";
+
   return (
     <Script
       async
-      src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2523996128478722"
+      src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${adsenseClientId}`}
       crossOrigin="anonymous"
       strategy="afterInteractive"
     />
