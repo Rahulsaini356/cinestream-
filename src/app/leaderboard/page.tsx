@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import { Crown, Trophy, Medal, Clock, ArrowLeft, User, Sparkles, Star, PlusCircle, Play, Info } from "lucide-react";
 import Link from "next/link";
+import UserAvatar from "@/components/ui/UserAvatar";
 
 export const dynamic = "force-dynamic";
 
@@ -95,11 +96,7 @@ export default async function LeaderboardPage() {
               <Link href={`/user/${leaderboard[1].id}`} className="order-2 md:order-1 bg-gradient-to-t from-zinc-950 via-[#0d0d14] to-zinc-900/30 border border-white/8 p-6 rounded-3xl text-center flex flex-col items-center gap-3 md:h-[220px] justify-center relative overflow-hidden hover:scale-102 hover:border-zinc-400/40 transition-all duration-300">
                 <div className="absolute top-3 left-3 bg-zinc-400/10 border border-zinc-400/20 text-zinc-300 text-xs px-2.5 py-1 rounded-lg font-bold">#2</div>
                 <div className="w-16 h-16 rounded-full bg-zinc-800 flex items-center justify-center border-2 border-zinc-400 shadow-lg overflow-hidden">
-                  {leaderboard[1].image ? (
-                    <img src={leaderboard[1].image} alt="" className="w-full h-full object-cover" />
-                  ) : (
-                    <User className="w-7 h-7 text-zinc-400" />
-                  )}
+                  <UserAvatar src={leaderboard[1].image} iconClassName="w-7 h-7 text-zinc-400" />
                 </div>
                 <div>
                   <h3 className="font-extrabold text-white text-base truncate max-w-[150px]">{leaderboard[1].name || "Cinephile"}</h3>
@@ -120,11 +117,7 @@ export default async function LeaderboardPage() {
                 </div>
                 <div className="absolute top-3 left-3 bg-yellow-500/10 border border-yellow-500/20 text-yellow-400 text-xs px-2.5 py-1 rounded-lg font-extrabold">KING</div>
                 <div className="w-20 h-20 rounded-full bg-zinc-800 flex items-center justify-center border-4 border-yellow-400 shadow-2xl overflow-hidden relative">
-                  {leaderboard[0].image ? (
-                    <img src={leaderboard[0].image} alt="" className="w-full h-full object-cover" />
-                  ) : (
-                    <User className="w-9 h-9 text-zinc-400" />
-                  )}
+                  <UserAvatar src={leaderboard[0].image} iconClassName="w-9 h-9 text-zinc-400" />
                 </div>
                 <div>
                   <h3 className="font-black text-white text-lg truncate max-w-[180px] flex items-center justify-center gap-1">
@@ -143,11 +136,7 @@ export default async function LeaderboardPage() {
               <Link href={`/user/${leaderboard[2].id}`} className="order-3 bg-gradient-to-t from-zinc-950 via-[#0d0d14] to-zinc-900/30 border border-white/8 p-6 rounded-3xl text-center flex flex-col items-center gap-3 md:h-[220px] justify-center relative overflow-hidden hover:scale-102 hover:border-amber-700/40 transition-all duration-300">
                 <div className="absolute top-3 left-3 bg-amber-700/10 border border-amber-700/20 text-amber-600 text-xs px-2.5 py-1 rounded-lg font-bold">#3</div>
                 <div className="w-16 h-16 rounded-full bg-zinc-800 flex items-center justify-center border-2 border-amber-600 shadow-lg overflow-hidden">
-                  {leaderboard[2].image ? (
-                    <img src={leaderboard[2].image} alt="" className="w-full h-full object-cover" />
-                  ) : (
-                    <User className="w-7 h-7 text-zinc-400" />
-                  )}
+                  <UserAvatar src={leaderboard[2].image} iconClassName="w-7 h-7 text-zinc-400" />
                 </div>
                 <div>
                   <h3 className="font-extrabold text-white text-base truncate max-w-[150px]">{leaderboard[2].name || "Cinephile"}</h3>
@@ -197,11 +186,7 @@ export default async function LeaderboardPage() {
                       <div className={`w-10 h-10 rounded-full shrink-0 flex items-center justify-center overflow-hidden border ${
                         i === 0 ? "border-yellow-400" : "border-white/10"
                       }`}>
-                        {u.image ? (
-                          <img src={u.image} alt="" className="w-full h-full object-cover" />
-                        ) : (
-                          <User className="w-4 h-4 text-zinc-500" />
-                        )}
+                        <UserAvatar src={u.image} iconClassName="w-4 h-4 text-zinc-500" />
                       </div>
 
                       {/* User Info */}

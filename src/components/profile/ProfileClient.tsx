@@ -9,6 +9,7 @@ import {
 import { useSession, signOut } from "next-auth/react";
 import Link from "next/link";
 import ForgotPasswordModal from "../auth/ForgotPasswordModal";
+import UserAvatar from "../ui/UserAvatar";
 
 interface ProfileClientProps {
   user: {
@@ -181,11 +182,10 @@ export default function ProfileClient({ user, stats }: ProfileClientProps) {
                 : "from-[#e50914] to-[#ff6b35] shadow-[0_0_30px_rgba(229,9,20,0.3)]"
             }`}>
               <div className="w-full h-full rounded-full overflow-hidden bg-zinc-900 flex items-center justify-center relative">
-                {avatarUrl ? (
-                  <img src={avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
-                ) : (
-                  <User className="w-14 h-14 text-zinc-500" />
-                )}
+                <UserAvatar 
+                  src={avatarUrl} 
+                  iconClassName="w-14 h-14 text-zinc-500" 
+                />
               </div>
             </div>
             

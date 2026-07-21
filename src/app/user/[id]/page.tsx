@@ -5,6 +5,7 @@ import {
   User, Calendar, Award, Film, MessageSquare, 
   Sparkles, Star
 } from "lucide-react";
+import UserAvatar from "@/components/ui/UserAvatar";
 import Link from "next/link";
 
 interface PageProps {
@@ -138,11 +139,10 @@ export default async function PublicProfilePage({ params }: PageProps) {
 
               <div className={`w-32 h-32 rounded-full p-[3px] bg-gradient-to-tr ${avatarBorderClass}`}>
                 <div className="w-full h-full rounded-full overflow-hidden bg-zinc-900 flex items-center justify-center relative">
-                  {user.image ? (
-                    <img src={user.image} alt="Avatar" className="w-full h-full object-cover" />
-                  ) : (
-                    <User className="w-14 h-14 text-zinc-500" />
-                  )}
+                  <UserAvatar 
+                    src={user.image} 
+                    iconClassName="w-14 h-14 text-zinc-500" 
+                  />
                 </div>
               </div>
             </div>

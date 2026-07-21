@@ -5,6 +5,7 @@ import { Star, MessageSquare, Loader2, User } from "lucide-react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { formatDistanceToNow } from "date-fns"; // Make sure to npm install date-fns
+import UserAvatar from "@/components/ui/UserAvatar";
 
 interface Review {
   id: string;
@@ -167,14 +168,8 @@ export default function ReviewSection({ tmdbId, type }: ReviewSectionProps) {
         ) : reviews.length > 0 ? (
           reviews.map((rev) => (
             <div key={rev.id} className="p-6 bg-zinc-900/40 rounded-2xl border border-white/5 shadow-inner flex gap-5 animate-[fade-in_0.5s_ease-out]">
-              <div className="w-12 h-12 rounded-full overflow-hidden bg-zinc-800 shrink-0 border border-white/10">
-                {rev.user.image ? (
-                  <img src={rev.user.image} alt={rev.user.name || "User"} className="w-full h-full object-cover" />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center bg-zinc-800 text-zinc-400">
-                    <User className="w-6 h-6" />
-                  </div>
-                )}
+              <div className="w-12 h-12 rounded-full overflow-hidden bg-zinc-800 shrink-0 border border-white/10 flex items-center justify-center">
+                <UserAvatar src={rev.user.image} iconClassName="w-6 h-6 text-zinc-400" />
               </div>
               <div className="flex-1 space-y-2">
                 <div className="flex items-center justify-between">

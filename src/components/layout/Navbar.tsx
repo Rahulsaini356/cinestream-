@@ -7,6 +7,7 @@ import { User, LogOut, Search, Menu, X, Bookmark, ChevronDown, Send, Crown } fro
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import SearchModal from "@/components/search/SearchModal";
+import UserAvatar from "@/components/ui/UserAvatar";
 
 export default function Navbar() {
   const { data: session } = useSession();
@@ -168,15 +169,10 @@ export default function Navbar() {
                       ? "bg-gradient-to-br from-yellow-400 to-amber-500 border border-yellow-400 shadow-[0_0_8px_rgba(250,204,21,0.4)]" 
                       : "bg-gradient-to-br from-[#e50914] to-[#ff6b35] border border-white/10"
                   }`}>
-                    {avatarUrl || session.user?.image ? (
-                      <img
-                        src={(avatarUrl || session.user?.image) as string}
-                        alt="Profile"
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <User className="w-4 h-4 text-white" />
-                    )}
+                    <UserAvatar 
+                      src={avatarUrl || session.user?.image} 
+                      iconClassName="w-4 h-4 text-white" 
+                    />
                   </div>
                   <ChevronDown className={`w-3.5 h-3.5 text-zinc-400 transition-transform hidden sm:block ${dropdownOpen ? "rotate-180" : ""}`} />
                 </button>
