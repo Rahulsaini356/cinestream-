@@ -26,15 +26,25 @@ export default function Navbar() {
   }, []);
 
   useEffect(() => {
-    if (session?.user?.id) {
+    if (session?.user?.image) {
+      setAvatarUrl(session.user.image);
+    } else if (session?.user?.id) {
       const saved = localStorage.getItem(`avatar_${session.user.id}`);
       if (saved) {
-        Promise.resolve().then(() => {
-          setAvatarUrl(saved);
-        });
+        setAvatarUrl(saved);
       }
     }
-  }, [session?.user?.id]);
+  }, [session?.user?.id, session?.user?.image]);
+
+  useEffect(() => {
+    const handleAvatarUpdate = (e: any) => {
+      if (e.detail?.image) {
+        setAvatarUrl(e.detail.image);
+      }
+    };
+    window.addEventListener("avatarUpdated", handleAvatarUpdate);
+    return () => window.removeEventListener("avatarUpdated", handleAvatarUpdate);
+  }, []);
 
   useEffect(() => {
     if (session?.user?.id) {

@@ -101,21 +101,34 @@ export const authOptions: NextAuthOptions = {
     async session({ session, token }) {
       if (token && session.user) {
         session.user.id = token.sub as string;
+        if (token.picture) {
+          session.user.image = token.picture as string;
+        }
       }
       return session;
     },
 
-    async jwt({ token, user, account }) {
+    async jwt({ token, user, account, trigger, session }) {
       if (user) {
         token.sub = user.id;
+        token.picture = user.image || token.picture;
       }
-      // For Google users, get the DB id
-      if (account?.provider === "google" && token.email) {
+      if (trigger === "update" && session?.image) {
+        token.picture = session.image;
+      }
+      // Sync DB user image to token
+      if (token.email) {
         const prisma = await getPrisma();
         const dbUser = await prisma.user.findUnique({
           where: { email: token.email },
+          select: { id: true, image: true },
         });
-        if (dbUser) token.sub = dbUser.id;
+        if (dbUser) {
+          token.sub = dbUser.id;
+          if (dbUser.image) {
+            token.picture = dbUser.image;
+          }
+        }
       }
       return token;
     },

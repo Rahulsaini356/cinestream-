@@ -81,6 +81,11 @@ export default function ProfileClient({ user, stats }: ProfileClientProps) {
         // Save to localStorage as a fast client-side fallback/cache
         localStorage.setItem(`avatar_${user.id}`, result);
         
+        // Notify Navbar to update corner PFP in real-time
+        if (typeof window !== "undefined") {
+          window.dispatchEvent(new CustomEvent("avatarUpdated", { detail: { image: result } }));
+        }
+        
         try {
           // Save to database!
           const res = await fetch("/api/user/update-profile", {
