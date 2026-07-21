@@ -1,11 +1,3 @@
-import dns from "node:dns";
-
-try {
-  dns.setDefaultResultOrder("ipv4first");
-} catch {
-  // Fallback if environment doesn't allow setting DNS order
-}
-
 const TMDB_API_KEY = process.env.TMDB_API_KEY;
 const BASE_URL = "https://api.themoviedb.org/3";
 
@@ -19,7 +11,7 @@ export async function fetchTMDB(endpoint: string, params: Record<string, string>
   try {
     const res = await fetch(url, {
       next: { revalidate: 3600 },
-      signal: AbortSignal.timeout(8000), // 8 seconds timeout to prevent IPv6 ETIMEDOUT hangs
+      signal: AbortSignal.timeout(8000), // 8 seconds timeout to prevent hanging
     });
 
     if (!res.ok) {
@@ -34,10 +26,7 @@ export async function fetchTMDB(endpoint: string, params: Record<string, string>
   }
 }
 
-export function getImageUrl(path: string | null | undefined, size: "w500" | "original" | "w780" | "w1280" = "w500") {
-  if (!path) return "https://via.placeholder.com/500x750?text=No+Image"; 
-  return `https://image.tmdb.org/t/p/${size}${path}`;
-}
+export { getImageUrl } from "./tmdb-client";
 
 export async function getProviders(type: "movie" | "tv", id: string) {
   try {

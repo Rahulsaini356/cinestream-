@@ -1,6 +1,3 @@
-import dns from "node:dns";
-dns.setDefaultResultOrder("ipv4first");
-
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
@@ -12,6 +9,20 @@ const nextConfig: NextConfig = {
     ],
   },
   allowedDevOrigins: ["127.0.0.1"],
+  webpack: (config, { isServer }) => {
+    if (!isServer) {
+      config.resolve = config.resolve || {};
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        dns: false,
+        net: false,
+        tls: false,
+        fs: false,
+        "node:dns": false,
+      };
+    }
+    return config;
+  },
 };
 
 export default nextConfig;

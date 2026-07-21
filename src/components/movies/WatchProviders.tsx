@@ -1,4 +1,4 @@
-import { getImageUrl } from "@/lib/tmdb";
+import { getImageUrl } from "@/lib/tmdb-client";
 import Image from "next/image";
 
 interface Provider {

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { Star, Plus, Check, Info } from "lucide-react";
-import { getImageUrl } from "@/lib/tmdb";
+import { getImageUrl } from "@/lib/tmdb-client";
 import { motion } from "framer-motion";
 import { useState } from "react";
 

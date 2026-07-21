@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { Play, Info, Star, ChevronLeft, ChevronRight } from "lucide-react";
-import { getImageUrl } from "@/lib/tmdb";
+import { getImageUrl } from "@/lib/tmdb-client";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function HeroSlider({ movies }: { movies: any[] }) {
