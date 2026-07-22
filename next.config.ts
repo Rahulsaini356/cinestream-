@@ -24,7 +24,7 @@ const nextConfig: NextConfig = {
           { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
           { 
             key: "Content-Security-Policy", 
-            value: "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://pagead2.googlesyndication.com https://*.googlesyndication.com https://*.google.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https:; connect-src 'self' https://api.themoviedb.org https://api.brevo.com; frame-src 'self' https://*.vidsrc.to https://*.vidsrc.me https://vidsrc.cc https://*.vidsrc.in https://*.vidsrc.pm https://*.vidsrc.xyz https://*.superembed.stream https://googleads.g.doubleclick.net;" 
+            value: "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://pagead2.googlesyndication.com https://*.googlesyndication.com https://*.google.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https:; connect-src 'self' https://api.themoviedb.org https://api.brevo.com; frame-src 'self' https://vidlink.pro https://*.vidlink.pro https://vidsrc.net https://*.vidsrc.net https://vidsrc.pm https://*.vidsrc.pm https://vidsrc.me https://*.vidsrc.me https://vidsrc.xyz https://*.vidsrc.xyz https://vidsrc.to https://*.vidsrc.to https://vidsrc.su https://*.vidsrc.su https://autoembed.co https://*.autoembed.co https://2embed.cc https://*.2embed.cc https://www.2embed.cc https://*.2embed.cc https://superembed.stream https://*.superembed.stream https://googleads.g.doubleclick.net;" 
           },
         ],
       },
