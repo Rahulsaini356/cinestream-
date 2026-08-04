@@ -4,8 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "prisma generate && next build --webpack",
-    "start": "next start -H 0.0.0.0 -p ${PORT:-3000}",
+    "build": "prisma generate && next build --webpack && node scripts/copy-standalone.js",
+    "start": "node .next/standalone/server.js",
     "lint": "eslint",
     "postinstall": "prisma generate"
   },
