@@ -22,8 +22,12 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://cinestream.digital"),
   title: "CineStream | Movies & TV",
   description: "A premium movie streaming discovery app",
+  alternates: {
+    canonical: "/",
+  },
   verification: {
     google: "eBgT2koe6w9ks8rV2J55i1piuItGO6DTlCuLqmfVMf8",
   },
