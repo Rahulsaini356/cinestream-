@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { User } from "lucide-react";
 
 interface UserAvatarProps {
@@ -16,11 +16,13 @@ export default function UserAvatar({
   className = "w-full h-full object-cover",
   iconClassName = "w-1/2 h-1/2 text-zinc-400",
 }: UserAvatarProps) {
+  const [prevSrc, setPrevSrc] = useState(src);
   const [hasError, setHasError] = useState(false);
 
-  useEffect(() => {
+  if (src !== prevSrc) {
+    setPrevSrc(src);
     setHasError(false);
-  }, [src]);
+  }
 
   if (!src || hasError || typeof src !== "string" || src.trim() === "") {
     return <User className={iconClassName} />;

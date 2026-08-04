@@ -26,15 +26,15 @@ export default function Navbar() {
   }, []);
 
   useEffect(() => {
-    if (session?.user?.image) {
-      setAvatarUrl(session.user.image);
-    } else if (session?.user?.id) {
+    if (session?.user?.id) {
       const saved = localStorage.getItem(`avatar_${session.user.id}`);
       if (saved) {
-        setAvatarUrl(saved);
+        setTimeout(() => {
+          setAvatarUrl(saved);
+        }, 0);
       }
     }
-  }, [session?.user?.id, session?.user?.image]);
+  }, [session?.user?.id]);
 
   useEffect(() => {
     const handleAvatarUpdate = (e: any) => {

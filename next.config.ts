@@ -1,6 +1,9 @@
 import type { NextConfig } from "next";
 
-const nextConfig: NextConfig = {
+// Mock Google Font network fetches during build to support offline compiles
+process.env.NEXT_FONT_GOOGLE_MOCK = "1";
+
+const nextConfig: NextConfig & { turbo?: any } = {
   output: "standalone",
   images: {
     remotePatterns: [
@@ -11,6 +14,15 @@ const nextConfig: NextConfig = {
     ],
   },
   allowedDevOrigins: ["127.0.0.1"],
+  turbo: {
+    resolveAlias: {
+      dns: "empty",
+      net: "empty",
+      tls: "empty",
+      fs: "empty",
+      "node:dns": "empty",
+    },
+  },
   async headers() {
     return [
       {

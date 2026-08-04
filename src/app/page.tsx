@@ -60,11 +60,35 @@ export default async function Home() {
     }),
   ]);
 
-  const trending = trendingData.results?.slice(0, 20) || [];
-  const newReleases = newReleasesData.results?.slice(0, 20) || [];
-  const topRated = topRatedData.results?.slice(0, 20) || [];
-  const tvShows = tvData.results?.slice(0, 20) || [];
-  const freeMovies = freeData.results?.slice(0, 20) || [];
+  // Fallback mock dataset to ensure Homepage/Hero loads cleanly even if TMDB API is offline/timeouts
+  const fallbackMovies = [
+    {
+      id: "1083381",
+      title: "Backrooms",
+      media_type: "movie",
+      backdrop_path: null,
+      poster_path: null,
+      vote_average: 8.5,
+      release_date: "2026-01-01",
+      overview: "A group of friends explore the mysterious and endless hallways of the Backrooms.",
+    },
+    {
+      id: "550",
+      title: "Fight Club",
+      media_type: "movie",
+      backdrop_path: null,
+      poster_path: null,
+      vote_average: 8.8,
+      release_date: "1999-10-15",
+      overview: "An insomniac office worker and a devil-may-care soapmaker form an underground fight club.",
+    }
+  ];
+
+  const trending = trendingData.results?.length ? trendingData.results.slice(0, 20) : fallbackMovies;
+  const newReleases = newReleasesData.results?.length ? newReleasesData.results.slice(0, 20) : fallbackMovies;
+  const topRated = topRatedData.results?.length ? topRatedData.results.slice(0, 20) : fallbackMovies;
+  const tvShows = tvData.results?.length ? tvData.results.slice(0, 20) : fallbackMovies;
+  const freeMovies = freeData.results?.length ? freeData.results.slice(0, 20) : fallbackMovies;
 
   return (
     <main className="min-h-screen bg-[#060608]">
