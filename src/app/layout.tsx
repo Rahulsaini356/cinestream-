@@ -10,6 +10,7 @@ import NextTopLoader from "nextjs-toploader";
 import Script from "next/script";
 import LeaderboardAnnouncement from "@/components/ui/LeaderboardAnnouncement";
 import AdSenseProvider from "@/components/providers/AdSenseProvider";
+import { GoogleAnalytics } from "@next/third-parties/google";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -49,6 +50,7 @@ export default function RootLayout({
       data-scroll-behavior="smooth"
     >
       <body className="min-h-full flex flex-col bg-[var(--color-background)] text-[var(--color-foreground)]" suppressHydrationWarning>
+        <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || "G-YZH44TEVN1"} />
         <AdSenseProvider />
         <NextTopLoader 
           color="#e11d48" 
