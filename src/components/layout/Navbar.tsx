@@ -1,4 +1,5 @@
 "use client";
+import Image from "next/image";
 
 import { useSession, signOut } from "next-auth/react";
 import Link from "next/link";
@@ -104,7 +105,7 @@ export default function Navbar() {
           <div className="flex items-center gap-8">
             <Link href="/" className="flex items-center gap-2.5 group flex-shrink-0">
               <div className="w-8 h-8 rounded-xl gradient-accent flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
-                <img src="/icon.svg" alt="CineStream" className="w-5 h-5" />
+                <Image src="/icon.svg" alt="CineStream" className="w-5 h-5" width={20} height={20} />
               </div>
               <span className="text-lg font-black tracking-tight hidden sm:block">
                 <span className="gradient-accent-text">Cine</span>
@@ -267,7 +268,7 @@ export default function Navbar() {
               <div className="flex items-center justify-between mb-10">
                 <Link href="/" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-2.5">
                   <div className="w-8 h-8 rounded-xl gradient-accent flex items-center justify-center">
-                    <img src="/icon.svg" alt="CineStream" className="w-5 h-5" />
+                    <Image src="/icon.svg" alt="CineStream" className="w-5 h-5" width={20} height={20} />
                   </div>
                   <span className="text-lg font-black">
                     <span className="gradient-accent-text">Cine</span>

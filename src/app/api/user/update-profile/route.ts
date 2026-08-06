@@ -39,7 +39,8 @@ export async function POST(request: Request) {
       data: dataToUpdate,
     });
 
-    const { password, ...sanitizedUser } = updatedUser;
+    const sanitizedUser = { ...updatedUser } as any;
+    delete sanitizedUser.password;
 
     return NextResponse.json({ success: true, user: sanitizedUser });
   } catch (error) {
