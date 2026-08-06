@@ -19,7 +19,7 @@ export function validateEnv() {
 
   if (missing.length > 0) {
     const errorMsg = `CRITICAL CONFIGURATION ERROR: Missing required environment variables:\n - ${missing.join("\n - ")}\nApp cannot start safely. Please set these in .env.local or your production provider environment settings.`;
-    if (process.env.NODE_ENV === "production") {
+    if (process.env.NODE_ENV === "production" && process.env.NEXT_PHASE !== "phase-production-build") {
       throw new Error(errorMsg);
     } else {
       console.error(errorMsg);
