@@ -2,12 +2,21 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { NextResponse } from "next/server";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 export async function POST(request: Request) {
   const session = await getServerSession(authOptions);
 
   if (!session?.user?.id) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const limiter = checkRateLimit(`update_profile_${session.user.id}`, 10, 60000);
+  if (!limiter.success) {
+    return NextResponse.json(
+      { error: "Too many profile updates. Please wait 1 minute." },
+      { status: 429 }
+    );
   }
 
   try {

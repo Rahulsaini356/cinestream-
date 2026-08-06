@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -33,6 +34,14 @@ export async function POST(request: Request) {
 
   if (!session?.user?.id) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const limiter = checkRateLimit(`reviews_${session.user.id}`, 5, 60000);
+  if (!limiter.success) {
+    return NextResponse.json(
+      { error: "Too many review attempts. Please wait 1 minute." },
+      { status: 429 }
+    );
   }
 
   try {

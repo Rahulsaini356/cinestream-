@@ -11,11 +11,25 @@ export async function POST(request: Request) {
   }
 
   try {
+    const user = await prisma.user.findUnique({
+      where: { id: session.user.id },
+      select: { updatedAt: true, points: true, watchTime: true }
+    });
+
+    if (user) {
+      const now = new Date();
+      const timeDiff = now.getTime() - user.updatedAt.getTime();
+      // Rate limit DB writes to at most once per 45 seconds
+      if (timeDiff < 45000) {
+        return NextResponse.json({ success: true, points: user.points, watchTime: user.watchTime });
+      }
+    }
+
     const updatedUser = await prisma.user.update({
       where: { id: session.user.id },
       data: {
         watchTime: { increment: 1 },
-        points: { increment: 1 }, // 1 point per minute of active watching
+        points: { increment: 1 },
       },
       select: {
         points: true,

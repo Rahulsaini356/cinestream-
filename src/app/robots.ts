@@ -4,12 +4,28 @@ export default function robots(): MetadataRoute.Robots {
   const baseUrl = 'https://cinestream.digital';
 
   return {
-    rules: {
-      userAgent: '*',
-      allow: '/',
-      // Disallow Google from indexing private user pages or APIs
-      disallow: ['/api/', '/profile', '/watchlist'],
-    },
+    rules: [
+      {
+        userAgent: '*',
+        allow: '/',
+        disallow: ['/api/', '/profile', '/watchlist', '/_next/', '/static/'],
+      },
+      {
+        userAgent: [
+          'GPTBot',
+          'ChatGPT-User',
+          'Google-Extended',
+          'CCBot',
+          'ClaudeBot',
+          'Anthropic-AI',
+          'cohere-ai',
+          'Omgilibot',
+          'FacebookBot',
+          'PerplexityBot',
+        ],
+        disallow: '/',
+      },
+    ],
     sitemap: `${baseUrl}/sitemap.xml`,
   };
 }

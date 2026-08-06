@@ -3,12 +3,21 @@ import { authOptions } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import { handleApiError } from "@/lib/errors";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 export async function DELETE(request: Request) {
   const session = await getServerSession(authOptions);
 
   if (!session?.user?.id) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const limiter = checkRateLimit(`delete_account_${session.user.id}`, 2, 60000);
+  if (!limiter.success) {
+    return NextResponse.json(
+      { error: "Too many account deletion attempts. Please wait 1 minute." },
+      { status: 429 }
+    );
   }
 
   try {

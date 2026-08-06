@@ -44,6 +44,7 @@ export async function sendOTP(email: string, code: string) {
         "api-key": BREVO_API_KEY,
       },
       body: JSON.stringify(payload),
+      signal: AbortSignal.timeout(6000),
     });
 
     if (!res.ok) {

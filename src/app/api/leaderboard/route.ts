@@ -20,7 +20,14 @@ export async function GET() {
       take: 50, // Limit to top 50 users
     });
 
-    return NextResponse.json({ success: true, leaderboard: users });
+    return NextResponse.json(
+      { success: true, leaderboard: users },
+      {
+        headers: {
+          "Cache-Control": "public, s-maxage=300, stale-while-revalidate=59",
+        },
+      }
+    );
   } catch (error) {
     console.error("Error fetching leaderboard:", error);
     return NextResponse.json({ error: "Failed to fetch leaderboard" }, { status: 500 });
