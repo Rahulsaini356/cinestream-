@@ -5,12 +5,12 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Trophy, X, Sparkles, ArrowRight } from "lucide-react";
 import { useRouter } from "next/navigation";
 
+// Expiry date is set to 5 days from today (June 30, 2026) -> July 5, 2026
+const EXPIRY_DATE = new Date("2026-07-05T23:59:59Z");
+
 export default function LeaderboardAnnouncement() {
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
-
-  // Expiry date is set to 5 days from today (June 30, 2026) -> July 5, 2026
-  const EXPIRY_DATE = new Date("2026-07-05T23:59:59Z");
 
   useEffect(() => {
     // Check if the current time is before the expiry date

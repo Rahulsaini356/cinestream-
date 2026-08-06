@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { getBlogPost, getRelatedPosts, blogPosts } from "@/lib/blog";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -56,7 +57,7 @@ export default async function BlogPostPage({ params }: { params: Params }) {
     <main className="min-h-screen bg-[#060608] pt-20 pb-24">
       {/* Hero */}
       <div className="relative w-full aspect-[16/6] max-h-[520px] overflow-hidden">
-        <img src={post.coverImage} alt={post.title} className="w-full h-full object-cover" />
+        <Image src={post.coverImage} alt={post.title} className="w-full h-full object-cover" fill sizes="100vw" priority />
         <div className="absolute inset-0 bg-gradient-to-t from-[#060608] via-[#060608]/60 to-transparent" />
         <div className="absolute inset-0 bg-gradient-to-r from-[#060608]/80 via-transparent to-transparent" />
       </div>
@@ -130,8 +131,8 @@ export default async function BlogPostPage({ params }: { params: Params }) {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {related.map((r) => (
               <Link href={`/blog/${r.slug}`} key={r.slug} className="group glass rounded-2xl overflow-hidden hover:border-white/15 transition-all">
-                <div className="aspect-video overflow-hidden">
-                  <img src={r.coverImage} alt={r.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                <div className="aspect-video overflow-hidden relative">
+                  <Image src={r.coverImage} alt={r.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" fill sizes="(max-width: 768px) 100vw, 33vw" />
                 </div>
                 <div className="p-5">
                   <span className={`text-[11px] font-bold ${categoryColors[r.category]?.split(" ")[1] || "text-[#ff6b35]"}`}>{r.category}</span>

@@ -1,4 +1,5 @@
 "use client";
+import Image from "next/image";
 
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
@@ -67,10 +68,13 @@ export default function HeroSlider({ movies }: { movies: any[] }) {
           className="absolute inset-0"
         >
           {currentMovie.backdrop_path && (
-            <img
+            <Image
               src={getImageUrl(currentMovie.backdrop_path, "original")}
               alt=""
               className="w-full h-full object-cover object-center"
+              fill
+              priority
+              sizes="100vw"
             />
           )}
           {/* Cinematic overlays */}

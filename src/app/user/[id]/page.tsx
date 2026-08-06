@@ -2,8 +2,7 @@ import prisma from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import { 
   Crown, Trophy, Medal, Clock, ArrowLeft, 
-  User, Calendar, Award, Film, MessageSquare, 
-  Sparkles, Star
+  Calendar, Award, Film, MessageSquare
 } from "lucide-react";
 import UserAvatar from "@/components/ui/UserAvatar";
 import Link from "next/link";

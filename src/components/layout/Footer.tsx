@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Film, PlayCircle, Send } from "lucide-react";
+import { Film, Send } from "lucide-react";
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();

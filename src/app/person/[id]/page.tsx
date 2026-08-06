@@ -1,6 +1,7 @@
+import Image from "next/image";
 import { fetchTMDB, getImageUrl } from "@/lib/tmdb";
 import Link from "next/link";
-import { Star } from "lucide-react";
+
 
 export default async function PersonDetail({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = await params;
@@ -20,7 +21,7 @@ export default async function PersonDetail({ params }: { params: Promise<{ id: s
       <div className="flex flex-col md:flex-row gap-8 items-start">
         {/* Photo */}
         <div className="w-48 md:w-64 shrink-0 rounded-2xl overflow-hidden shadow-2xl ring-1 ring-white/10 bg-zinc-900">
-          <img src={getImageUrl(person.profile_path, "w500")} alt={person.name} className="w-full object-cover" />
+          <Image src={getImageUrl(person.profile_path, "w500")} alt={person.name} className="w-full object-cover" width={256} height={384} priority />
         </div>
 
         {/* Bio */}
@@ -48,7 +49,7 @@ export default async function PersonDetail({ params }: { params: Promise<{ id: s
               <Link key={item.id} href={`/${item.media_type === "tv" ? "tv" : "movie"}/${item.id}`} className="group relative flex flex-col gap-2 border border-white/5 bg-zinc-900/50 p-2 rounded-xl hover:bg-zinc-800 transition-colors">
                 <div className="relative aspect-[2/3] w-full rounded-lg overflow-hidden bg-zinc-800 shadow-md">
                   {item.poster_path ? (
-                    <img src={getImageUrl(item.poster_path, "w500")} alt={item.title || item.name} className="w-full h-full object-cover" />
+                    <Image src={getImageUrl(item.poster_path, "w500")} alt={item.title || item.name} className="w-full h-full object-cover" fill sizes="(max-width: 640px) 150px, 200px" />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center text-zinc-500">No Image</div>
                   )}

@@ -1,8 +1,9 @@
 "use client";
+import Image from "next/image";
 
 import { useState, useEffect } from "react";
 import AuthForm from "@/components/auth/AuthForm";
-import { Film, PlayCircle, Tv } from "lucide-react";
+
 
 const BACKDROPS_DATA = [
   {
@@ -100,15 +101,15 @@ export default function LoginPage() {
         <p className="text-xxs uppercase tracking-wider text-zinc-500">Stream on</p>
         <div className="flex items-center gap-4 justify-center opacity-70 hover:opacity-100 transition-opacity">
           <a href="https://www.netflix.com" target="_blank" rel="noopener noreferrer">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/0/08/Netflix_2015_logo.svg" alt="Netflix" className="h-4 object-contain brightness-90 hover:scale-110 transition-transform" />
+            <Image src="https://upload.wikimedia.org/wikipedia/commons/0/08/Netflix_2015_logo.svg" alt="Netflix" className="h-4 object-contain brightness-90 hover:scale-110 transition-transform" width={80} height={16} unoptimized />
           </a>
           <div className="h-3 w-[1px] bg-white/10" />
           <a href="https://www.primevideo.com" target="_blank" rel="noopener noreferrer">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/1/11/Amazon_Prime_Video_logo.svg" alt="Prime" className="h-4 object-contain brightness-200 hover:scale-110 transition-transform" />
+            <Image src="https://upload.wikimedia.org/wikipedia/commons/1/11/Amazon_Prime_Video_logo.svg" alt="Prime" className="h-4 object-contain brightness-200 hover:scale-110 transition-transform" width={80} height={16} unoptimized />
           </a>
           <div className="h-3 w-[1px] bg-white/10" />
           <a href="https://www.disneyplus.com" target="_blank" rel="noopener noreferrer">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/3/3e/Disney%2B_logo.svg" alt="Disney" className="h-5 object-contain brightness-100 hover:scale-110 transition-transform" />
+            <Image src="https://upload.wikimedia.org/wikipedia/commons/3/3e/Disney%2B_logo.svg" alt="Disney" className="h-5 object-contain brightness-100 hover:scale-110 transition-transform" width={80} height={20} unoptimized />
           </a>
         </div>
         <p className="text-xxs text-zinc-600 mt-2">By continuing you agree to our <a href="/terms" className="hover:underline">Terms</a> & <a href="/privacy" className="hover:underline">Privacy Policy</a></p>

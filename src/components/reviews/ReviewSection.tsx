@@ -1,10 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { Star, MessageSquare, Loader2, User } from "lucide-react";
+import { useState, useEffect, useCallback } from "react";
+import { Star, MessageSquare, Loader2 } from "lucide-react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
-import { formatDistanceToNow } from "date-fns"; // Make sure to npm install date-fns
 import UserAvatar from "@/components/ui/UserAvatar";
 
 interface Review {
@@ -35,7 +34,7 @@ export default function ReviewSection({ tmdbId, type }: ReviewSectionProps) {
   const [content, setContent] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const fetchReviews = async () => {
+  const fetchReviews = useCallback(async () => {
     try {
       setLoading(true);
       const res = await fetch(`/api/reviews?tmdbId=${tmdbId}&type=${type}`);
@@ -57,11 +56,11 @@ export default function ReviewSection({ tmdbId, type }: ReviewSectionProps) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [tmdbId, type, session?.user?.id]);
 
   useEffect(() => {
     fetchReviews();
-  }, [tmdbId, type, session?.user?.id]);
+  }, [fetchReviews]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -81,7 +80,7 @@ export default function ReviewSection({ tmdbId, type }: ReviewSectionProps) {
       } else {
         alert("Failed to save review.");
       }
-    } catch (error) {
+    } catch {
       alert("Error saving review.");
     } finally {
       setIsSubmitting(false);

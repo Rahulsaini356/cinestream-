@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import prisma from "@/lib/prisma";
@@ -57,10 +58,12 @@ export default async function WatchlistPage({ searchParams }: { searchParams: Se
             >
               <div className="relative aspect-[2/3] w-full rounded-2xl overflow-hidden bg-zinc-900 shadow-xl transition-all duration-300 group-hover:scale-105 group-hover:shadow-[0_20px_40px_-15px_rgba(229,9,20,0.3)] group-hover:ring-2 ring-accent">
                 {item.poster ? (
-                  <img
+                  <Image
                     src={getImageUrl(item.poster, "w500")}
                     alt={item.title}
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                    fill
+                    sizes="(max-width: 640px) 150px, 200px"
                   />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center bg-zinc-800 text-zinc-500">

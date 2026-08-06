@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { 
-  User, Copy, Mail, Camera, Save, Loader2, 
+  Copy, Mail, Camera, Save, Loader2, 
   Calendar, Shield, Award, Film, MessageSquare, 
   Check, Key, LogOut, ArrowRight, Crown, Clock,
   Trash2, AlertTriangle

@@ -1,8 +1,9 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Send, Users, Sparkles, MessageCircle, Flame, Download, CheckCircle2, Heart, ThumbsUp } from "lucide-react";
+import { Send, Users, MessageCircle, Flame, Download, CheckCircle2 } from "lucide-react";
 import { useEffect, useState } from "react";
+import Image from "next/image";
 
 export default function TelegramSection() {
   const telegramUrl = process.env.NEXT_PUBLIC_TELEGRAM_URL || "https://t.me/cinestreamdigital";
@@ -164,10 +165,12 @@ export default function TelegramSection() {
                     {/* Styled Movie Card Inside Message */}
                     <div className="rounded-xl overflow-hidden bg-black/30 border border-white/10 p-3 mb-3 flex gap-3">
                       <div className="w-16 h-20 rounded bg-zinc-800 flex-shrink-0 flex items-center justify-center relative overflow-hidden">
-                        <img 
+                        <Image 
                           src="https://images.unsplash.com/photo-1635805737707-575885ab0820?w=120&auto=format&fit=crop&q=60" 
                           alt="Spider-man poster" 
                           className="w-full h-full object-cover"
+                          width={64}
+                          height={80}
                         />
                       </div>
                       <div className="flex flex-col justify-center gap-1.5">

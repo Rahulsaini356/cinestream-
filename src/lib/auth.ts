@@ -108,7 +108,7 @@ export const authOptions: NextAuthOptions = {
       return session;
     },
 
-    async jwt({ token, user, account, trigger, session }) {
+    async jwt({ token, user, trigger, session }) {
       if (user) {
         token.sub = user.id;
         token.picture = user.image || token.picture;

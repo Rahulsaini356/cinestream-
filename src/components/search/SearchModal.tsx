@@ -1,4 +1,5 @@
 "use client";
+import Image from "next/image";
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
@@ -175,10 +176,12 @@ export default function SearchModal({ isOpen, onClose }: { isOpen: boolean; onCl
                         {/* Poster */}
                         <div className="w-10 h-14 rounded-lg overflow-hidden bg-zinc-800 flex-shrink-0">
                           {item.poster_path ? (
-                            <img
+                            <Image
                               src={`https://image.tmdb.org/t/p/w92${item.poster_path}`}
                               alt={title}
                               className="w-full h-full object-cover"
+                              width={40}
+                              height={56}
                             />
                           ) : (
                             <div className="w-full h-full flex items-center justify-center">

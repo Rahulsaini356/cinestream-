@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { blogPosts } from "@/lib/blog";
 import Link from "next/link";
 import { BookOpen, Clock, ArrowRight, Tag, Send, Zap, Calendar, TrendingUp } from "lucide-react";
@@ -64,10 +65,13 @@ export default async function BlogPage() {
             {/* Featured Post Card */}
             <Link href={`/blog/${featured.slug}`} className="block group">
               <div className="relative rounded-2xl overflow-hidden aspect-[21/9] sm:aspect-[21/8] border border-white/5 group-hover:border-white/10 transition-colors">
-                <img
+                <Image
                   src={featured.coverImage}
                   alt={featured.title}
                   className="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-700"
+                  fill
+                  sizes="100vw"
+                  priority
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#060608] via-[#060608]/50 to-transparent" />
                 <div className="absolute bottom-0 left-0 p-6 sm:p-8 w-full">
@@ -100,10 +104,12 @@ export default async function BlogPage() {
                   className="group glass rounded-2xl overflow-hidden hover:border-white/12 transition-all flex flex-col h-full"
                 >
                   <div className="aspect-video overflow-hidden border-b border-white/5 relative">
-                    <img
+                    <Image
                       src={post.coverImage}
                       alt={post.title}
                       className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-500"
+                      fill
+                      sizes="(max-width: 768px) 100vw, 50vw"
                     />
                   </div>
                   <div className="p-5 flex flex-col flex-1 justify-between">
@@ -166,10 +172,12 @@ export default async function BlogPage() {
                     >
                       {/* Movie Mini Poster */}
                       <div className="w-12 h-16 rounded bg-zinc-900 border border-white/5 overflow-hidden flex-shrink-0 relative">
-                        <img 
+                        <Image 
                           src={getImageUrl(movie.poster_path, "w500")} 
                           alt={movie.title}
                           className="w-full h-full object-cover group-hover/item:scale-105 transition-transform"
+                          fill
+                          sizes="48px"
                         />
                       </div>
                       

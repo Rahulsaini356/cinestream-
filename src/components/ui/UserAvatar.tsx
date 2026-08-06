@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { User } from "lucide-react";
+import Image from "next/image";
 
 interface UserAvatarProps {
   src?: string | null;
@@ -29,11 +30,13 @@ export default function UserAvatar({
   }
 
   return (
-    <img
+    <Image
       src={src}
       alt={alt}
       onError={() => setHasError(true)}
       className={className}
+      width={40}
+      height={40}
     />
   );
 }

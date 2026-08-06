@@ -1,7 +1,8 @@
 "use client";
+import Image from "next/image";
 
 import Link from "next/link";
-import { Star, Plus, Check, Info } from "lucide-react";
+import { Star, Info } from "lucide-react";
 import { getImageUrl } from "@/lib/tmdb-client";
 import { motion } from "framer-motion";
 import { useState } from "react";
@@ -31,12 +32,14 @@ export default function MovieCard({ item, className = "" }: MovieCardProps) {
         {/* Poster */}
         <div className="relative rounded-xl overflow-hidden bg-[#0d0d14] aspect-[2/3] shadow-xl">
           {item.poster_path && !imgError ? (
-            <img
+            <Image
               src={posterUrl}
               alt={title}
               className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
               onError={() => setImgError(true)}
-              loading="lazy"
+              fill
+              sizes="(max-width: 180px) 100vw, 180px"
+              priority={false}
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center bg-[#0d0d14] text-zinc-600 text-xs text-center p-4">

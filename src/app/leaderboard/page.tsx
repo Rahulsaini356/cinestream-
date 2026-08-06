@@ -1,7 +1,7 @@
 import prisma from "@/lib/prisma";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
-import { Crown, Trophy, Medal, Clock, ArrowLeft, User, Sparkles, Star, PlusCircle, Play, Info } from "lucide-react";
+import { Crown, Trophy, Medal, Clock, ArrowLeft, Sparkles, Star, PlusCircle, Play, Info } from "lucide-react";
 import Link from "next/link";
 import UserAvatar from "@/components/ui/UserAvatar";
 

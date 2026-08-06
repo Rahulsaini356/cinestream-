@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { fetchTMDB, getImageUrl, getProviders } from "@/lib/tmdb";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
@@ -39,7 +40,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
         images: imageUrl ? [imageUrl] : [],
       },
     };
-  } catch (error) {
+  } catch {
     return { title: 'Movie - CineStream' };
   }
 }
@@ -121,7 +122,7 @@ export default async function MovieDetail({ params }: { params: Promise<{ id: st
           <div className="flex flex-col md:flex-row gap-8 items-center md:items-start">
             {/* Poster */}
             <div className="hidden md:block w-64 lg:w-[320px] shrink-0 rounded-2xl overflow-hidden shadow-[0_30px_60px_-15px_rgba(0,0,0,0.8)] ring-1 ring-white/10 bg-zinc-900 transform lg:-translate-y-8">
-              <img src={getImageUrl(movie.poster_path, "w500")} alt={movie.title} className="w-full object-cover" />
+              <Image src={getImageUrl(movie.poster_path, "w500")} alt={movie.title} className="w-full object-cover" width={320} height={480} priority />
             </div>
 
             {/* Details */}
@@ -210,7 +211,7 @@ export default async function MovieDetail({ params }: { params: Promise<{ id: st
                 <Link key={person.id} href={`/person/${person.id}`} className="min-w-[140px] w-[140px] group bg-zinc-900/50 rounded-xl overflow-hidden hover:bg-zinc-800 transition-colors border border-white/5">
                   <div className="aspect-[2/3] w-full bg-zinc-800 relative overflow-hidden">
                     {person.profile_path ? (
-                      <img src={getImageUrl(person.profile_path, "w500")} alt={person.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                      <Image src={getImageUrl(person.profile_path, "w500")} alt={person.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" fill sizes="140px" />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center text-zinc-600">No Image</div>
                     )}
@@ -238,7 +239,7 @@ export default async function MovieDetail({ params }: { params: Promise<{ id: st
                 >
                   <div className="relative aspect-[2/3] w-full rounded-xl overflow-hidden bg-zinc-900 border border-white/5 shadow-xl transition-all duration-300 group-hover:scale-105 group-hover:shadow-[0_20px_40px_-15px_rgba(229,9,20,0.3)] ring-accent hover-glow">
                     {item.poster_path ? (
-                      <img src={getImageUrl(item.poster_path, "w500")} alt={item.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" loading="lazy" />
+                      <Image src={getImageUrl(item.poster_path, "w500")} alt={item.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" fill sizes="(max-width: 640px) 160px, 220px" />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center text-zinc-500 bg-zinc-800">No Image</div>
                     )}
