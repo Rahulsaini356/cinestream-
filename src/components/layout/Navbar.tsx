@@ -29,7 +29,7 @@ export default function Navbar() {
   useEffect(() => {
     if (session?.user?.image) {
       setTimeout(() => {
-        setAvatarUrl(session.user.image);
+        setAvatarUrl(session.user.image || null);
       }, 0);
     } else if (session?.user?.id) {
       const saved = localStorage.getItem(`avatar_${session.user.id}`);
