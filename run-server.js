@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-require-imports */
 // run-server.js
 // Custom standalone server wrapper for CineStream production deployment.
 // This resolves Render 502 Bad Gateway and Next.js standalone env loading issues.

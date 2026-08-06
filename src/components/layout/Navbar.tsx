@@ -28,14 +28,20 @@ export default function Navbar() {
 
   useEffect(() => {
     if (session?.user?.image) {
-      setAvatarUrl(session.user.image);
+      setTimeout(() => {
+        setAvatarUrl(session.user.image);
+      }, 0);
     } else if (session?.user?.id) {
       const saved = localStorage.getItem(`avatar_${session.user.id}`);
       if (saved) {
-        setAvatarUrl(saved);
+        setTimeout(() => {
+          setAvatarUrl(saved);
+        }, 0);
       }
     } else {
-      setAvatarUrl(null);
+      setTimeout(() => {
+        setAvatarUrl(null);
+      }, 0);
     }
   }, [session?.user?.id, session?.user?.image]);
 
