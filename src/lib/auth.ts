@@ -111,10 +111,14 @@ export const authOptions: NextAuthOptions = {
     async jwt({ token, user, trigger, session }) {
       if (user) {
         token.sub = user.id;
-        token.picture = user.image || token.picture;
+        token.picture = user.image && user.image.startsWith("data:")
+          ? `/api/user/avatar?userId=${user.id}`
+          : user.image || token.picture;
       }
       if (trigger === "update" && session?.image) {
-        token.picture = session.image;
+        token.picture = session.image.startsWith("data:")
+          ? `/api/user/avatar?userId=${token.sub}`
+          : session.image;
       }
       // Sync DB user image to token
       if (token.email) {
@@ -126,7 +130,9 @@ export const authOptions: NextAuthOptions = {
         if (dbUser) {
           token.sub = dbUser.id;
           if (dbUser.image) {
-            token.picture = dbUser.image;
+            token.picture = dbUser.image.startsWith("data:")
+              ? `/api/user/avatar?userId=${dbUser.id}`
+              : dbUser.image;
           }
         }
       }
