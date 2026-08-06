@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "prisma generate && next build --webpack && node scripts/copy-standalone.js",
-    "start": "node run-server.js",
+    "start": "node --max-http-header-size=1048576 run-server.js",
     "lint": "eslint",
     "postinstall": "prisma generate"
   },
