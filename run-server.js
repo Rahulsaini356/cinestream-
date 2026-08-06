@@ -4,6 +4,10 @@
 // This resolves Render 502 Bad Gateway and Next.js standalone env loading issues.
 
 const { loadEnvConfig } = require('@next/env');
+const dns = require('dns');
+
+// Force IPv4 resolution first to avoid IPv6 network timeouts on Render/cloud instances
+dns.setDefaultResultOrder('ipv4first');
 
 // Load environment variables from .env files (like next start does)
 loadEnvConfig(process.cwd());
