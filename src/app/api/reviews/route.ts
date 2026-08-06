@@ -5,6 +5,15 @@ import { authOptions } from "@/lib/auth";
 import { checkRateLimit } from "@/lib/rate-limit";
 
 export async function GET(request: Request) {
+  const ip = request.headers.get("x-forwarded-for") || "unknown";
+  const limiter = checkRateLimit(`reviews_get_${ip}`, 60, 60000); // 60 requests per minute
+  if (!limiter.success) {
+    return NextResponse.json(
+      { error: "Too many requests. Please wait 1 minute." },
+      { status: 429 }
+    );
+  }
+
   const { searchParams } = new URL(request.url);
   const tmdbId = searchParams.get("tmdbId");
   const type = searchParams.get("type");
