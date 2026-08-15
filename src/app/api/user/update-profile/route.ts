@@ -39,6 +39,13 @@ export async function POST(request: Request) {
       data: dataToUpdate,
     });
 
+    // Invalidate user image / avatar caches if modified
+    if (dataToUpdate.image !== undefined || dataToUpdate.name !== undefined) {
+      const { revalidateTag } = await import("next/cache");
+      revalidateTag("user-image", "max");
+      revalidateTag("avatar", "max");
+    }
+
     const sanitizedUser = { ...updatedUser } as any;
     delete sanitizedUser.password;
 

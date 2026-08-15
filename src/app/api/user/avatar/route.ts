@@ -1,7 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
+import { unstable_cache } from "next/cache";
 
 export const dynamic = "force-dynamic";
+
+const getCachedUserImage = unstable_cache(
+  async (userId: string) => {
+    return prisma.user.findUnique({
+      where: { id: userId },
+      select: { image: true },
+    });
+  },
+  ["user-avatar"],
+  { revalidate: 3600, tags: ["avatar"] }
+);
 
 export async function GET(req: NextRequest) {
   try {
@@ -12,10 +24,7 @@ export async function GET(req: NextRequest) {
       return new Response("Missing userId", { status: 400 });
     }
 
-    const user = await prisma.user.findUnique({
-      where: { id: userId },
-      select: { image: true },
-    });
+    const user = await getCachedUserImage(userId);
 
     if (!user || !user.image) {
       return new Response("Not found", { status: 404 });

@@ -3,8 +3,21 @@ import { authOptions } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import ProfileClient from "@/components/profile/ProfileClient";
+import { unstable_cache } from "next/cache";
 
 export const dynamic = "force-dynamic";
+
+const getCachedTopUserId = unstable_cache(
+  async () => {
+    const topUser = await prisma.user.findFirst({
+      orderBy: { points: "desc" },
+      select: { id: true },
+    });
+    return topUser?.id || null;
+  },
+  ["leaderboard-top-user-id"],
+  { revalidate: 300 } // Cache for 5 minutes
+);
 
 export default async function ProfilePage() {
   const session = await getServerSession(authOptions);
@@ -13,7 +26,7 @@ export default async function ProfilePage() {
     redirect("/login");
   }
 
-  const [user, watchlistCount, reviewCount, topUser] = await Promise.all([
+  const [user, watchlistCount, reviewCount, topUserId] = await Promise.all([
     prisma.user.findUnique({
       where: { id: session.user.id },
     }),
@@ -23,10 +36,7 @@ export default async function ProfilePage() {
     prisma.review.count({
       where: { userId: session.user.id },
     }),
-    prisma.user.findFirst({
-      orderBy: { points: "desc" },
-      select: { id: true },
-    }),
+    getCachedTopUserId(),
   ]);
 
   if (!user) {
@@ -34,7 +44,7 @@ export default async function ProfilePage() {
     redirect("/login");
   }
 
-  const isKing = topUser?.id === session.user.id;
+  const isKing = topUserId === session.user.id;
 
   return (
     <main className="min-h-screen pt-24 pb-20 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">

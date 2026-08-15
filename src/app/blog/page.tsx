@@ -17,6 +17,8 @@ export const metadata: Metadata = {
   },
 };
 
+export const revalidate = 3600; // Cache blog for 1 hour
+
 const categoryColors: Record<string, string> = {
   "Top Lists": "bg-yellow-500/20 text-yellow-400",
   "Hindi Content": "bg-orange-500/20 text-orange-400",

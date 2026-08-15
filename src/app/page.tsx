@@ -5,6 +5,8 @@ import Link from "next/link";
 import { TrendingUp, Sparkles, Star, Tv, Zap, ArrowRight } from "lucide-react";
 import TelegramSection from "@/components/ui/TelegramSection";
 
+export const revalidate = 3600; // Cache homepage for 1 hour
+
 interface RowProps {
   title: string;
   icon: React.ReactNode;

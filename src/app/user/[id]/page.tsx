@@ -34,14 +34,18 @@ export default async function PublicProfilePage({ params }: PageProps) {
     notFound();
   }
 
-  // 2. Determine exact leaderboard rank
-  const allUsers = await prisma.user.findMany({
-    orderBy: { points: "desc" },
-    select: { id: true },
-  });
-
-  const rankIndex = allUsers.findIndex((u) => u.id === id);
-  const rankNumber = rankIndex !== -1 ? rankIndex + 1 : null;
+  // 2. Determine exact leaderboard rank using a count query instead of downloading the whole table
+  const rankNumber = await prisma.user.count({
+    where: {
+      OR: [
+        { points: { gt: user.points } },
+        {
+          points: user.points,
+          createdAt: { lt: user.createdAt }
+        }
+      ]
+    }
+  }) + 1;
 
   // 3. Define ranks (same as ProfileClient.tsx)
   const getRankInfo = (points: number) => {

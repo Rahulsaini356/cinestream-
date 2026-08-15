@@ -14,7 +14,9 @@ import { Metadata } from "next";
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
   try {
     const resolvedParams = await params;
-    const tv = await fetchTMDB(`/tv/${resolvedParams.id}`);
+    const tv = await fetchTMDB(`/tv/${resolvedParams.id}`, {
+      append_to_response: "videos,credits,similar,watch/providers,external_ids",
+    });
     
     if (!tv || tv.success === false || !tv.name) {
       return { title: 'TV Show - CineStream' };

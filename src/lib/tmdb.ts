@@ -8,25 +8,40 @@ export async function fetchTMDB(endpoint: string, params: Record<string, string>
 
   const url = `${BASE_URL}${endpoint}?${searchParams.toString()}`;
 
-  try {
-    const res = await fetch(url, {
-      headers: {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-        "Accept": "application/json",
-      },
-      next: { revalidate: 3600 },
-      signal: AbortSignal.timeout(8000), // 8 seconds timeout to prevent hanging
-    });
+  let attempt = 0;
+  const maxAttempts = 3;
+  const baseDelay = 300; // ms
 
-    if (!res.ok) {
-      console.error(`TMDB HTTP Error ${res.status}: ${res.statusText} on ${endpoint}`);
-      return { results: [], success: false };
+  while (attempt < maxAttempts) {
+    try {
+      const res = await fetch(url, {
+        headers: {
+          "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+          "Accept": "application/json",
+        },
+        next: { revalidate: 3600 },
+        signal: AbortSignal.timeout(6000), // 6 seconds timeout to prevent hanging
+      });
+
+      if (!res.ok) {
+        // Only retry on server errors (5xx) or rate limits (429)
+        if (res.status >= 500 || res.status === 429) {
+          throw new Error(`HTTP Error ${res.status}: ${res.statusText}`);
+        }
+        console.error(`TMDB HTTP Error ${res.status}: ${res.statusText} on ${endpoint}`);
+        return { results: [], success: false };
+      }
+
+      return await res.json();
+    } catch (error: any) {
+      attempt++;
+      if (attempt >= maxAttempts) {
+        console.error(`TMDB fetch failed after ${maxAttempts} attempts on ${endpoint}:`, error?.message || error);
+        return { results: [], success: false };
+      }
+      const delay = baseDelay * Math.pow(2, attempt);
+      await new Promise((resolve) => setTimeout(resolve, delay));
     }
-
-    return await res.json();
-  } catch (error: any) {
-    console.error(`TMDB fetch failed on ${endpoint}:`, error?.message || error);
-    return { results: [], success: false };
   }
 }
 

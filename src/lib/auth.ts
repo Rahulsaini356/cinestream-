@@ -2,8 +2,21 @@ import { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 import bcrypt from "bcryptjs";
+import { unstable_cache } from "next/cache";
 
 const getPrisma = async () => (await import("./prisma")).default;
+
+const getCachedUserByEmail = unstable_cache(
+  async (email: string) => {
+    const prisma = await getPrisma();
+    return prisma.user.findUnique({
+      where: { email },
+      select: { id: true, image: true },
+    });
+  },
+  ["jwt-user-image"],
+  { revalidate: 60, tags: ["user-image"] }
+);
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -120,13 +133,9 @@ export const authOptions: NextAuthOptions = {
           ? `/api/user/avatar?userId=${token.sub}`
           : session.image;
       }
-      // Sync DB user image to token
+      // Sync DB user image to token using cached query
       if (token.email) {
-        const prisma = await getPrisma();
-        const dbUser = await prisma.user.findUnique({
-          where: { email: token.email },
-          select: { id: true, image: true },
-        });
+        const dbUser = await getCachedUserByEmail(token.email);
         if (dbUser) {
           token.sub = dbUser.id;
           if (dbUser.image) {
