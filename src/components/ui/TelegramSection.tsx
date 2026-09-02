@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 
 export default function TelegramSection() {
-  const telegramUrl = process.env.NEXT_PUBLIC_TELEGRAM_URL || "https://t.me/cinestreamdigital";
+  const telegramUrl = process.env.NEXT_PUBLIC_TELEGRAM_URL || "https://t.me/telegram";
   const [subCount, setSubCount] = useState(15340);
 
   // Subtle count increment to simulate a live active channel

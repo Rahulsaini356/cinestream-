@@ -235,7 +235,7 @@ export default async function BlogPage() {
                 
                 {/* Join button */}
                 <a
-                  href={process.env.NEXT_PUBLIC_TELEGRAM_URL || "https://t.me/cinestreamdigital"}
+                  href={process.env.NEXT_PUBLIC_TELEGRAM_URL || "https://t.me/telegram"}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex-shrink-0 px-3.5 py-1.5 rounded-lg bg-gradient-to-r from-[#229ED9] to-[#0088cc] hover:from-[#2ba6e3] hover:to-[#0493dc] text-white text-[11px] font-bold shadow-md hover:shadow-blue-500/20 hover:scale-[1.03] active:scale-95 transition-all"

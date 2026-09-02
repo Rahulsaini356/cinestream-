@@ -27,7 +27,7 @@ export default function Footer() {
             Disclaimer
           </Link>
           <a
-            href={process.env.NEXT_PUBLIC_TELEGRAM_URL || "https://t.me/cinestreamdigital"}
+            href={process.env.NEXT_PUBLIC_TELEGRAM_URL || "https://t.me/telegram"}
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center gap-1.5 text-zinc-400 hover:text-[#229ED9] hover:scale-105 active:scale-95 transition-all font-semibold"

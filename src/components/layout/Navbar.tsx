@@ -161,7 +161,7 @@ export default function Navbar() {
 
             {/* Telegram Link (Desktop) */}
             <a
-              href={process.env.NEXT_PUBLIC_TELEGRAM_URL || "https://t.me/cinestreamdigital"}
+              href={process.env.NEXT_PUBLIC_TELEGRAM_URL || "https://t.me/telegram"}
               target="_blank"
               rel="noopener noreferrer"
               className="hidden sm:flex items-center justify-center w-10 h-10 rounded-xl bg-white/5 border border-white/8 text-zinc-400 hover:text-[#229ED9] hover:bg-blue-500/10 hover:border-blue-500/20 hover:scale-105 transition-all relative group"
@@ -327,7 +327,7 @@ export default function Navbar() {
                 className="mt-auto mb-6 animate-fade-up"
               >
                 <a
-                  href={process.env.NEXT_PUBLIC_TELEGRAM_URL || "https://t.me/cinestreamdigital"}
+                  href={process.env.NEXT_PUBLIC_TELEGRAM_URL || "https://t.me/telegram"}
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={() => setMobileMenuOpen(false)}
