@@ -77,7 +77,7 @@ export default async function MovieDetail({ params }: { params: Promise<{ id: st
   );
 
   // Get Providers
-  const providers = await getProviders("movie", id);
+  const providers = await getProviders("movie", id, movie);
 
   // Schema.org Structured Data
   const schemaData = {

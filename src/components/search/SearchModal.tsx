@@ -46,23 +46,38 @@ export default function SearchModal({ isOpen, onClose }: { isOpen: boolean; onCl
     }
   }, [isOpen]);
 
-  // Debounced search
+  // Debounced search with AbortController cancellation for stale requests
   useEffect(() => {
     if (query.trim().length < 2) {
       setResults([]);
       return;
     }
+    const controller = new AbortController();
     const timer = setTimeout(async () => {
       setIsLoading(true);
       try {
-        const res = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
+        const res = await fetch(`/api/search?q=${encodeURIComponent(query)}`, {
+          signal: controller.signal,
+        });
+        if (!res.ok) return;
         const data = await res.json();
         setResults(data.results?.slice(0, 10) || []);
         setActiveIndex(-1);
-      } catch {}
-      finally { setIsLoading(false); }
+      } catch (err: any) {
+        if (err.name !== "AbortError") {
+          console.error("Search fetch error:", err);
+        }
+      } finally {
+        if (!controller.signal.aborted) {
+          setIsLoading(false);
+        }
+      }
     }, 350);
-    return () => clearTimeout(timer);
+
+    return () => {
+      clearTimeout(timer);
+      controller.abort();
+    };
   }, [query]);
 
   const saveRecent = useCallback((q: string) => {

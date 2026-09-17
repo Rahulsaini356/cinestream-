@@ -77,7 +77,7 @@ export default async function TVDetail({ params }: { params: Promise<{ id: strin
   );
 
   // Get Providers
-  const providers = await getProviders("tv", id);
+  const providers = await getProviders("tv", id, tv);
 
   // Schema.org Structured Data
   const schemaData = {
