@@ -213,7 +213,7 @@ export default async function TVDetail({ params }: { params: Promise<{ id: strin
             <h2 className="text-2xl font-bold text-white">Top Cast</h2>
             <div className="flex overflow-x-auto gap-4 pb-4 scrollbar-hide">
               {tv.credits.cast.slice(0, 10).map((person: any) => (
-                <Link key={person.id} href={`/person/${person.id}`} className="min-w-[140px] w-[140px] group bg-zinc-900/50 rounded-xl overflow-hidden hover:bg-zinc-800 transition-colors border border-white/5">
+                <Link key={person.id} href={`/person/${person.id}`} prefetch={false} className="min-w-[140px] w-[140px] group bg-zinc-900/50 rounded-xl overflow-hidden hover:bg-zinc-800 transition-colors border border-white/5">
                   <div className="aspect-[2/3] w-full bg-zinc-800 relative overflow-hidden">
                     {person.profile_path ? (
                       <Image src={getImageUrl(person.profile_path, "w500")} alt={person.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" fill sizes="140px" />

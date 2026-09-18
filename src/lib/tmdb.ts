@@ -35,6 +35,7 @@ const staleCacheMap = new Map<string, { data: any; timestamp: number }>();
 function getEndpointTTL(endpoint: string): number {
   if (endpoint.includes("/search/")) return 3600; // 1 hour for search
   if (endpoint.includes("/genre/")) return 7 * 24 * 3600; // 7 days for genres
+  if (endpoint.startsWith("/person/")) return 7 * 24 * 3600; // 7 days for person details
   if (endpoint.startsWith("/movie/") || endpoint.startsWith("/tv/")) {
     if (endpoint.includes("/trending/") || endpoint.includes("/popular") || endpoint.includes("/top_rated") || endpoint.includes("/now_playing")) {
       return 2 * 3600; // 2 hours for popular/trending lists

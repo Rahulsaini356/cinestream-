@@ -1,7 +1,32 @@
 import Image from "next/image";
 import { fetchTMDB, getImageUrl } from "@/lib/tmdb";
 import Link from "next/link";
+import { notFound } from "next/navigation";
+import type { Metadata } from "next";
 
+export const revalidate = 604800; // Cache person pages for 7 days (ISR edge caching)
+
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
+  try {
+    const resolvedParams = await params;
+    const person = await fetchTMDB(`/person/${resolvedParams.id}`, {
+      append_to_response: "combined_credits",
+    });
+
+    if (!person || !person.name || person.success === false) {
+      return { title: "Person - CineStream" };
+    }
+
+    return {
+      title: `${person.name} - CineStream`,
+      description: person.biography
+        ? person.biography.slice(0, 160)
+        : `Explore movies, TV shows and biography of ${person.name} on CineStream.`,
+    };
+  } catch {
+    return { title: "Person - CineStream" };
+  }
+}
 
 export default async function PersonDetail({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = await params;
@@ -10,6 +35,10 @@ export default async function PersonDetail({ params }: { params: Promise<{ id: s
   const person = await fetchTMDB(`/person/${id}`, {
     append_to_response: "combined_credits",
   });
+
+  if (!person || !person.name || person.success === false) {
+    notFound();
+  }
 
   const knownFor = person.combined_credits?.cast
     ?.filter((item: any, index: number, self: any[]) => index === self.findIndex((t: any) => t.id === item.id))

@@ -12,6 +12,9 @@ export default function robots(): MetadataRoute.Robots {
       },
       {
         userAgent: [
+          'meta-externalagent',
+          'meta-externalagent/1.1',
+          'FacebookBot',
           'GPTBot',
           'ChatGPT-User',
           'Google-Extended',
@@ -20,7 +23,6 @@ export default function robots(): MetadataRoute.Robots {
           'Anthropic-AI',
           'cohere-ai',
           'Omgilibot',
-          'FacebookBot',
           'PerplexityBot',
         ],
         disallow: '/',
