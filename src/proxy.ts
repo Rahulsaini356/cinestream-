@@ -1,7 +1,8 @@
 import { withAuth } from "next-auth/middleware";
 import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 
-export default withAuth(
+const authMiddleware = withAuth(
   function middleware(request) {
     const allCookies = request.cookies.getAll();
     
@@ -44,6 +45,24 @@ export default withAuth(
     },
   }
 );
+
+export default function proxy(request: NextRequest, event: any) {
+  const userAgent = request.headers.get("user-agent")?.toLowerCase() || "";
+
+  // Targeted early interception for meta-externalagent (including meta-externalagent/1.1)
+  // Does NOT block facebookexternalhit, Googlebot, Bingbot, or normal users
+  if (userAgent.includes("meta-externalagent")) {
+    return new NextResponse("Access forbidden for this crawler.", {
+      status: 403,
+      headers: {
+        "Content-Type": "text/plain",
+        "Cache-Control": "no-store",
+      },
+    });
+  }
+
+  return (authMiddleware as any)(request, event);
+}
 
 export const config = {
   matcher: [
