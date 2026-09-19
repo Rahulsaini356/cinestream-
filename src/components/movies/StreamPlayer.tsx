@@ -35,25 +35,23 @@ export default function StreamPlayer({ id, imdbId, type, title, seasonsData }: S
 
   const servers = [
     { label: "Server 1 (VidLink - Fast & 4K Clean)", value: "vidlink" },
-    { label: "Server 2 (VidSrc.su - Multi-Audio & 4K)", value: "vidsrc.su" },
+    { label: "Server 2 (VidSrc.dev - Multi-Audio & 4K)", value: "vidsrc.dev" },
     { label: "Server 3 (AutoEmbed - Multi-Language & Multi-Server)", value: "autoembed" },
     { label: "Server 4 (VidSrc.to - High Bitrate Stream)", value: "vidsrc.to" },
-    { label: "Server 5 (VidSrc.me - Classic Stable Mirror)", value: "vidsrc.me" },
+    { label: "Server 5 (2Embed - Global Mirror HD)", value: "2embed" },
   ];
 
   const currentSeasonData = seasonsData?.find((s) => s.season_number === season);
   const maxEpisodes = currentSeasonData?.episode_count || 1;
 
   const getEmbedUrl = () => {
-    const movieIdentifier = imdbId || id;
-
     if (server === "vidlink") {
       if (type === "movie") return `https://vidlink.pro/movie/${id}`;
       return `https://vidlink.pro/tv/${id}/${season}/${episode}`;
     }
-    if (server === "vidsrc.su") {
-      if (type === "movie") return `https://vidsrc.su/embed/movie/${movieIdentifier}`;
-      return `https://vidsrc.su/embed/tv/${id}/${season}/${episode}`;
+    if (server === "vidsrc.dev") {
+      if (type === "movie") return `https://vidsrc.dev/embed/movie/${id}`;
+      return `https://vidsrc.dev/embed/tv/${id}/${season}/${episode}`;
     }
     if (server === "autoembed") {
       if (type === "movie") {
@@ -66,23 +64,17 @@ export default function StreamPlayer({ id, imdbId, type, title, seasonsData }: S
       if (type === "movie") return `https://vidsrc.to/embed/movie/${id}`;
       return `https://vidsrc.to/embed/tv/${id}/${season}/${episode}`;
     }
-    if (server === "vidsrc.me") {
-      if (type === "movie") {
-        if (imdbId) return `https://vidsrc.me/embed/movie?imdb=${imdbId}`;
-        return `https://vidsrc.me/embed/movie?tmdb=${id}`;
-      }
-      return `https://vidsrc.me/embed/tv?tmdb=${id}&season=${season}&episode=${episode}`;
+    if (server === "2embed") {
+      if (type === "movie") return `https://2embed.skin/embed/${id}`;
+      return `https://2embed.skin/embedtv/${id}&s=${season}&e=${episode}`;
     }
     return `https://vidlink.pro/movie/${id}`; // fallback
   };
 
   const handleDownload = () => {
-    const movieIdentifier = imdbId || id;
-
-    // We use vidsrc.su opened in a new tab because it is unblocked and has a native download button.
     const url = type === "movie" 
-      ? `https://vidsrc.su/embed/movie/${movieIdentifier}` 
-      : `https://vidsrc.su/embed/tv/${id}/${season}/${episode}`;
+      ? `https://vidsrc.to/embed/movie/${id}` 
+      : `https://vidsrc.to/embed/tv/${id}/${season}/${episode}`;
       
     window.open(url, "_blank");
   };
@@ -203,7 +195,8 @@ export default function StreamPlayer({ id, imdbId, type, title, seasonsData }: S
                 src={getEmbedUrl()}
                 className="w-full h-full"
                 allowFullScreen
-                allow="autoplay; encrypted-media"
+                allow="autoplay; encrypted-media; fullscreen; picture-in-picture"
+                referrerPolicy="origin"
                 title="Movie Player"
                 frameBorder="0"
               />
