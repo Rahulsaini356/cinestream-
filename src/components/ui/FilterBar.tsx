@@ -18,6 +18,7 @@ export default function FilterBar({
   const currentSearch = searchParams.get("q") || "";
   const currentGenre = searchParams.get("genre") || "";
   const currentYear = searchParams.get("year") || "";
+  const currentLang = searchParams.get("lang") || "";
   const currentSort = searchParams.get("sort") || (type === "watchlist" ? "desc" : "popularity.desc");
   const currentType = searchParams.get("type") || "";
 
@@ -111,6 +112,22 @@ export default function FilterBar({
           {years.map((y) => (
             <option key={y} value={y}>{y}</option>
           ))}
+        </select>
+      )}
+
+      {/* Language / Region Filter (Movies & TV) */}
+      {(type === "movies" || type === "tv") && (
+        <select
+          value={currentLang}
+          onChange={(e) => updateFilters("lang", e.target.value)}
+          className="bg-zinc-800/60 hover:bg-zinc-800 text-white text-sm font-semibold px-4 py-2.5 rounded-xl border border-white/10 focus:outline-none focus:ring-2 focus:ring-accent cursor-pointer backdrop-blur-md transition-all"
+        >
+          <option value="">All Languages</option>
+          <option value="hi">🇮🇳 Hindi / Indian</option>
+          <option value="en">🇺🇸 English</option>
+          <option value="ko">🇰🇷 Korean</option>
+          <option value="ja">🇯🇵 Japanese / Anime</option>
+          <option value="es">🇪🇸 Spanish</option>
         </select>
       )}
 

@@ -34,13 +34,10 @@ export default function StreamPlayer({ id, imdbId, type, title, seasonsData }: S
   }, [isOpen]);
 
   const servers = [
-    { label: "Server 1 (VidLink - Fast & 4K Clean)", value: "vidlink" },
-    { label: "Server 2 (VidSrc.dev - Multi-Audio & 4K)", value: "vidsrc.dev" },
-    { label: "Server 3 (AutoEmbed - Multi-Language & Multi-Server)", value: "autoembed" },
-    { label: "Server 4 (VidEasy - Multi-Audio & Subtitles)", value: "videasy" },
-    { label: "Server 5 (AnyEmbed - Fast Alternative Mirror)", value: "anyembed" },
-    { label: "Server 6 (VidSrc.to - High Bitrate Stream)", value: "vidsrc.to" },
-    { label: "Server 7 (2Embed - Global Mirror HD)", value: "2embed" },
+    { label: "Server 1 (VidLink - Ultra Fast & 4K Clean)", value: "vidlink" },
+    { label: "Server 2 (VidEasy - Multi-Audio & Hindi Tracks)", value: "videasy" },
+    { label: "Server 3 (AnyEmbed - Fast Multi-Source Mirror)", value: "anyembed" },
+    { label: "Server 4 (2Embed - Global Mirror Backup)", value: "2embed" },
   ];
 
   const currentSeasonData = seasonsData?.find((s) => s.season_number === season);
@@ -51,17 +48,6 @@ export default function StreamPlayer({ id, imdbId, type, title, seasonsData }: S
       if (type === "movie") return `https://vidlink.pro/movie/${id}`;
       return `https://vidlink.pro/tv/${id}/${season}/${episode}`;
     }
-    if (server === "vidsrc.dev") {
-      if (type === "movie") return `https://vidsrc.dev/embed/movie/${id}`;
-      return `https://vidsrc.dev/embed/tv/${id}/${season}/${episode}`;
-    }
-    if (server === "autoembed") {
-      if (type === "movie") {
-        if (imdbId) return `https://autoembed.co/movie/imdb/${imdbId}`;
-        return `https://autoembed.co/movie/tmdb/${id}`;
-      }
-      return `https://autoembed.co/tv/tmdb/${id}-${season}-${episode}`;
-    }
     if (server === "videasy") {
       if (type === "movie") return `https://player.videasy.to/movie/${id}`;
       return `https://player.videasy.to/tv/${id}/${season}/${episode}`;
@@ -69,10 +55,6 @@ export default function StreamPlayer({ id, imdbId, type, title, seasonsData }: S
     if (server === "anyembed") {
       if (type === "movie") return `https://anyembed.xyz/embed/tmdb-movie-${id}`;
       return `https://anyembed.xyz/embed/tmdb-tv-${id}/${season}/${episode}`;
-    }
-    if (server === "vidsrc.to") {
-      if (type === "movie") return `https://vidsrc.to/embed/movie/${id}`;
-      return `https://vidsrc.to/embed/tv/${id}/${season}/${episode}`;
     }
     if (server === "2embed") {
       if (type === "movie") return `https://2embed.skin/embed/${id}`;
@@ -83,8 +65,8 @@ export default function StreamPlayer({ id, imdbId, type, title, seasonsData }: S
 
   const handleDownload = () => {
     const url = type === "movie" 
-      ? `https://vidsrc.to/embed/movie/${id}` 
-      : `https://vidsrc.to/embed/tv/${id}/${season}/${episode}`;
+      ? `https://player.videasy.to/movie/${id}` 
+      : `https://player.videasy.to/tv/${id}/${season}/${episode}`;
       
     window.open(url, "_blank");
   };
@@ -215,7 +197,7 @@ export default function StreamPlayer({ id, imdbId, type, title, seasonsData }: S
             {/* Bottom Banner */}
             <div className="p-3 bg-zinc-900/50 border-t border-white/5 space-y-1.5 text-center">
               <p className="text-xs text-amber-300/90 font-medium">
-                💡 Language & Audio: For Indian & Bollywood titles, audio plays in Hindi automatically. For Hollywood titles with Dual-Audio, use <span className="font-bold text-white">Server 2 (VidSrc.dev)</span>, <span className="font-bold text-white">Server 3 (AutoEmbed)</span>, or <span className="font-bold text-white">Server 4 (VidEasy)</span> and click the Audio / Settings (🎧 / ⚙️) icon inside the player.
+                💡 Language & Audio: For Hindi audio or dual-audio tracks, select <span className="font-bold text-white">Server 2 (VidEasy)</span> or <span className="font-bold text-white">Server 3 (AnyEmbed)</span> and click the Audio / Settings (🎧 / ⚙️) icon inside the player. For fast 4K, use <span className="font-bold text-white">Server 1 (VidLink)</span>.
               </p>
               <p className="text-[10px] text-zinc-500">
                 Disclaimer: Video stream is provided by third-party servers. We do not host any content.{" "}

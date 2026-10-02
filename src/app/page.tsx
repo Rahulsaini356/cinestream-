@@ -2,7 +2,7 @@ import { fetchTMDB } from "@/lib/tmdb";
 import MovieCard from "@/components/ui/MovieCard";
 import HeroSlider from "@/components/ui/HeroSlider";
 import Link from "next/link";
-import { TrendingUp, Sparkles, Star, Tv, Zap, ArrowRight } from "lucide-react";
+import { TrendingUp, Sparkles, Star, Tv, Zap, ArrowRight, Flame } from "lucide-react";
 import TelegramSection from "@/components/ui/TelegramSection";
 
 export const revalidate = 3600; // Cache homepage for 1 hour
@@ -51,11 +51,15 @@ function MovieRow({ title, icon, movies, viewAllHref, accent = "default" }: RowP
 }
 
 export default async function Home() {
-  const [trendingData, newReleasesData, topRatedData, tvData, freeData] = await Promise.all([
+  const [trendingData, newReleasesData, topRatedData, tvData, indianTvData, freeData] = await Promise.all([
     fetchTMDB("/trending/all/week"),
     fetchTMDB("/movie/now_playing"),
     fetchTMDB("/movie/top_rated"),
     fetchTMDB("/tv/popular"),
+    fetchTMDB("/discover/tv", {
+      with_original_language: "hi",
+      sort_by: "popularity.desc",
+    }),
     fetchTMDB("/discover/movie", {
       with_watch_monetization_types: "free",
       watch_region: "US",
@@ -91,6 +95,7 @@ export default async function Home() {
   const newReleases = newReleasesData.results?.length ? newReleasesData.results.slice(0, 12) : fallbackMovies;
   const topRated = topRatedData.results?.length ? topRatedData.results.slice(0, 12) : fallbackMovies;
   const tvShows = tvData.results?.length ? tvData.results.slice(0, 12) : fallbackMovies;
+  const indianShows = indianTvData.results?.length ? indianTvData.results.slice(0, 12) : [];
   const freeMovies = freeData.results?.length ? freeData.results.slice(0, 12) : fallbackMovies;
 
   return (
@@ -106,6 +111,14 @@ export default async function Home() {
           movies={trending}
           viewAllHref="/movies"
         />
+        {indianShows.length > 0 && (
+          <MovieRow
+            title="Desi Hits & Indian Shows"
+            icon={<Flame className="w-5 h-5 text-orange-500" />}
+            movies={indianShows}
+            viewAllHref="/tv?lang=hi"
+          />
+        )}
         <MovieRow
           title="New Releases"
           icon={<Sparkles className="w-5 h-5" />}
@@ -113,16 +126,16 @@ export default async function Home() {
           viewAllHref="/movies"
         />
         <MovieRow
-          title="Top Rated"
-          icon={<Star className="w-5 h-5" />}
-          movies={topRated}
-          viewAllHref="/movies?sort=vote_average.desc"
-        />
-        <MovieRow
           title="Popular TV Shows"
           icon={<Tv className="w-5 h-5" />}
           movies={tvShows}
           viewAllHref="/tv"
+        />
+        <MovieRow
+          title="Top Rated"
+          icon={<Star className="w-5 h-5" />}
+          movies={topRated}
+          viewAllHref="/movies?sort=vote_average.desc"
         />
         {freeMovies.length > 0 && (
           <MovieRow

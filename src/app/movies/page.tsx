@@ -10,6 +10,7 @@ export default async function MoviesPage({ searchParams }: { searchParams: Searc
   const q = typeof sp.q === "string" ? sp.q.trim() : undefined;
   const genre = typeof sp.genre === "string" ? sp.genre : undefined;
   const year = typeof sp.year === "string" ? sp.year : undefined;
+  const lang = typeof sp.lang === "string" ? sp.lang : undefined;
   const sort = typeof sp.sort === "string" ? sp.sort : "popularity.desc";
   const free = sp.free === "true";
 
@@ -30,6 +31,7 @@ export default async function MoviesPage({ searchParams }: { searchParams: Searc
 
     if (genre) pageParams.with_genres = genre;
     if (year) pageParams.primary_release_year = year;
+    if (lang) pageParams.with_original_language = lang;
     if (free) {
       pageParams.with_watch_monetization_types = "free";
       pageParams.watch_region = "US";

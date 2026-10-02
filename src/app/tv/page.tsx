@@ -10,6 +10,7 @@ export default async function TVShowsPage({ searchParams }: { searchParams: Sear
   const q = typeof sp.q === "string" ? sp.q.trim() : undefined;
   const genre = typeof sp.genre === "string" ? sp.genre : undefined;
   const year = typeof sp.year === "string" ? sp.year : undefined;
+  const lang = typeof sp.lang === "string" ? sp.lang : undefined;
   const sort = typeof sp.sort === "string" ? sp.sort : "popularity.desc";
 
   let showsPromise;
@@ -29,6 +30,7 @@ export default async function TVShowsPage({ searchParams }: { searchParams: Sear
 
     if (genre) pageParams.with_genres = genre;
     if (year) pageParams.first_air_date_year = year;
+    if (lang) pageParams.with_original_language = lang;
 
     showsPromise = fetchTMDB("/discover/tv", pageParams);
   }

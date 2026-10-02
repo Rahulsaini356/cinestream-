@@ -48,9 +48,52 @@ export async function GET(req: Request) {
     });
 
     const rawResults = data?.results || [];
-    const results = rawResults.filter(
-      (item: any) => item.media_type === "movie" || item.media_type === "tv"
-    );
+    const results: any[] = [];
+    const seenIds = new Set<string>();
+
+    for (const item of rawResults) {
+      if (item.media_type === "movie" || item.media_type === "tv") {
+        const key = `${item.media_type}_${item.id}`;
+        if (!seenIds.has(key)) {
+          seenIds.add(key);
+          results.push(item);
+        }
+      } else if (item.media_type === "person" && Array.isArray(item.known_for)) {
+        // Surface shows/movies created by or starring the searched YouTuber/creator/actor
+        for (const known of item.known_for) {
+          if (known.media_type === "movie" || known.media_type === "tv") {
+            const key = `${known.media_type}_${known.id}`;
+            if (!seenIds.has(key)) {
+              seenIds.add(key);
+              results.push(known);
+            }
+          }
+        }
+      }
+    }
+
+    // If results are limited, supplement with targeted TV search for Indian web series/shows
+    if (results.length < 4) {
+      try {
+        const tvData = await fetchTMDB("/search/tv", {
+          query: normalizedQuery,
+          include_adult: "false",
+          language: "en-US",
+          page: "1",
+        });
+        if (tvData?.results) {
+          for (const item of tvData.results) {
+            const key = `tv_${item.id}`;
+            if (!seenIds.has(key)) {
+              seenIds.add(key);
+              results.push({ ...item, media_type: "tv" });
+            }
+          }
+        }
+      } catch (err) {
+        // Fallback silently if secondary TV search encounters error
+      }
+    }
 
     return NextResponse.json(
       { results },
