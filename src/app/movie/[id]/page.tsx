@@ -209,11 +209,11 @@ export default async function MovieDetail({ params }: { params: Promise<{ id: st
           <div className="space-y-6">
             <h2 className="text-2xl font-bold text-white">Top Cast</h2>
             <div className="flex overflow-x-auto gap-4 pb-4 scrollbar-hide">
-              {movie.credits.cast.slice(0, 10).map((person: any) => (
+              {movie.credits.cast.slice(0, 8).map((person: any) => (
                 <Link key={person.id} href={`/person/${person.id}`} prefetch={false} className="min-w-[140px] w-[140px] group bg-zinc-900/50 rounded-xl overflow-hidden hover:bg-zinc-800 transition-colors border border-white/5">
                   <div className="aspect-[2/3] w-full bg-zinc-800 relative overflow-hidden">
                     {person.profile_path ? (
-                      <Image src={getImageUrl(person.profile_path, "w500")} alt={person.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" fill sizes="140px" />
+                      <Image src={getImageUrl(person.profile_path, "w500")} alt={person.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" fill sizes="140px" loading="lazy" decoding="async" />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center text-zinc-600">No Image</div>
                     )}
@@ -233,7 +233,7 @@ export default async function MovieDetail({ params }: { params: Promise<{ id: st
           <div className="space-y-6">
             <h2 className="text-2xl font-bold text-white">Similar Movies</h2>
             <div className="flex gap-4 overflow-x-auto pb-6 scrollbar-hide snap-x snap-mandatory">
-              {movie.similar.results.map((item: any) => (
+              {movie.similar.results.slice(0, 10).map((item: any) => (
                 <Link
                   key={item.id}
                   href={`/movie/${item.id}`}
@@ -242,7 +242,7 @@ export default async function MovieDetail({ params }: { params: Promise<{ id: st
                 >
                   <div className="relative aspect-[2/3] w-full rounded-xl overflow-hidden bg-zinc-900 border border-white/5 shadow-xl transition-all duration-300 group-hover:scale-105 group-hover:shadow-[0_20px_40px_-15px_rgba(229,9,20,0.3)] ring-accent hover-glow">
                     {item.poster_path ? (
-                      <Image src={getImageUrl(item.poster_path, "w500")} alt={item.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" fill sizes="(max-width: 640px) 160px, 220px" />
+                      <Image src={getImageUrl(item.poster_path, "w500")} alt={item.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" fill sizes="(max-width: 640px) 160px, 220px" loading="lazy" decoding="async" />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center text-zinc-500 bg-zinc-800">No Image</div>
                     )}

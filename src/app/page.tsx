@@ -87,11 +87,11 @@ export default async function Home() {
     }
   ];
 
-  const trending = trendingData.results?.length ? trendingData.results.slice(0, 20) : fallbackMovies;
-  const newReleases = newReleasesData.results?.length ? newReleasesData.results.slice(0, 20) : fallbackMovies;
-  const topRated = topRatedData.results?.length ? topRatedData.results.slice(0, 20) : fallbackMovies;
-  const tvShows = tvData.results?.length ? tvData.results.slice(0, 20) : fallbackMovies;
-  const freeMovies = freeData.results?.length ? freeData.results.slice(0, 20) : fallbackMovies;
+  const trending = trendingData.results?.length ? trendingData.results.slice(0, 12) : fallbackMovies;
+  const newReleases = newReleasesData.results?.length ? newReleasesData.results.slice(0, 12) : fallbackMovies;
+  const topRated = topRatedData.results?.length ? topRatedData.results.slice(0, 12) : fallbackMovies;
+  const tvShows = tvData.results?.length ? tvData.results.slice(0, 12) : fallbackMovies;
+  const freeMovies = freeData.results?.length ? freeData.results.slice(0, 12) : fallbackMovies;
 
   return (
     <main className="min-h-screen bg-[#060608]">

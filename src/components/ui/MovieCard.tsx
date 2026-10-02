@@ -40,6 +40,8 @@ export default function MovieCard({ item, className = "" }: MovieCardProps) {
               fill
               sizes="(max-width: 180px) 100vw, 180px"
               priority={false}
+              loading="lazy"
+              decoding="async"
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center bg-[#0d0d14] text-zinc-600 text-xs text-center p-4">
