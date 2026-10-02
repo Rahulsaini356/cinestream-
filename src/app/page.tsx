@@ -33,6 +33,7 @@ function MovieRow({ title, icon, movies, viewAllHref, accent = "default" }: RowP
         {viewAllHref && (
           <Link
             href={viewAllHref}
+            prefetch={false}
             className="flex items-center gap-1.5 text-sm text-zinc-400 hover:text-white transition-colors font-medium group"
           >
             See all

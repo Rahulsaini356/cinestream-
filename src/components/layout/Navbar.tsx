@@ -127,6 +127,7 @@ export default function Navbar() {
                 <Link
                   key={link.name}
                   href={link.href}
+                  prefetch={false}
                   className={`px-3 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-1.5 ${
                     pathname === link.href
                       ? "text-white bg-white/10"
@@ -314,6 +315,7 @@ export default function Navbar() {
                   >
                     <Link
                       href={link.href}
+                      prefetch={false}
                       onClick={() => setMobileMenuOpen(false)}
                       className={`px-4 py-3.5 rounded-xl text-lg font-semibold transition-all flex items-center justify-between ${
                         pathname === link.href

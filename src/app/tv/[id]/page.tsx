@@ -152,7 +152,7 @@ export default async function TVDetail({ params }: { params: Promise<{ id: strin
 
               <div className="flex flex-wrap gap-2 mb-8">
                 {tv.genres?.map((g: any) => (
-                  <Link key={g.id} href={`/tv?genre=${g.id}`} className="px-3 py-1 bg-white/10 hover:bg-white/20 text-white rounded-full text-sm transition-colors backdrop-blur-md">
+                  <Link key={g.id} href={`/tv?genre=${g.id}`} prefetch={false} className="px-3 py-1 bg-white/10 hover:bg-white/20 text-white rounded-full text-sm transition-colors backdrop-blur-md">
                     {g.name}
                   </Link>
                 ))}
@@ -240,6 +240,7 @@ export default async function TVDetail({ params }: { params: Promise<{ id: strin
                 <Link 
                   key={item.id} 
                   href={`/tv/${item.id}`} 
+                  prefetch={false}
                   className="min-w-[160px] sm:min-w-[200px] md:min-w-[220px] snap-start group relative flex flex-col gap-2 "
                 >
                   <div className="relative aspect-[2/3] w-full rounded-xl overflow-hidden bg-zinc-900 border border-white/5 shadow-xl transition-all duration-300 group-hover:scale-105 group-hover:shadow-[0_20px_40px_-15px_rgba(229,9,20,0.3)] ring-accent hover-glow">
