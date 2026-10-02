@@ -17,13 +17,13 @@ export default function Footer() {
         </p>
 
         <div className="flex items-center gap-6 text-sm">
-          <Link href="/terms" className="hover:text-white transition-colors">
+          <Link href="/terms" prefetch={false} className="hover:text-white transition-colors">
             Terms & Conditions
           </Link>
-          <Link href="/privacy" className="hover:text-white transition-colors">
+          <Link href="/privacy" prefetch={false} className="hover:text-white transition-colors">
             Privacy Policy
           </Link>
-          <Link href="/disclaimer" className="hover:text-white transition-colors">
+          <Link href="/disclaimer" prefetch={false} className="hover:text-white transition-colors">
             Disclaimer
           </Link>
           <a
