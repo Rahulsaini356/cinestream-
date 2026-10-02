@@ -7,26 +7,38 @@ type SearchParams = Promise<{ [key: string]: string | string[] | undefined }>;
 
 export default async function MoviesPage({ searchParams }: { searchParams: SearchParams }) {
   const sp = await searchParams;
+  const q = typeof sp.q === "string" ? sp.q.trim() : undefined;
   const genre = typeof sp.genre === "string" ? sp.genre : undefined;
   const year = typeof sp.year === "string" ? sp.year : undefined;
   const sort = typeof sp.sort === "string" ? sp.sort : "popularity.desc";
   const free = sp.free === "true";
 
-  const pageParams: Record<string, string> = {
-    page: "1",
-    include_adult: "false",
-    sort_by: sort,
-  };
+  let moviesPromise;
+  if (q) {
+    moviesPromise = fetchTMDB("/search/movie", {
+      query: q,
+      include_adult: "false",
+      language: "en-US",
+      page: "1",
+    });
+  } else {
+    const pageParams: Record<string, string> = {
+      page: "1",
+      include_adult: "false",
+      sort_by: sort,
+    };
 
-  if (genre) pageParams.with_genres = genre;
-  if (year) pageParams.primary_release_year = year;
-  if (free) {
-    pageParams.with_watch_monetization_types = "free";
-    pageParams.watch_region = "US";
+    if (genre) pageParams.with_genres = genre;
+    if (year) pageParams.primary_release_year = year;
+    if (free) {
+      pageParams.with_watch_monetization_types = "free";
+      pageParams.watch_region = "US";
+    }
+    moviesPromise = fetchTMDB("/discover/movie", pageParams);
   }
 
   const [data, genreData] = await Promise.all([
-    fetchTMDB("/discover/movie", pageParams),
+    moviesPromise,
     fetchTMDB("/genre/movie/list"),
   ]);
 
@@ -43,7 +55,9 @@ export default async function MoviesPage({ searchParams }: { searchParams: Searc
           </div>
           <div>
             <h1 className="text-3xl font-black text-white tracking-tight">Movies</h1>
-            <p className="text-sm text-zinc-500 mt-0.5">{movies.length} titles{free ? " · Free to Watch" : ""}</p>
+            <p className="text-sm text-zinc-500 mt-0.5">
+              {q ? `Search results for "${q}" · ${movies.length} titles` : `${movies.length} titles${free ? " · Free to Watch" : ""}`}
+            </p>
           </div>
         </div>
 
@@ -65,7 +79,7 @@ export default async function MoviesPage({ searchParams }: { searchParams: Searc
           <div className="text-center py-32 text-zinc-500">
             <Film className="w-12 h-12 mx-auto mb-4 opacity-20" />
             <p className="text-xl font-semibold">No movies found</p>
-            <p className="text-sm mt-1">Try adjusting your filters</p>
+            <p className="text-sm mt-1">{q ? `No movies matched "${q}"` : "Try adjusting your filters"}</p>
           </div>
         )}
       </div>

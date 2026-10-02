@@ -59,7 +59,10 @@ export default function SearchModal({ isOpen, onClose }: { isOpen: boolean; onCl
         const res = await fetch(`/api/search?q=${encodeURIComponent(query)}`, {
           signal: controller.signal,
         });
-        if (!res.ok) return;
+        if (!res.ok) {
+          setResults([]);
+          return;
+        }
         const data = await res.json();
         setResults(data.results?.slice(0, 10) || []);
         setActiveIndex(-1);
@@ -72,7 +75,7 @@ export default function SearchModal({ isOpen, onClose }: { isOpen: boolean; onCl
           setIsLoading(false);
         }
       }
-    }, 350);
+    }, 300);
 
     return () => {
       clearTimeout(timer);
@@ -111,8 +114,13 @@ export default function SearchModal({ isOpen, onClose }: { isOpen: boolean; onCl
         e.preventDefault();
         setActiveIndex(i => Math.max(i - 1, -1));
       }
-      if (e.key === "Enter" && activeIndex >= 0 && results[activeIndex]) {
-        navigate(results[activeIndex]);
+      if (e.key === "Enter") {
+        e.preventDefault();
+        if (activeIndex >= 0 && results[activeIndex]) {
+          navigate(results[activeIndex]);
+        } else if (results.length > 0) {
+          navigate(results[0]);
+        }
       }
     };
     window.addEventListener("keydown", handler);
@@ -151,6 +159,10 @@ export default function SearchModal({ isOpen, onClose }: { isOpen: boolean; onCl
             <Search className="w-5 h-5 text-zinc-400 flex-shrink-0" />
             <input
               ref={inputRef}
+              type="search"
+              autoComplete="off"
+              autoCorrect="off"
+              spellCheck={false}
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search movies, TV shows, people..."

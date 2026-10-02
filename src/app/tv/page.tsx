@@ -7,21 +7,34 @@ type SearchParams = Promise<{ [key: string]: string | string[] | undefined }>;
 
 export default async function TVShowsPage({ searchParams }: { searchParams: SearchParams }) {
   const sp = await searchParams;
+  const q = typeof sp.q === "string" ? sp.q.trim() : undefined;
   const genre = typeof sp.genre === "string" ? sp.genre : undefined;
   const year = typeof sp.year === "string" ? sp.year : undefined;
   const sort = typeof sp.sort === "string" ? sp.sort : "popularity.desc";
 
-  const pageParams: Record<string, string> = {
-    page: "1",
-    include_adult: "false",
-    sort_by: sort,
-  };
+  let showsPromise;
+  if (q) {
+    showsPromise = fetchTMDB("/search/tv", {
+      query: q,
+      include_adult: "false",
+      language: "en-US",
+      page: "1",
+    });
+  } else {
+    const pageParams: Record<string, string> = {
+      page: "1",
+      include_adult: "false",
+      sort_by: sort,
+    };
 
-  if (genre) pageParams.with_genres = genre;
-  if (year) pageParams.first_air_date_year = year;
+    if (genre) pageParams.with_genres = genre;
+    if (year) pageParams.first_air_date_year = year;
+
+    showsPromise = fetchTMDB("/discover/tv", pageParams);
+  }
 
   const [data, genreData] = await Promise.all([
-    fetchTMDB("/discover/tv", pageParams),
+    showsPromise,
     fetchTMDB("/genre/tv/list"),
   ]);
 
@@ -38,7 +51,9 @@ export default async function TVShowsPage({ searchParams }: { searchParams: Sear
           </div>
           <div>
             <h1 className="text-3xl font-black text-white tracking-tight">TV Shows</h1>
-            <p className="text-sm text-zinc-500 mt-0.5">{shows.length} series</p>
+            <p className="text-sm text-zinc-500 mt-0.5">
+              {q ? `Search results for "${q}" · ${shows.length} series` : `${shows.length} series`}
+            </p>
           </div>
         </div>
 
@@ -60,7 +75,7 @@ export default async function TVShowsPage({ searchParams }: { searchParams: Sear
           <div className="text-center py-32 text-zinc-500">
             <Tv className="w-12 h-12 mx-auto mb-4 opacity-20" />
             <p className="text-xl font-semibold">No shows found</p>
-            <p className="text-sm mt-1">Try adjusting your filters</p>
+            <p className="text-sm mt-1">{q ? `No TV shows matched "${q}"` : "Try adjusting your filters"}</p>
           </div>
         )}
       </div>
