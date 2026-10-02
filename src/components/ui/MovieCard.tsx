@@ -28,7 +28,7 @@ export default function MovieCard({ item, className = "" }: MovieCardProps) {
       whileHover={{ y: -6 }}
       transition={{ duration: 0.25, ease: "easeOut" }}
     >
-      <Link href={href} className="block">
+      <Link href={href} prefetch={false} className="block">
         {/* Poster */}
         <div className="relative rounded-xl overflow-hidden bg-[#0d0d14] aspect-[2/3] shadow-xl">
           {item.poster_path && !imgError ? (

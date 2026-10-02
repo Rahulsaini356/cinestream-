@@ -240,6 +240,7 @@ export default function Navbar() {
             ) : (
               <Link
                 href="/login"
+                prefetch={false}
                 className="px-4 py-2 rounded-xl gradient-accent text-white text-sm font-bold hover:opacity-90 hover:scale-105 active:scale-95 transition-all shadow-lg"
               >
                 Sign In
@@ -362,6 +363,7 @@ export default function Navbar() {
                 ) : (
                   <Link
                     href="/login"
+                    prefetch={false}
                     onClick={() => setMobileMenuOpen(false)}
                     className="block w-full text-center px-4 py-3.5 rounded-xl gradient-accent text-white font-bold text-lg"
                   >
