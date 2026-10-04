@@ -10,6 +10,8 @@ import WatchProviders from "@/components/movies/WatchProviders";
 import ReviewSection from "@/components/reviews/ReviewSection";
 import StreamPlayer from "@/components/movies/StreamPlayer";
 import { Metadata } from "next";
+import { notFound } from "next/navigation";
+import { isVulgarOrAdult, filterCleanContent } from "@/lib/contentFilter";
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
   try {
@@ -18,8 +20,8 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
       append_to_response: "videos,credits,similar,watch/providers,external_ids",
     });
     
-    if (!tv || tv.success === false || !tv.name) {
-      return { title: 'TV Show - CineStream' };
+    if (!tv || tv.success === false || !tv.name || isVulgarOrAdult(tv)) {
+      return { title: 'TV Show Not Found - CineStream' };
     }
 
     const title = `${tv.name} - Watch TV Show Online | CineStream`;
@@ -54,6 +56,10 @@ export default async function TVDetail({ params }: { params: Promise<{ id: strin
   const tv = await fetchTMDB(`/tv/${id}`, {
     append_to_response: "videos,credits,similar,watch/providers,external_ids",
   });
+
+  if (!tv || tv.success === false || !tv.name || isVulgarOrAdult(tv)) {
+    notFound();
+  }
 
   const session = await getServerSession(authOptions);
   let inWatchlist = false;
@@ -232,11 +238,11 @@ export default async function TVDetail({ params }: { params: Promise<{ id: strin
         )}
 
         {/* Similar */}
-        {tv.similar?.results?.length > 0 && (
+        {filterCleanContent(tv.similar?.results || []).length > 0 && (
           <div className="space-y-6">
             <h2 className="text-2xl font-bold text-white">Similar Shows</h2>
             <div className="flex gap-4 overflow-x-auto pb-6 scrollbar-hide snap-x snap-mandatory">
-              {tv.similar.results.slice(0, 10).map((item: any) => (
+              {filterCleanContent(tv.similar.results).slice(0, 10).map((item: any) => (
                 <Link 
                   key={item.id} 
                   href={`/tv/${item.id}`} 

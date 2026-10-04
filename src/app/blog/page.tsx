@@ -65,7 +65,7 @@ export default async function BlogPage() {
           <div className="lg:col-span-8 space-y-10">
             
             {/* Featured Post Card */}
-            <Link href={`/blog/${featured.slug}`} className="block group">
+            <Link href={`/blog/${featured.slug}`} prefetch={false} className="block group">
               <div className="relative rounded-2xl overflow-hidden aspect-[21/9] sm:aspect-[21/8] border border-white/5 group-hover:border-white/10 transition-colors">
                 <Image
                   src={featured.coverImage}
@@ -103,6 +103,7 @@ export default async function BlogPage() {
                 <Link 
                   href={`/blog/${post.slug}`} 
                   key={post.slug} 
+                  prefetch={false}
                   className="group glass rounded-2xl overflow-hidden hover:border-white/12 transition-all flex flex-col h-full"
                 >
                   <div className="aspect-video overflow-hidden border-b border-white/5 relative">

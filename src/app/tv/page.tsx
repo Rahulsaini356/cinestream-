@@ -2,6 +2,7 @@ import { fetchTMDB } from "@/lib/tmdb";
 import MovieCard from "@/components/ui/MovieCard";
 import FilterBar from "@/components/ui/FilterBar";
 import { Tv } from "lucide-react";
+import { filterCleanContent, VULGAR_EXCLUDED_NETWORKS, VULGAR_EXCLUDED_COMPANIES } from "@/lib/contentFilter";
 
 type SearchParams = Promise<{ [key: string]: string | string[] | undefined }>;
 
@@ -26,6 +27,8 @@ export default async function TVShowsPage({ searchParams }: { searchParams: Sear
       page: "1",
       include_adult: "false",
       sort_by: sort,
+      without_networks: VULGAR_EXCLUDED_NETWORKS,
+      without_companies: VULGAR_EXCLUDED_COMPANIES,
     };
 
     if (genre) pageParams.with_genres = genre;
@@ -40,7 +43,7 @@ export default async function TVShowsPage({ searchParams }: { searchParams: Sear
     fetchTMDB("/genre/tv/list"),
   ]);
 
-  const shows = data.results || [];
+  const shows = filterCleanContent(data.results || []);
   const genres = genreData.genres || [];
 
   return (

@@ -1,13 +1,12 @@
 import { cache } from "react";
-import { unstable_cache } from "next/cache";
+import { filterCleanContent, isVulgarOrAdult } from "./contentFilter";
 
 const TMDB_API_KEY = process.env.TMDB_API_KEY;
 const BASE_URL = process.env["TMDB_API_BASE_URL"] || "https://api.themoviedb.org/3";
 
 /**
  * PRODUCTION-GRADE TMDB CIRCUIT BREAKER & PROTECTION STATE
- * Note: Process-local state. Functions across serverless / multi-instance workers
- * complemented by Next.js persistent unstable_cache.
+ * Process-local state complemented by Next.js persistent Data Cache.
  */
 interface CircuitBreaker {
   isOpen: boolean;
@@ -26,7 +25,14 @@ const CIRCUIT_OPEN_DURATION_MS = 5 * 60 * 1000; // 5 minutes
 // In-Memory Request Coalescing (Single-Flight pattern) to prevent cache stampedes
 const inFlightMap = new Map<string, Promise<any>>();
 
-// Secondary Stale Cache Store for graceful degradation during TMDB outages / 429s
+// L1 In-Memory Cache Store (Process-level across requests during lambda warmup)
+interface CacheEntry {
+  data: any;
+  expiresAt: number;
+}
+const l1MemoryCache = new Map<string, CacheEntry>();
+
+// Emergency Stale Cache Store for graceful degradation during TMDB outages / 429s
 const staleCacheMap = new Map<string, { data: any; timestamp: number }>();
 
 /**
@@ -37,7 +43,12 @@ function getEndpointTTL(endpoint: string): number {
   if (endpoint.includes("/genre/")) return 7 * 24 * 3600; // 7 days for genres
   if (endpoint.startsWith("/person/")) return 7 * 24 * 3600; // 7 days for person details
   if (endpoint.startsWith("/movie/") || endpoint.startsWith("/tv/")) {
-    if (endpoint.includes("/trending/") || endpoint.includes("/popular") || endpoint.includes("/top_rated") || endpoint.includes("/now_playing")) {
+    if (
+      endpoint.includes("/trending/") ||
+      endpoint.includes("/popular") ||
+      endpoint.includes("/top_rated") ||
+      endpoint.includes("/now_playing")
+    ) {
       return 2 * 3600; // 2 hours for popular/trending lists
     }
     if (endpoint.includes("/upcoming")) return 6 * 3600; // 6 hours for upcoming
@@ -47,10 +58,48 @@ function getEndpointTTL(endpoint: string): number {
 }
 
 /**
- * Low-level HTTP fetcher for TMDB with circuit breaker, single retry for 5xx, and stale fallbacks
+ * Normalizes query parameters into a canonical sorted key
  */
-async function rawFetchTMDB(endpoint: string, params: Record<string, string> = {}) {
-  const cacheKey = `${endpoint}?${new URLSearchParams(params).toString()}`;
+function canonicalizeKey(endpoint: string, params: Record<string, string> = {}): {
+  cacheKey: string;
+  url: string;
+  ttl: number;
+  cacheTags: string[];
+} {
+  const sortedKeys = Object.keys(params).sort();
+  const searchParams = new URLSearchParams();
+  searchParams.append("api_key", TMDB_API_KEY || "");
+
+  const keyParams = new URLSearchParams();
+  for (const k of sortedKeys) {
+    const val = params[k];
+    if (val !== undefined && val !== null && val !== "") {
+      searchParams.append(k, String(val));
+      keyParams.append(k, String(val));
+    }
+  }
+
+  const queryStr = keyParams.toString();
+  const cacheKey = queryStr ? `${endpoint}?${queryStr}` : endpoint;
+  const url = `${BASE_URL}${endpoint}?${searchParams.toString()}`;
+  const ttl = getEndpointTTL(endpoint);
+  const tagSegment = endpoint.split("/")[1] || "general";
+  const cacheTags = [`tmdb-${tagSegment}`];
+
+  return { cacheKey, url, ttl, cacheTags };
+}
+
+/**
+ * Low-level HTTP fetcher for TMDB with Next.js Data Cache, circuit breaker,
+ * single retry for 5xx/network errors, and stale fallbacks.
+ */
+async function rawFetchTMDB(
+  url: string,
+  cacheKey: string,
+  endpoint: string,
+  ttl: number,
+  cacheTags: string[]
+) {
   const now = Date.now();
 
   // 1. Check Circuit Breaker
@@ -64,19 +113,11 @@ async function rawFetchTMDB(endpoint: string, params: Record<string, string> = {
       }
       return { results: [], success: false, circuitOpen: true };
     } else {
-      // Cooldown expired, move to half-open
       circuit.isOpen = false;
       circuit.consecutive5xx = 0;
       console.log(`[TMDB CIRCUIT HALF-OPEN] Cooldown expired. Testing endpoint ${endpoint}`);
     }
   }
-
-  // 2. Prepare URL & Headers (Security: Key remains strictly server-side)
-  const searchParams = new URLSearchParams();
-  searchParams.append("api_key", TMDB_API_KEY || "");
-  Object.entries(params).forEach(([key, value]) => searchParams.append(key, String(value)));
-
-  const url = `${BASE_URL}${endpoint}?${searchParams.toString()}`;
 
   let attempt = 0;
   const maxAttempts = 2; // Strict MAX 1 RETRY for 5xx/network errors
@@ -86,10 +127,15 @@ async function rawFetchTMDB(endpoint: string, params: Record<string, string> = {
     console.log(`[TMDB FETCH] endpoint=${endpoint} attempt=${attempt}/${maxAttempts}`);
 
     try {
+      // Use Next.js native Data Cache options so responses are cached by Next.js & Netlify Blobs!
       const res = await fetch(url, {
         headers: {
           "User-Agent": "CineStream/2.0 (Server-Side; Security-Protected)",
           "Accept": "application/json",
+        },
+        next: {
+          revalidate: ttl,
+          tags: cacheTags,
         },
         signal: AbortSignal.timeout(6000), // 6s timeout
       });
@@ -98,10 +144,10 @@ async function rawFetchTMDB(endpoint: string, params: Record<string, string> = {
       if (res.status === 429) {
         const retryAfterHeader = res.headers.get("Retry-After");
         const retryAfterMs = retryAfterHeader ? parseInt(retryAfterHeader, 10) * 1000 : CIRCUIT_OPEN_DURATION_MS;
-        
+
         circuit.isOpen = true;
         circuit.openUntil = Date.now() + Math.max(retryAfterMs, CIRCUIT_OPEN_DURATION_MS);
-        
+
         console.error(`[TMDB 429 RATE LIMIT] Quota exceeded on ${endpoint}. Circuit breaker tripped until ${new Date(circuit.openUntil).toISOString()}`);
 
         const stale = staleCacheMap.get(cacheKey);
@@ -139,12 +185,30 @@ async function rawFetchTMDB(endpoint: string, params: Record<string, string> = {
 
       // Successful Response
       const data = await res.json();
-      
+
       // Reset 5xx counter on success
       circuit.consecutive5xx = 0;
 
+      // Filter adult/vulgar shows from any list
+      if (data && Array.isArray(data.results)) {
+        data.results = filterCleanContent(data.results);
+      } else if (data && isVulgarOrAdult(data)) {
+        return { results: [], success: false, not_found: true };
+      }
+
+      // Store in L1 Memory Cache
+      l1MemoryCache.set(cacheKey, { data, expiresAt: Date.now() + (ttl * 1000) });
+
       // Store in stale cache for emergency fallback
       staleCacheMap.set(cacheKey, { data, timestamp: Date.now() });
+
+      // Bound memory cache size
+      if (l1MemoryCache.size > 500) {
+        const pruneNow = Date.now();
+        for (const [k, v] of l1MemoryCache.entries()) {
+          if (v.expiresAt < pruneNow) l1MemoryCache.delete(k);
+        }
+      }
 
       return data;
     } catch (error: any) {
@@ -165,53 +229,52 @@ async function rawFetchTMDB(endpoint: string, params: Record<string, string> = {
 }
 
 /**
- * Next.js Server-Level Cached Fetcher
+ * React Server Component per-request memoization keyed on string primitive.
+ * Guarantees generateMetadata() and Page components on the same request share 1 promise.
  */
-function createCachedTMDBFetcher(endpoint: string, params: Record<string, string>) {
-  const ttl = getEndpointTTL(endpoint);
-  const cacheTags = [`tmdb-${endpoint.split("/")[1] || "general"}`];
-
-  return unstable_cache(
-    async () => {
-      console.log(`[TMDB CACHE MISS] Fetching fresh data for endpoint=${endpoint}`);
-      return await rawFetchTMDB(endpoint, params);
-    },
-    [endpoint, JSON.stringify(params)],
-    {
-      revalidate: ttl,
-      tags: cacheTags,
-    }
-  );
-}
-
-/**
- * REQUEST COALESCING (Single-Flight) + REACT CACHE (Per-Request Deduplication)
- * Main entry point for all TMDB queries across CineStream.
- */
-export const fetchTMDB = cache(async (endpoint: string, params: Record<string, string> = {}) => {
-  const cacheKey = `${endpoint}?${new URLSearchParams(params).toString()}`;
-
-  // 1. Check if an identical request is already in-flight (Single-Flight Coalescing)
-  if (inFlightMap.has(cacheKey)) {
-    console.log(`[TMDB SINGLE-FLIGHT COALESCED] Sharing active in-flight fetch for ${endpoint}`);
-    return await inFlightMap.get(cacheKey);
+const rscMemoizedFetch = cache(async (canonicalKey: string): Promise<any> => {
+  // 1. Check L1 In-Memory Cache first (0ms instantaneous return)
+  const l1Entry = l1MemoryCache.get(canonicalKey);
+  if (l1Entry && Date.now() < l1Entry.expiresAt) {
+    return l1Entry.data;
   }
 
-  // 2. Create the cached execution promise
-  const cachedFetcher = createCachedTMDBFetcher(endpoint, params);
-  const promise = cachedFetcher();
+  // 2. Single-flight request coalescing for concurrent in-flight fetches
+  if (inFlightMap.has(canonicalKey)) {
+    console.log(`[TMDB SINGLE-FLIGHT COALESCED] Sharing active in-flight fetch for ${canonicalKey}`);
+    return await inFlightMap.get(canonicalKey);
+  }
 
-  // Store in in-flight map
-  inFlightMap.set(cacheKey, promise);
+  const [endpoint, queryString] = canonicalKey.split("?");
+  const params: Record<string, string> = {};
+  if (queryString) {
+    const sp = new URLSearchParams(queryString);
+    sp.forEach((v, k) => {
+      params[k] = v;
+    });
+  }
+
+  const { url, ttl, cacheTags } = canonicalizeKey(endpoint, params);
+
+  const fetchPromise = rawFetchTMDB(url, canonicalKey, endpoint, ttl, cacheTags);
+  inFlightMap.set(canonicalKey, fetchPromise);
 
   try {
-    const result = await promise;
+    const result = await fetchPromise;
     return result;
   } finally {
-    // Clean up in-flight map once resolved/rejected
-    inFlightMap.delete(cacheKey);
+    inFlightMap.delete(canonicalKey);
   }
 });
+
+/**
+ * Public TMDB API fetcher used across CineStream.
+ * Handles canonical key generation, React RSC deduplication, and Next.js Data Cache.
+ */
+export async function fetchTMDB(endpoint: string, params: Record<string, string> = {}) {
+  const { cacheKey } = canonicalizeKey(endpoint, params);
+  return await rscMemoizedFetch(cacheKey);
+}
 
 export { getImageUrl } from "./tmdb-client";
 

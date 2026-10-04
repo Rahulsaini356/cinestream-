@@ -3,6 +3,7 @@ import { fetchTMDB, getImageUrl } from "@/lib/tmdb";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
+import { filterCleanContent } from "@/lib/contentFilter";
 
 export const revalidate = 604800; // Cache person pages for 7 days (ISR edge caching)
 
@@ -40,10 +41,11 @@ export default async function PersonDetail({ params }: { params: Promise<{ id: s
     notFound();
   }
 
-  const knownFor = person.combined_credits?.cast
-    ?.filter((item: any, index: number, self: any[]) => index === self.findIndex((t: any) => t.id === item.id))
-    ?.sort((a: any, b: any) => b.popularity - a.popularity)
-    .slice(0, 10) || [];
+  const cleanCredits = filterCleanContent(person.combined_credits?.cast || []);
+  const knownFor = cleanCredits
+    .filter((item: any, index: number, self: any[]) => index === self.findIndex((t: any) => t.id === item.id))
+    .sort((a: any, b: any) => b.popularity - a.popularity)
+    .slice(0, 10);
 
   return (
     <main className="min-h-screen bg-black pt-24 pb-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -75,7 +77,7 @@ export default async function PersonDetail({ params }: { params: Promise<{ id: s
           <h2 className="text-2xl font-bold text-white mb-6">Known For</h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
             {knownFor.map((item: any) => (
-              <Link key={item.id} href={`/${item.media_type === "tv" ? "tv" : "movie"}/${item.id}`} className="group relative flex flex-col gap-2 border border-white/5 bg-zinc-900/50 p-2 rounded-xl hover:bg-zinc-800 transition-colors">
+              <Link key={item.id} href={`/${item.media_type === "tv" ? "tv" : "movie"}/${item.id}`} prefetch={false} className="group relative flex flex-col gap-2 border border-white/5 bg-zinc-900/50 p-2 rounded-xl hover:bg-zinc-800 transition-colors">
                 <div className="relative aspect-[2/3] w-full rounded-lg overflow-hidden bg-zinc-800 shadow-md">
                   {item.poster_path ? (
                     <Image src={getImageUrl(item.poster_path, "w500")} alt={item.title || item.name} className="w-full h-full object-cover" fill sizes="(max-width: 640px) 150px, 200px" />

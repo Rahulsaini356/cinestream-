@@ -149,6 +149,7 @@ export default function HeroSlider({ movies }: { movies: any[] }) {
               >
                 <Link
                   href={href}
+                  prefetch={false}
                   className="flex items-center gap-2.5 px-7 py-3.5 rounded-xl bg-white text-black font-bold text-sm hover:bg-zinc-100 hover:scale-105 active:scale-95 transition-all shadow-2xl shadow-white/10"
                 >
                   <div className="w-7 h-7 rounded-full bg-black flex items-center justify-center">
@@ -158,6 +159,7 @@ export default function HeroSlider({ movies }: { movies: any[] }) {
                 </Link>
                 <Link
                   href={href}
+                  prefetch={false}
                   className="flex items-center gap-2.5 px-7 py-3.5 rounded-xl glass text-white font-bold text-sm hover:bg-white/10 hover:scale-105 active:scale-95 transition-all"
                 >
                   <Info className="w-4 h-4 opacity-80" />

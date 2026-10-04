@@ -2,6 +2,7 @@ import { MetadataRoute } from "next";
 import { blogPosts } from "@/lib/blog";
 import { fetchTMDB } from "@/lib/tmdb";
 import { unstable_cache } from "next/cache";
+import { filterCleanContent } from "@/lib/contentFilter";
 
 const getCachedSitemapMedia = unstable_cache(
   async () => {
@@ -48,6 +49,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   try {
     const mediaItems = await getCachedSitemapMedia();
+    const cleanMediaItems = filterCleanContent(mediaItems);
 
     const safeDate = (dateStr: string | undefined) => {
       if (!dateStr) return new Date();
@@ -55,7 +57,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       return isNaN(parsed.getTime()) ? new Date() : parsed;
     };
 
-    mediaItems.forEach((item: any) => {
+    cleanMediaItems.forEach((item: any) => {
       if (item.title || item.media_type === "movie") {
         movieUrls.push({
           url: `${baseUrl}/movie/${item.id}`,

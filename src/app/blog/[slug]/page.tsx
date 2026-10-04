@@ -130,7 +130,7 @@ export default async function BlogPostPage({ params }: { params: Params }) {
           <h2 className="text-2xl font-black text-white mb-6">More From the Blog</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {related.map((r) => (
-              <Link href={`/blog/${r.slug}`} key={r.slug} className="group glass rounded-2xl overflow-hidden hover:border-white/15 transition-all">
+              <Link href={`/blog/${r.slug}`} key={r.slug} prefetch={false} className="group glass rounded-2xl overflow-hidden hover:border-white/15 transition-all">
                 <div className="aspect-video overflow-hidden relative">
                   <Image src={r.coverImage} alt={r.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" fill sizes="(max-width: 768px) 100vw, 33vw" />
                 </div>

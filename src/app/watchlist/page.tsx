@@ -54,6 +54,7 @@ export default async function WatchlistPage({ searchParams }: { searchParams: Se
             <Link
               key={item.id}
               href={`/${item.type}/${item.movieId}`}
+              prefetch={false}
               className="group relative flex flex-col gap-3"
             >
               <div className="relative aspect-[2/3] w-full rounded-2xl overflow-hidden bg-zinc-900 shadow-xl transition-all duration-300 group-hover:scale-105 group-hover:shadow-[0_20px_40px_-15px_rgba(229,9,20,0.3)] group-hover:ring-2 ring-accent">

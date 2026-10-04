@@ -10,6 +10,8 @@ import WatchProviders from "@/components/movies/WatchProviders";
 import ReviewSection from "@/components/reviews/ReviewSection";
 import StreamPlayer from "@/components/movies/StreamPlayer";
 import { Metadata } from "next";
+import { notFound } from "next/navigation";
+import { isVulgarOrAdult, filterCleanContent } from "@/lib/contentFilter";
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
   try {
@@ -18,8 +20,8 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
       append_to_response: "videos,credits,similar,watch/providers",
     });
     
-    if (!movie || movie.success === false || !movie.title) {
-      return { title: 'Movie - CineStream' };
+    if (!movie || movie.success === false || !movie.title || isVulgarOrAdult(movie)) {
+      return { title: 'Movie Not Found - CineStream' };
     }
 
     const title = `${movie.title} - Watch Full Movie Online | CineStream`;
@@ -54,6 +56,10 @@ export default async function MovieDetail({ params }: { params: Promise<{ id: st
   const movie = await fetchTMDB(`/movie/${id}`, {
     append_to_response: "videos,credits,similar,watch/providers",
   });
+
+  if (!movie || movie.success === false || !movie.title || isVulgarOrAdult(movie)) {
+    notFound();
+  }
 
   const session = await getServerSession(authOptions);
   let inWatchlist = false;
@@ -229,11 +235,11 @@ export default async function MovieDetail({ params }: { params: Promise<{ id: st
         )}
 
         {/* Similar */}
-        {movie.similar?.results?.length > 0 && (
+        {filterCleanContent(movie.similar?.results || []).length > 0 && (
           <div className="space-y-6">
             <h2 className="text-2xl font-bold text-white">Similar Movies</h2>
             <div className="flex gap-4 overflow-x-auto pb-6 scrollbar-hide snap-x snap-mandatory">
-              {movie.similar.results.slice(0, 10).map((item: any) => (
+              {filterCleanContent(movie.similar.results).slice(0, 10).map((item: any) => (
                 <Link
                   key={item.id}
                   href={`/movie/${item.id}`}

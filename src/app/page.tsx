@@ -4,6 +4,7 @@ import HeroSlider from "@/components/ui/HeroSlider";
 import Link from "next/link";
 import { TrendingUp, Sparkles, Star, Tv, Zap, ArrowRight, Flame } from "lucide-react";
 import TelegramSection from "@/components/ui/TelegramSection";
+import { filterCleanContent, VULGAR_EXCLUDED_NETWORKS, VULGAR_EXCLUDED_COMPANIES } from "@/lib/contentFilter";
 
 export const revalidate = 3600; // Cache homepage for 1 hour
 
@@ -59,11 +60,14 @@ export default async function Home() {
     fetchTMDB("/discover/tv", {
       with_original_language: "hi",
       sort_by: "popularity.desc",
+      without_networks: VULGAR_EXCLUDED_NETWORKS,
+      without_companies: VULGAR_EXCLUDED_COMPANIES,
     }),
     fetchTMDB("/discover/movie", {
       with_watch_monetization_types: "free",
       watch_region: "US",
       sort_by: "popularity.desc",
+      without_companies: VULGAR_EXCLUDED_COMPANIES,
     }),
   ]);
 
@@ -91,12 +95,19 @@ export default async function Home() {
     }
   ];
 
-  const trending = trendingData.results?.length ? trendingData.results.slice(0, 12) : fallbackMovies;
-  const newReleases = newReleasesData.results?.length ? newReleasesData.results.slice(0, 12) : fallbackMovies;
-  const topRated = topRatedData.results?.length ? topRatedData.results.slice(0, 12) : fallbackMovies;
-  const tvShows = tvData.results?.length ? tvData.results.slice(0, 12) : fallbackMovies;
-  const indianShows = indianTvData.results?.length ? indianTvData.results.slice(0, 12) : [];
-  const freeMovies = freeData.results?.length ? freeData.results.slice(0, 12) : fallbackMovies;
+  const cleanTrending = filterCleanContent(trendingData.results || []);
+  const cleanNewReleases = filterCleanContent(newReleasesData.results || []);
+  const cleanTopRated = filterCleanContent(topRatedData.results || []);
+  const cleanTvShows = filterCleanContent(tvData.results || []);
+  const cleanIndianShows = filterCleanContent(indianTvData.results || []);
+  const cleanFreeMovies = filterCleanContent(freeData.results || []);
+
+  const trending = cleanTrending.length ? cleanTrending.slice(0, 12) : fallbackMovies;
+  const newReleases = cleanNewReleases.length ? cleanNewReleases.slice(0, 12) : fallbackMovies;
+  const topRated = cleanTopRated.length ? cleanTopRated.slice(0, 12) : fallbackMovies;
+  const tvShows = cleanTvShows.length ? cleanTvShows.slice(0, 12) : fallbackMovies;
+  const indianShows = cleanIndianShows.slice(0, 12);
+  const freeMovies = cleanFreeMovies.length ? cleanFreeMovies.slice(0, 12) : fallbackMovies;
 
   return (
     <main className="min-h-screen bg-[#060608]">

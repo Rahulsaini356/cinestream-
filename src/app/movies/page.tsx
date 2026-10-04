@@ -2,6 +2,7 @@ import { fetchTMDB } from "@/lib/tmdb";
 import MovieCard from "@/components/ui/MovieCard";
 import FilterBar from "@/components/ui/FilterBar";
 import { Film } from "lucide-react";
+import { filterCleanContent, VULGAR_EXCLUDED_COMPANIES } from "@/lib/contentFilter";
 
 type SearchParams = Promise<{ [key: string]: string | string[] | undefined }>;
 
@@ -27,6 +28,7 @@ export default async function MoviesPage({ searchParams }: { searchParams: Searc
       page: "1",
       include_adult: "false",
       sort_by: sort,
+      without_companies: VULGAR_EXCLUDED_COMPANIES,
     };
 
     if (genre) pageParams.with_genres = genre;
@@ -44,7 +46,7 @@ export default async function MoviesPage({ searchParams }: { searchParams: Searc
     fetchTMDB("/genre/movie/list"),
   ]);
 
-  const movies = data.results || [];
+  const movies = filterCleanContent(data.results || []);
   const genres = genreData.genres || [];
 
   return (

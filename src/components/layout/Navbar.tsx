@@ -214,6 +214,7 @@ export default function Navbar() {
                       <div className="p-1.5">
                         <Link
                           href="/profile"
+                          prefetch={false}
                           onClick={() => setDropdownOpen(false)}
                           className="flex items-center gap-3 px-3 py-2 text-sm text-zinc-300 hover:text-white hover:bg-white/5 rounded-lg transition-all"
                         >
@@ -221,6 +222,7 @@ export default function Navbar() {
                         </Link>
                         <Link
                           href="/watchlist"
+                          prefetch={false}
                           onClick={() => setDropdownOpen(false)}
                           className="flex items-center gap-3 px-3 py-2 text-sm text-zinc-300 hover:text-white hover:bg-white/5 rounded-lg transition-all"
                         >
