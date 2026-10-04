@@ -2,7 +2,7 @@ import { fetchTMDB } from "@/lib/tmdb";
 import MovieCard from "@/components/ui/MovieCard";
 import HeroSlider from "@/components/ui/HeroSlider";
 import Link from "next/link";
-import { TrendingUp, Sparkles, Star, Tv, Zap, ArrowRight, Flame } from "lucide-react";
+import { TrendingUp, Sparkles, Star, Tv, Zap, ArrowRight } from "lucide-react";
 import TelegramSection from "@/components/ui/TelegramSection";
 
 export const revalidate = 3600; // Cache homepage for 1 hour
@@ -111,14 +111,6 @@ export default async function Home() {
           movies={trending}
           viewAllHref="/movies"
         />
-        {indianShows.length > 0 && (
-          <MovieRow
-            title="Desi Hits & Indian Shows"
-            icon={<Flame className="w-5 h-5 text-orange-500" />}
-            movies={indianShows}
-            viewAllHref="/tv?lang=hi"
-          />
-        )}
         <MovieRow
           title="New Releases"
           icon={<Sparkles className="w-5 h-5" />}
