@@ -3,7 +3,6 @@ import { fetchTMDB, getImageUrl } from "@/lib/tmdb";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { filterCleanContent } from "@/lib/contentFilter";
 
 export const revalidate = 604800; // Cache person pages for 7 days (ISR edge caching)
 
@@ -41,11 +40,10 @@ export default async function PersonDetail({ params }: { params: Promise<{ id: s
     notFound();
   }
 
-  const cleanCredits = filterCleanContent(person.combined_credits?.cast || []);
-  const knownFor = cleanCredits
-    .filter((item: any, index: number, self: any[]) => index === self.findIndex((t: any) => t.id === item.id))
-    .sort((a: any, b: any) => b.popularity - a.popularity)
-    .slice(0, 10);
+  const knownFor = person.combined_credits?.cast
+    ?.filter((item: any, index: number, self: any[]) => index === self.findIndex((t: any) => t.id === item.id))
+    ?.sort((a: any, b: any) => b.popularity - a.popularity)
+    .slice(0, 10) || [];
 
   return (
     <main className="min-h-screen bg-black pt-24 pb-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

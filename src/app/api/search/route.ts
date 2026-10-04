@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { fetchTMDB } from "@/lib/tmdb";
 import { checkRateLimit } from "@/lib/rate-limit";
-import { filterCleanContent } from "@/lib/contentFilter";
 
 export const dynamic = "force-dynamic";
 
@@ -96,10 +95,8 @@ export async function GET(req: Request) {
       }
     }
 
-    const cleanResults = filterCleanContent(results);
-
     return NextResponse.json(
-      { results: cleanResults },
+      { results },
       {
         headers: {
           "Cache-Control": "no-store, no-cache, must-revalidate",

@@ -1,5 +1,4 @@
 import { cache } from "react";
-import { filterCleanContent, isVulgarOrAdult } from "./contentFilter";
 
 const TMDB_API_KEY = process.env.TMDB_API_KEY;
 const BASE_URL = process.env["TMDB_API_BASE_URL"] || "https://api.themoviedb.org/3";
@@ -42,16 +41,16 @@ function getEndpointTTL(endpoint: string): number {
   if (endpoint.includes("/search/")) return 3600; // 1 hour for search
   if (endpoint.includes("/genre/")) return 7 * 24 * 3600; // 7 days for genres
   if (endpoint.startsWith("/person/")) return 7 * 24 * 3600; // 7 days for person details
+  if (
+    endpoint.includes("/trending/") ||
+    endpoint.includes("/popular") ||
+    endpoint.includes("/top_rated") ||
+    endpoint.includes("/now_playing")
+  ) {
+    return 2 * 3600; // 2 hours for popular/trending lists
+  }
+  if (endpoint.includes("/upcoming")) return 6 * 3600; // 6 hours for upcoming
   if (endpoint.startsWith("/movie/") || endpoint.startsWith("/tv/")) {
-    if (
-      endpoint.includes("/trending/") ||
-      endpoint.includes("/popular") ||
-      endpoint.includes("/top_rated") ||
-      endpoint.includes("/now_playing")
-    ) {
-      return 2 * 3600; // 2 hours for popular/trending lists
-    }
-    if (endpoint.includes("/upcoming")) return 6 * 3600; // 6 hours for upcoming
     return 24 * 3600; // 24 hours for individual movie/TV details
   }
   return 3600; // Default 1 hour
@@ -188,13 +187,6 @@ async function rawFetchTMDB(
 
       // Reset 5xx counter on success
       circuit.consecutive5xx = 0;
-
-      // Filter adult/vulgar shows from any list
-      if (data && Array.isArray(data.results)) {
-        data.results = filterCleanContent(data.results);
-      } else if (data && isVulgarOrAdult(data)) {
-        return { results: [], success: false, not_found: true };
-      }
 
       // Store in L1 Memory Cache
       l1MemoryCache.set(cacheKey, { data, expiresAt: Date.now() + (ttl * 1000) });
