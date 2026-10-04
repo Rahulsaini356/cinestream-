@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useSession, signOut } from "next-auth/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { User, LogOut, Search, Menu, X, Bookmark, ChevronDown, Send, Crown } from "lucide-react";
+import { User, LogOut, Search, Menu, X, Bookmark, ChevronDown, Send, Crown, Home, Film, Tv, Sparkles } from "lucide-react";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import SearchModal from "@/components/search/SearchModal";
@@ -13,18 +13,11 @@ import UserAvatar from "@/components/ui/UserAvatar";
 export default function Navbar() {
   const { data: session } = useSession();
   const pathname = usePathname();
-  const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [isKing, setIsKing] = useState(false);
-
-  useEffect(() => {
-    const handleScroll = () => setIsScrolled(window.scrollY > 20);
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
 
   useEffect(() => {
     if (session?.user?.image) {
@@ -90,111 +83,106 @@ export default function Navbar() {
   if (pathname === "/login" || pathname === "/signup") return null;
 
   const navLinks = [
-    { name: "Home", href: "/" },
-    { name: "Movies", href: "/movies" },
-    { name: "TV Shows", href: "/tv" },
-    { name: "Anime", href: "/anime" },
-    { name: "Leaderboard", href: "/leaderboard" },
-    { name: "Blog", href: "/blog" },
-    { name: "My List", href: "/watchlist" },
+    { name: "Home", href: "/", icon: <Home className="w-3.5 h-3.5" /> },
+    { name: "Movies", href: "/movies", icon: <Film className="w-3.5 h-3.5" /> },
+    { name: "Series", href: "/tv", icon: <Tv className="w-3.5 h-3.5" /> },
+    { name: "Anime", href: "/anime", icon: <Sparkles className="w-3.5 h-3.5" /> },
+    { name: "Top", href: "/leaderboard", icon: <Crown className="w-3.5 h-3.5" /> },
+    { name: "List", href: "/watchlist", icon: <Bookmark className="w-3.5 h-3.5" /> },
   ];
 
   return (
     <>
-      <header
-        className={`fixed top-0 w-full z-40 transition-all duration-500 ${
-          isScrolled
-            ? "glass-nav shadow-lg shadow-black/20"
-            : "bg-gradient-to-b from-black/80 via-black/30 to-transparent"
-        }`}
-      >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
-          {/* Logo */}
-          <div className="flex items-center gap-8">
-            <Link href="/" className="flex items-center gap-2.5 group flex-shrink-0">
-              <div className="w-8 h-8 rounded-xl gradient-accent flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
-                <Image src="/icon.svg" alt="CineStream" className="w-5 h-5" width={20} height={20} />
-              </div>
-              <span className="text-lg font-black tracking-tight hidden sm:block">
-                <span className="gradient-accent-text">Cine</span>
-                <span className="text-white">Stream</span>
-              </span>
-            </Link>
+      {/* Floating Centered Pill Navbar (Vivarium & ShuttleTV Style) */}
+      <header className="fixed top-3 sm:top-4 inset-x-0 z-50 flex justify-center px-3 sm:px-6 pointer-events-none">
+        <div className="pointer-events-auto flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-full bg-[#0a0a10]/85 backdrop-blur-2xl border border-white/15 shadow-[0_12px_45px_rgba(0,0,0,0.85)] max-w-full">
+          {/* Logo / Home icon button */}
+          <Link
+            href="/"
+            className="w-8 h-8 rounded-full gradient-accent flex items-center justify-center shadow-md hover:scale-105 transition-transform shrink-0"
+            title="CineStream Home"
+          >
+            <Image src="/icon.svg" alt="CineStream" className="w-4 h-4" width={16} height={16} />
+          </Link>
 
-            {/* Desktop nav */}
-            <nav className="hidden md:flex items-center gap-1">
-              {navLinks.map((link) => (
+          {/* Desktop Nav Items */}
+          <nav className="hidden md:flex items-center gap-1 pl-1">
+            {navLinks.map((link) => {
+              const isActive = pathname === link.href;
+              return (
                 <Link
                   key={link.name}
                   href={link.href}
                   prefetch={false}
-                  className={`px-3 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-1.5 ${
-                    pathname === link.href
-                      ? "text-white bg-white/10"
-                      : "text-zinc-400 hover:text-white hover:bg-white/5"
+                  className={`px-3 py-1.5 rounded-full text-xs sm:text-sm font-semibold transition-all duration-200 flex items-center gap-1.5 ${
+                    isActive
+                      ? "bg-white text-black shadow-md"
+                      : "text-zinc-300 hover:text-white hover:bg-white/10"
                   }`}
                 >
-                  {link.name}
-                  {link.name === "Leaderboard" && (
-                    <span className="relative flex h-2 w-2">
-                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-yellow-400 opacity-75"></span>
-                      <span className="relative inline-flex rounded-full h-2 w-2 bg-yellow-500"></span>
+                  {link.icon}
+                  <span>{link.name}</span>
+                  {link.name === "Top" && (
+                    <span className="relative flex h-1.5 w-1.5">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-yellow-400 opacity-75" />
+                      <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-yellow-500" />
                     </span>
                   )}
                 </Link>
-              ))}
-            </nav>
-          </div>
+              );
+            })}
+          </nav>
 
-          {/* Right side */}
-          <div className="flex items-center gap-2">
-            {/* Search button */}
+          {/* Divider */}
+          <div className="h-4 w-px bg-white/15 mx-1 hidden md:block" />
+
+          {/* Action icons */}
+          <div className="flex items-center gap-1">
+            {/* Search icon button */}
             <button
               onClick={() => setSearchOpen(true)}
-              className="flex items-center gap-2 px-3 py-2 rounded-xl bg-white/5 border border-white/8 text-zinc-400 hover:text-white hover:bg-white/10 transition-all text-sm"
+              className="w-8 h-8 rounded-full flex items-center justify-center text-zinc-300 hover:text-white hover:bg-white/10 transition-all cursor-pointer"
+              title="Search (⌘K)"
             >
               <Search className="w-4 h-4" />
-              <span className="hidden sm:block text-sm">Search</span>
-              <kbd className="hidden sm:inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10px] font-mono bg-white/10 text-zinc-400 ml-1">
-                ⌘K
-              </kbd>
             </button>
 
-            {/* Telegram Link (Desktop) */}
+            {/* Telegram Community */}
             <a
               href={process.env.NEXT_PUBLIC_TELEGRAM_URL || "https://t.me/telegram"}
               target="_blank"
               rel="noopener noreferrer"
-              className="hidden sm:flex items-center justify-center w-10 h-10 rounded-xl bg-white/5 border border-white/8 text-zinc-400 hover:text-[#229ED9] hover:bg-blue-500/10 hover:border-blue-500/20 hover:scale-105 transition-all relative group"
-              title="Join our Telegram Community"
+              className="w-8 h-8 rounded-full hidden sm:flex items-center justify-center text-zinc-300 hover:text-[#229ED9] hover:bg-blue-500/10 transition-all relative"
+              title="Join Telegram Community"
             >
-              <Send className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-              {/* Subtle active notification dot */}
-              <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse shadow-[0_0_8px_#229ED9]" />
+              <Send className="w-3.5 h-3.5" />
+              <span className="absolute top-1 right-1 w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse shadow-[0_0_6px_#229ED9]" />
             </a>
 
+            {/* Profile Avatar / Dropdown */}
             {session ? (
               <div className="relative">
                 <button
                   onClick={() => setDropdownOpen(!dropdownOpen)}
-                  className="flex items-center gap-2 pl-1 pr-2 py-1 rounded-xl hover:bg-white/5 transition-all relative"
+                  className="flex items-center pl-0.5 rounded-full hover:opacity-90 transition-all relative cursor-pointer"
                 >
                   {isKing && (
-                    <div className="absolute -top-3.5 left-2.5 z-20">
-                      <Crown className="w-4 h-4 text-yellow-400 fill-yellow-400 filter drop-shadow-[0_0_2px_rgba(250,204,21,0.6)]" />
+                    <div className="absolute -top-3.5 left-1 z-20">
+                      <Crown className="w-3.5 h-3.5 text-yellow-400 fill-yellow-400 filter drop-shadow-[0_0_2px_rgba(250,204,21,0.6)]" />
                     </div>
                   )}
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center overflow-hidden flex-shrink-0 ${
-                    isKing 
-                      ? "bg-gradient-to-br from-yellow-400 to-amber-500 border border-yellow-400 shadow-[0_0_8px_rgba(250,204,21,0.4)]" 
-                      : "bg-gradient-to-br from-[#e50914] to-[#ff6b35] border border-white/10"
-                  }`}>
-                    <UserAvatar 
-                      src={avatarUrl || session.user?.image} 
-                      iconClassName="w-4 h-4 text-white" 
+                  <div
+                    className={`w-7 h-7 rounded-full flex items-center justify-center overflow-hidden flex-shrink-0 ${
+                      isKing
+                        ? "bg-gradient-to-br from-yellow-400 to-amber-500 border border-yellow-400 shadow-[0_0_8px_rgba(250,204,21,0.4)]"
+                        : "bg-gradient-to-br from-[#e50914] to-[#ff6b35] border border-white/20"
+                    }`}
+                  >
+                    <UserAvatar
+                      src={avatarUrl || session.user?.image}
+                      iconClassName="w-3.5 h-3.5 text-white"
                     />
                   </div>
-                  <ChevronDown className={`w-3.5 h-3.5 text-zinc-400 transition-transform hidden sm:block ${dropdownOpen ? "rotate-180" : ""}`} />
                 </button>
 
                 <AnimatePresence>
@@ -204,7 +192,7 @@ export default function Navbar() {
                       animate={{ opacity: 1, y: 0, scale: 1 }}
                       exit={{ opacity: 0, y: 8, scale: 0.95 }}
                       transition={{ duration: 0.15 }}
-                      className="absolute right-0 mt-2 w-56 glass rounded-2xl shadow-2xl shadow-black/50 overflow-hidden"
+                      className="absolute right-0 mt-3 w-56 bg-[#0a0a10]/95 backdrop-blur-2xl border border-white/10 rounded-2xl shadow-2xl shadow-black/90 overflow-hidden z-50"
                       onMouseLeave={() => setDropdownOpen(false)}
                     >
                       <div className="px-4 py-3 border-b border-white/8">
@@ -231,7 +219,7 @@ export default function Navbar() {
                         <div className="h-px bg-white/5 my-1.5" />
                         <button
                           onClick={() => { setDropdownOpen(false); signOut(); }}
-                          className="w-full flex items-center gap-3 px-3 py-2 text-sm text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-lg transition-all text-left"
+                          className="w-full flex items-center gap-3 px-3 py-2 text-sm text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-lg transition-all text-left cursor-pointer"
                         >
                           <LogOut className="w-4 h-4" /> Sign Out
                         </button>
@@ -244,18 +232,19 @@ export default function Navbar() {
               <Link
                 href="/login"
                 prefetch={false}
-                className="px-4 py-2 rounded-xl gradient-accent text-white text-sm font-bold hover:opacity-90 hover:scale-105 active:scale-95 transition-all shadow-lg"
+                className="px-3 py-1 rounded-full bg-white text-black text-xs font-bold hover:bg-zinc-200 transition-all shadow-md ml-1"
               >
                 Sign In
               </Link>
             )}
 
-            {/* Mobile hamburger */}
+            {/* Mobile hamburger menu */}
             <button
-              className="md:hidden w-9 h-9 rounded-lg bg-white/5 flex items-center justify-center text-zinc-400 hover:text-white hover:bg-white/10 transition-all"
+              className="md:hidden w-8 h-8 rounded-full flex items-center justify-center text-zinc-300 hover:text-white hover:bg-white/10 transition-all ml-0.5"
               onClick={() => setMobileMenuOpen(true)}
+              aria-label="Open navigation menu"
             >
-              <Menu className="w-5 h-5" />
+              <Menu className="w-4 h-4" />
             </button>
           </div>
         </div>

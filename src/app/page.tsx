@@ -16,32 +16,46 @@ interface RowProps {
 }
 
 function MovieRow({ title, icon, movies, viewAllHref, accent = "default" }: RowProps) {
+  const isFree = accent === "free";
+
   return (
-    <div className="mb-10">
-      <div className="flex items-center justify-between mb-5 px-4 sm:px-6 lg:px-8">
-        <h2 className="flex items-center gap-2.5 text-xl md:text-2xl font-bold text-white tracking-tight">
-          <span className={accent === "free" ? "text-green-400" : "text-[#e50914]"}>{icon}</span>
-          {accent === "free" ? (
-            <span className="gradient-white-text">{title}</span>
-          ) : (
-            title
-          )}
-          {accent === "free" && (
-            <span className="badge badge-free ml-1">Free</span>
-          )}
-        </h2>
+    <div className="mb-12 md:mb-14">
+      {/* Section Header */}
+      <div className="flex items-center justify-between mb-4 px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center gap-3">
+          {/* Subtle vertical indicator bar */}
+          <span
+            className={`w-1 h-5 rounded-full ${
+              isFree
+                ? "bg-gradient-to-b from-emerald-400 to-green-500 shadow-[0_0_10px_rgba(52,211,153,0.5)]"
+                : "bg-gradient-to-b from-[#e50914] to-[#ff414d] shadow-[0_0_10px_rgba(229,9,20,0.5)]"
+            }`}
+          />
+          <h2 className="flex items-center gap-2 text-xl md:text-2xl font-bold text-white tracking-tight">
+            <span className={isFree ? "text-emerald-400" : "text-[#e50914]"}>{icon}</span>
+            <span>{title}</span>
+            {isFree && (
+              <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 ml-1 uppercase tracking-wider">
+                Free
+              </span>
+            )}
+          </h2>
+        </div>
+
         {viewAllHref && (
           <Link
             href={viewAllHref}
             prefetch={false}
-            className="flex items-center gap-1.5 text-sm text-zinc-400 hover:text-white transition-colors font-medium group"
+            className="group flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-zinc-400 hover:text-white transition-all px-3 py-1.5 rounded-lg hover:bg-white/[0.06] border border-transparent hover:border-white/10"
           >
-            See all
-            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            <span>See all</span>
+            <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform duration-200" />
           </Link>
         )}
       </div>
-      <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide px-4 sm:px-6 lg:px-8 snap-x snap-mandatory">
+
+      {/* Horizontal Carousel Rail */}
+      <div className="flex gap-3.5 sm:gap-4 md:gap-5 overflow-x-auto pb-4 pt-1 scrollbar-hide px-4 sm:px-6 lg:px-8 snap-x snap-mandatory">
         {movies.map((item: any) => (
           <MovieCard key={item.id} item={item} />
         ))}

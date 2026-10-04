@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { Play, Download } from "lucide-react";
+import { useState, useEffect, useCallback } from "react";
+import { Play, Loader2, AlertCircle, RefreshCw } from "lucide-react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 
@@ -13,72 +13,93 @@ interface StreamPlayerProps {
   seasonsData?: { season_number: number; episode_count: number }[];
 }
 
-export default function StreamPlayer({ id, imdbId, type, title, seasonsData }: StreamPlayerProps) {
+export default function StreamPlayer({ id, type, title, seasonsData }: StreamPlayerProps) {
   const { data: session } = useSession();
   const [isOpen, setIsOpen] = useState(false);
   const [season, setSeason] = useState(1);
   const [episode, setEpisode] = useState(1);
-  const [server, setServer] = useState("vidlink");
+  const [isLoading, setIsLoading] = useState(true);
+  const [hasError, setHasError] = useState(false);
 
   useEffect(() => {
     if (!isOpen) return;
 
-    // Ping immediately when opened
-    fetch("/api/user/ping-watch", { method: "POST" }).catch(err => console.error("Ping error:", err));
+    // Ping watch time tracker every minute
+    fetch("/api/user/ping-watch", { method: "POST" }).catch((err) => console.error("Ping error:", err));
 
     const interval = setInterval(() => {
-      fetch("/api/user/ping-watch", { method: "POST" }).catch(err => console.error("Ping error:", err));
-    }, 60000); // every 60 seconds
+      fetch("/api/user/ping-watch", { method: "POST" }).catch((err) => console.error("Ping error:", err));
+    }, 60000);
 
     return () => clearInterval(interval);
   }, [isOpen]);
 
-  const servers = [
-    { label: "Server 1 (VidLink - Ultra Fast & 4K Clean)", value: "vidlink" },
-    { label: "Server 2 (VidEasy - Multi-Audio & Hindi Tracks)", value: "videasy" },
-    { label: "Server 3 (AnyEmbed - Fast Multi-Source Mirror)", value: "anyembed" },
-    { label: "Server 4 (2Embed - Global Mirror Backup)", value: "2embed" },
-  ];
+  // Reset loading & error on route or episode change
+  useEffect(() => {
+    setIsLoading(true);
+    setHasError(false);
+  }, [season, episode, id, type]);
+
+  // Secure postMessage event listener with origin and payload validation
+  useEffect(() => {
+    const handleMessage = (event: MessageEvent) => {
+      // Validate origin strictly against Vidy.st
+      if (event.origin !== "https://vidy.st" && event.origin !== "https://www.vidy.st") {
+        return;
+      }
+
+      let payload: any = null;
+      if (typeof event.data === "string") {
+        try {
+          payload = JSON.parse(event.data);
+        } catch {
+          return;
+        }
+      } else if (typeof event.data === "object" && event.data !== null) {
+        payload = event.data;
+      } else {
+        return;
+      }
+
+      if (!payload || typeof payload !== "object") return;
+
+      if (payload.event === "play" || payload.event === "timeupdate") {
+        setIsLoading(false);
+      }
+    };
+
+    window.addEventListener("message", handleMessage);
+    return () => window.removeEventListener("message", handleMessage);
+  }, []);
 
   const currentSeasonData = seasonsData?.find((s) => s.season_number === season);
   const maxEpisodes = currentSeasonData?.episode_count || 1;
 
-  const getEmbedUrl = () => {
-    if (server === "vidlink") {
-      if (type === "movie") return `https://vidlink.pro/movie/${id}`;
-      return `https://vidlink.pro/tv/${id}/${season}/${episode}`;
-    }
-    if (server === "videasy") {
-      if (type === "movie") return `https://player.videasy.to/movie/${id}`;
-      return `https://player.videasy.to/tv/${id}/${season}/${episode}`;
-    }
-    if (server === "anyembed") {
-      if (type === "movie") return `https://anyembed.xyz/embed/tmdb-movie-${id}`;
-      return `https://anyembed.xyz/embed/tmdb-tv-${id}/${season}/${episode}`;
-    }
-    if (server === "2embed") {
-      if (type === "movie") return `https://2embed.skin/embed/${id}`;
-      return `https://2embed.skin/embedtv/${id}&s=${season}&e=${episode}`;
-    }
-    return `https://vidlink.pro/movie/${id}`; // fallback
-  };
+  const getEmbedUrl = useCallback(() => {
+    const color = "e50914"; // CineStream red brand accent
+    const params = new URLSearchParams();
+    params.set("color", color);
 
-  const handleDownload = () => {
-    const url = type === "movie" 
-      ? `https://player.videasy.to/movie/${id}` 
-      : `https://player.videasy.to/tv/${id}/${season}/${episode}`;
-      
-    window.open(url, "_blank");
-  };
+    if (type === "tv") {
+      params.set("nextEpisode", "true");
+      params.set("episodeSelector", "true");
+      params.set("autoplayNextEpisode", "true");
+      return `https://vidy.st/tv/${encodeURIComponent(id)}/${season}/${episode}?${params.toString()}`;
+    }
+
+    return `https://vidy.st/movie/${encodeURIComponent(id)}?${params.toString()}`;
+  }, [id, type, season, episode]);
 
   if (!session) {
     return (
       <div className="flex flex-wrap items-center gap-3">
         <Link
           href="/login"
-          className="flex items-center gap-2 px-6 py-3 font-semibold rounded-xl bg-gradient-to-r from-[#e50914] to-[#ff6b35] text-white hover:scale-105 hover:shadow-[0_0_30px_rgba(229,9,20,0.5)] transition-all duration-300"
+          prefetch={false}
+          className="flex items-center gap-2 px-7 py-3 rounded-full bg-white text-black font-extrabold text-sm hover:bg-zinc-200 hover:scale-105 active:scale-95 transition-all shadow-xl"
         >
-          <Play className="w-5 h-5 fill-current" /> Login to Watch
+          <Play className="w-4 h-4 fill-black text-black ml-0.5" />
+          <span>Login to Play</span>
         </Link>
       </div>
     );
@@ -86,123 +107,149 @@ export default function StreamPlayer({ id, imdbId, type, title, seasonsData }: S
 
   return (
     <>
-      {/* Trigger Buttons */}
+      {/* Trigger Button (ShuttleTV Style Play Pill) */}
       <div className="flex flex-wrap items-center gap-3">
         <button
-          onClick={() => setIsOpen(true)}
-          className="flex items-center gap-2 px-6 py-3 font-semibold rounded-xl bg-gradient-to-r from-[#e50914] to-[#ff6b35] text-white hover:scale-105 hover:shadow-[0_0_30px_rgba(229,9,20,0.5)] transition-all duration-300"
+          onClick={() => {
+            setIsOpen(true);
+            setIsLoading(true);
+            setHasError(false);
+          }}
+          className="flex items-center gap-2 px-7 py-3 rounded-full bg-white text-black font-extrabold text-sm hover:bg-zinc-200 hover:scale-105 active:scale-95 transition-all shadow-xl cursor-pointer"
         >
-          <Play className="w-5 h-5 fill-current" /> Watch Now
-        </button>
-        <button
-          onClick={handleDownload}
-          className="flex items-center gap-2 px-6 py-3 font-semibold rounded-xl bg-white/10 hover:bg-white/20 text-white hover:scale-105 transition-all duration-300 border border-white/10"
-        >
-          <Download className="w-5 h-5" /> Download
+          <Play className="w-4 h-4 fill-black text-black ml-0.5" />
+          <span>Play</span>
         </button>
       </div>
 
-      {/* Modal */}
+      {/* Video Player Modal */}
       {isOpen && (
-        <div className="fixed inset-0 z-[100] bg-black/90 backdrop-blur-md flex flex-col items-center justify-center p-4">
-          <div className="w-full max-w-5xl bg-zinc-950 rounded-3xl overflow-hidden border border-white/10 shadow-2xl flex flex-col">
+        <div className="fixed inset-0 z-[100] bg-black/95 backdrop-blur-xl flex flex-col items-center justify-center p-2 sm:p-4 md:p-6 animate-fade-in">
+          <div className="w-full max-w-5xl bg-[#090912] rounded-2xl sm:rounded-3xl overflow-hidden border border-white/10 shadow-[0_30px_90px_rgba(0,0,0,0.95)] flex flex-col max-h-[95vh]">
 
-            {/* Controls Bar */}
-            <div className="flex flex-wrap items-center justify-between gap-3 p-4 border-b border-white/5 bg-zinc-900/50">
-
-              {/* Title */}
-              <div className="flex items-center gap-2">
-                <span className="font-bold text-white truncate max-w-xs">{title || "Streaming"}</span>
-                <span className="text-xs px-2 py-0.5 rounded bg-white/10 text-zinc-400 capitalize">{type}</span>
+            {/* Top Bar */}
+            <div className="flex items-center justify-between gap-3 px-4 py-3 sm:px-6 sm:py-3.5 border-b border-white/8 bg-[#0c0c16]">
+              {/* Title & Live indicator */}
+              <div className="flex items-center gap-2.5 min-w-0">
+                <span className="w-2 h-2 rounded-full bg-[#e50914] animate-pulse shrink-0" />
+                <span className="font-bold text-white text-sm sm:text-base truncate max-w-[200px] sm:max-w-md">
+                  {title || "Now Playing"}
+                </span>
+                <span className="text-[10px] uppercase tracking-wider font-extrabold px-2 py-0.5 rounded-md bg-white/[0.08] text-zinc-300 border border-white/10 shrink-0">
+                  {type === "tv" ? "TV Series" : "Movie"}
+                </span>
               </div>
 
-              <div className="flex items-center gap-3 flex-wrap">
-
-                {/* TV Season/Episode */}
+              <div className="flex items-center gap-2.5 sm:gap-3">
+                {/* TV Season / Episode Switchers */}
                 {type === "tv" && (
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-2 sm:gap-3">
                     <div className="flex items-center gap-1.5">
-                      <span className="text-xs text-zinc-400">Season</span>
+                      <span className="text-xs text-zinc-400 font-medium hidden sm:inline">Season</span>
                       <select
                         value={season}
-                        onChange={(e) => { setSeason(Number(e.target.value)); setEpisode(1); }}
-                        className="bg-black border border-white/10 rounded-md px-2 py-1 text-sm text-white focus:outline-none"
+                        onChange={(e) => {
+                          setSeason(Number(e.target.value));
+                          setEpisode(1);
+                        }}
+                        className="bg-black/90 border border-white/15 rounded-lg px-2.5 py-1 text-xs sm:text-sm text-white font-medium focus:outline-none focus:border-[#e50914] transition-colors cursor-pointer"
                       >
                         {seasonsData && seasonsData.length > 0
-                          ? seasonsData.filter((s) => s.season_number > 0).map((s) => (
-                              <option key={s.season_number} value={s.season_number}>{s.season_number}</option>
-                            ))
+                          ? seasonsData
+                              .filter((s) => s.season_number > 0)
+                              .map((s) => (
+                                <option key={s.season_number} value={s.season_number}>
+                                  Season {s.season_number}
+                                </option>
+                              ))
                           : [...Array(20)].map((_, i) => (
-                              <option key={i + 1} value={i + 1}>{i + 1}</option>
+                              <option key={i + 1} value={i + 1}>
+                                Season {i + 1}
+                              </option>
                             ))}
                       </select>
                     </div>
                     <div className="flex items-center gap-1.5">
-                      <span className="text-xs text-zinc-400">Episode</span>
+                      <span className="text-xs text-zinc-400 font-medium hidden sm:inline">Episode</span>
                       <select
                         value={episode}
                         onChange={(e) => setEpisode(Number(e.target.value))}
-                        className="bg-black border border-white/10 rounded-md px-2 py-1 text-sm text-white focus:outline-none"
+                        className="bg-black/90 border border-white/15 rounded-lg px-2.5 py-1 text-xs sm:text-sm text-white font-medium focus:outline-none focus:border-[#e50914] transition-colors cursor-pointer"
                       >
                         {[...Array(maxEpisodes)].map((_, i) => (
-                          <option key={i + 1} value={i + 1}>{i + 1}</option>
+                          <option key={i + 1} value={i + 1}>
+                            Episode {i + 1}
+                          </option>
                         ))}
                       </select>
                     </div>
                   </div>
                 )}
 
-                {/* Server Selector */}
-                <div className="flex items-center gap-1.5 border-l border-white/10 pl-3">
-                  <span className="text-xs text-zinc-400">Server</span>
-                  <select
-                    value={server}
-                    onChange={(e) => setServer(e.target.value)}
-                    className="bg-black border border-white/10 rounded-md px-2 py-1 text-sm text-white focus:outline-none"
-                  >
-                    {servers.map((s) => (
-                      <option key={s.value} value={s.value}>{s.label}</option>
-                    ))}
-                  </select>
-                </div>
-
+                {/* Close Button */}
+                <button
+                  onClick={() => setIsOpen(false)}
+                  className="p-1.5 sm:p-2 rounded-xl bg-white/[0.06] hover:bg-white/[0.15] text-zinc-400 hover:text-white transition-all cursor-pointer ml-1"
+                  title="Close Player"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
               </div>
-
-              {/* Close Button */}
-              <button
-                onClick={() => setIsOpen(false)}
-                className="p-1.5 rounded-full bg-white/5 hover:bg-white/10 text-zinc-400 hover:text-white transition-colors"
-                title="Close"
-              >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
             </div>
 
-            {/* Video Player */}
-            <div className="aspect-video w-full bg-black">
+            {/* 16:9 Video Player Container */}
+            <div className="relative aspect-video w-full bg-black flex items-center justify-center overflow-hidden">
+              {/* Loading Indicator */}
+              {isLoading && !hasError && (
+                <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-black/95 text-center p-4">
+                  <div className="relative mb-3">
+                    <div className="w-12 h-12 rounded-full border-2 border-white/10 border-t-[#e50914] animate-spin" />
+                  </div>
+                  <p className="text-sm font-semibold text-white">Loading Video Stream...</p>
+                  <p className="text-xs text-zinc-400 mt-1">Connecting to Vidy high-speed player</p>
+                </div>
+              )}
+
+              {/* Error Fallback */}
+              {hasError && (
+                <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-[#090912] p-6 text-center">
+                  <AlertCircle className="w-12 h-12 text-amber-400 mb-3" />
+                  <h3 className="text-base font-bold text-white mb-1">Stream Temporarily Unavailable</h3>
+                  <p className="text-xs text-zinc-400 max-w-md mb-4">
+                    Could not connect to the stream for this title. Please try refreshing or check back in a moment.
+                  </p>
+                  <button
+                    onClick={() => {
+                      setHasError(false);
+                      setIsLoading(true);
+                    }}
+                    className="flex items-center gap-2 px-5 py-2.5 text-xs font-semibold rounded-xl bg-[#e50914] text-white hover:bg-[#b80710] transition-colors cursor-pointer"
+                  >
+                    <RefreshCw className="w-3.5 h-3.5" /> Retry Player
+                  </button>
+                </div>
+              )}
+
+              {/* Vidy Embedded Iframe Player */}
               <iframe
-                key={getEmbedUrl()} // Re-mount iframe on URL change
+                key={getEmbedUrl()}
                 src={getEmbedUrl()}
-                className="w-full h-full"
+                width="100%"
+                height="100%"
+                className="w-full h-full border-0"
                 allowFullScreen
-                allow="autoplay; encrypted-media; fullscreen; picture-in-picture"
+                allow="encrypted-media; autoplay *; fullscreen *"
                 referrerPolicy="origin"
-                title="Movie Player"
-                frameBorder="0"
+                title={title ? `${title} - Vidy Player` : "Vidy Player"}
+                frameBorder={0}
+                onLoad={() => setIsLoading(false)}
+                onError={() => {
+                  setIsLoading(false);
+                  setHasError(true);
+                }}
               />
-            </div>
-
-            {/* Bottom Banner */}
-            <div className="p-3 bg-zinc-900/50 border-t border-white/5 space-y-1.5 text-center">
-              <p className="text-xs text-amber-300/90 font-medium">
-                💡 Language & Audio: For Hindi audio or dual-audio tracks, select <span className="font-bold text-white">Server 2 (VidEasy)</span> or <span className="font-bold text-white">Server 3 (AnyEmbed)</span> and click the Audio / Settings (🎧 / ⚙️) icon inside the player. For fast 4K, use <span className="font-bold text-white">Server 1 (VidLink)</span>.
-              </p>
-              <p className="text-[10px] text-zinc-500">
-                Disclaimer: Video stream is provided by third-party servers. We do not host any content.{" "}
-                <span className="text-red-400">Please use an adblocker for safe browsing.</span>
-              </p>
             </div>
 
           </div>

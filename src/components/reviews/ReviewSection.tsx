@@ -88,23 +88,24 @@ export default function ReviewSection({ tmdbId, type }: ReviewSectionProps) {
   };
 
   return (
-    <div className="mt-16 w-full max-w-4xl mx-auto space-y-12">
-      <div className="flex items-center justify-between pb-6 border-b border-white/10">
-        <h2 className="text-3xl font-bold text-white flex items-center gap-3">
-          <MessageSquare className="w-8 h-8 text-accent" />
+    <div className="mt-16 w-full max-w-4xl mx-auto space-y-10">
+      <div className="flex items-center justify-between pb-5 border-b border-white/10">
+        <h2 className="text-xl sm:text-2xl font-bold text-white flex items-center gap-2.5">
+          <span className="w-1 h-5 rounded-full bg-gradient-to-b from-[#e50914] to-[#ff414d]" />
+          <MessageSquare className="w-6 h-6 text-[#e50914]" />
           Community Reviews
         </h2>
-        <span className="text-zinc-400 font-medium">{reviews.length} Ratings</span>
+        <span className="text-zinc-400 text-sm font-medium">{reviews.length} Ratings</span>
       </div>
 
       {/* Review Submission Form */}
-      <div className="glass-morphism p-6 md:p-8 rounded-2xl border border-white/10 shadow-2xl relative overflow-hidden">
-        <div className="absolute top-0 left-0 w-1 h-full bg-accent"></div>
+      <div className="bg-[#0c0c14] p-6 md:p-8 rounded-2xl border border-white/10 shadow-xl relative overflow-hidden">
+        <div className="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-[#e50914] to-[#ff414d]" />
         {session ? (
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="flex flex-col md:flex-row gap-6 items-start md:items-center">
               <div className="flex flex-col gap-2">
-                <span className="text-zinc-400 text-sm uppercase tracking-wider font-semibold">Your Rating</span>
+                <span className="text-zinc-400 text-xs uppercase tracking-wider font-semibold">Your Rating</span>
                 <div className="flex gap-1" onMouseLeave={() => setHoveredStar(0)}>
                   {[1, 2, 3, 4, 5].map((star) => (
                     <button
@@ -112,13 +113,13 @@ export default function ReviewSection({ tmdbId, type }: ReviewSectionProps) {
                       type="button"
                       onClick={() => setRating(star)}
                       onMouseEnter={() => setHoveredStar(star)}
-                      className="transition-transform hover:scale-110 outline-none"
+                      className="transition-transform hover:scale-110 outline-none cursor-pointer"
                     >
                       <Star
-                        className={`w-8 h-8 md:w-10 md:h-10 transition-colors ${
+                        className={`w-7 h-7 md:w-8 md:h-8 transition-colors ${
                           star <= (hoveredStar || rating)
-                            ? "fill-yellow-500 text-yellow-500 drop-shadow-[0_0_10px_rgba(234,179,8,0.5)]"
-                            : "text-zinc-600 hover:text-zinc-500"
+                            ? "fill-amber-400 text-amber-400 drop-shadow-[0_0_8px_rgba(251,191,36,0.5)]"
+                            : "text-zinc-700 hover:text-zinc-500"
                         }`}
                       />
                     </button>
@@ -131,8 +132,8 @@ export default function ReviewSection({ tmdbId, type }: ReviewSectionProps) {
                   value={content}
                   onChange={(e) => setContent(e.target.value)}
                   placeholder="What did you think of this? (Optional)"
-                  className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-zinc-600 min-h-[100px] resize-none focus:outline-none focus:ring-2 focus:ring-accent/50 transition-all font-medium"
-                ></textarea>
+                  className="w-full bg-black/60 border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-zinc-600 min-h-[90px] resize-none focus:outline-none focus:border-[#e50914] transition-all font-medium text-sm"
+                />
                 <div className="absolute bottom-3 right-3 text-xs text-zinc-500">{content.length}/500</div>
               </div>
             </div>
@@ -141,17 +142,17 @@ export default function ReviewSection({ tmdbId, type }: ReviewSectionProps) {
               <button
                 type="submit"
                 disabled={isSubmitting || rating === 0}
-                className="px-8 py-3 bg-accent hover:bg-red-700 text-white font-bold rounded-xl shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                className="px-7 py-3 bg-gradient-to-r from-[#e50914] to-[#ff414d] hover:shadow-[0_0_25px_rgba(229,9,20,0.5)] text-white font-bold rounded-xl shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 text-sm cursor-pointer"
               >
-                {isSubmitting ? <Loader2 className="w-5 h-5 animate-spin" /> : "Save Review"}
+                {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : "Save Review"}
               </button>
             </div>
           </form>
         ) : (
-          <div className="flex flex-col items-center justify-center py-8 text-center space-y-4">
-             <Star className="w-12 h-12 text-zinc-700 mb-2" />
-             <p className="text-lg text-zinc-300 font-medium">Log in to rate and review this.</p>
-             <Link href="/login" className="px-6 py-2 bg-white text-black font-bold rounded-full hover:bg-zinc-200 transition-colors shadow-xl">
+          <div className="flex flex-col items-center justify-center py-6 text-center space-y-3">
+             <Star className="w-10 h-10 text-zinc-700 mb-1" />
+             <p className="text-base text-zinc-300 font-medium">Log in to rate and review this title.</p>
+             <Link href="/login" prefetch={false} className="px-6 py-2.5 bg-white text-black font-bold rounded-xl hover:bg-zinc-200 transition-colors shadow-xl text-sm">
                Sign In
              </Link>
           </div>
@@ -159,39 +160,39 @@ export default function ReviewSection({ tmdbId, type }: ReviewSectionProps) {
       </div>
 
       {/* Reviews List */}
-      <div className="space-y-6">
+      <div className="space-y-4">
         {loading ? (
           <div className="flex justify-center py-12">
-            <Loader2 className="w-8 h-8 text-accent animate-spin" />
+            <Loader2 className="w-8 h-8 text-[#e50914] animate-spin" />
           </div>
         ) : reviews.length > 0 ? (
           reviews.map((rev) => (
-            <div key={rev.id} className="p-6 bg-zinc-900/40 rounded-2xl border border-white/5 shadow-inner flex gap-5 animate-[fade-in_0.5s_ease-out]">
-              <div className="w-12 h-12 rounded-full overflow-hidden bg-zinc-800 shrink-0 border border-white/10 flex items-center justify-center">
-                <UserAvatar src={rev.user.image} iconClassName="w-6 h-6 text-zinc-400" />
+            <div key={rev.id} className="p-5 sm:p-6 bg-[#0c0c14] rounded-2xl border border-white/[0.07] shadow-md flex gap-4 sm:gap-5">
+              <div className="w-11 h-11 rounded-full overflow-hidden bg-zinc-800 shrink-0 border border-white/10 flex items-center justify-center">
+                <UserAvatar src={rev.user.image} iconClassName="w-5 h-5 text-zinc-400" />
               </div>
-              <div className="flex-1 space-y-2">
+              <div className="flex-1 space-y-1.5">
                 <div className="flex items-center justify-between">
-                  <h4 className="font-bold text-white text-lg">{rev.user.name || "CineStream User"}</h4>
+                  <h4 className="font-bold text-white text-sm sm:text-base">{rev.user.name || "CineStream User"}</h4>
                   <span className="text-xs text-zinc-500 font-medium">
                      {new Date(rev.createdAt).toLocaleDateString()}
                   </span>
                 </div>
                 <div className="flex gap-1">
                   {[1, 2, 3, 4, 5].map((s) => (
-                    <Star key={s} className={`w-4 h-4 ${s <= rev.rating ? "fill-yellow-500 text-yellow-500 drop-shadow-sm" : "text-zinc-700"}`} />
+                    <Star key={s} className={`w-3.5 h-3.5 ${s <= rev.rating ? "fill-amber-400 text-amber-400" : "text-zinc-700"}`} />
                   ))}
                 </div>
                 {rev.content && (
-                  <p className="text-zinc-300 leading-relaxed text-sm pt-2 break-words whitespace-pre-wrap">{rev.content}</p>
+                  <p className="text-zinc-300 leading-relaxed text-sm pt-1.5 break-words whitespace-pre-wrap">{rev.content}</p>
                 )}
               </div>
             </div>
           ))
         ) : (
-          <div className="text-center py-16 bg-zinc-900/20 rounded-2xl border border-dashed border-white/10">
-            <MessageSquare className="w-12 h-12 text-zinc-700 mx-auto mb-4" />
-            <p className="text-zinc-400 text-lg">No reviews yet. Be the first to share your thoughts!</p>
+          <div className="text-center py-14 bg-[#0c0c14]/50 rounded-2xl border border-dashed border-white/10">
+            <MessageSquare className="w-10 h-10 text-zinc-700 mx-auto mb-3" />
+            <p className="text-zinc-400 text-sm">No reviews yet. Be the first to share your thoughts!</p>
           </div>
         )}
       </div>

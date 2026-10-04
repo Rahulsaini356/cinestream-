@@ -84,21 +84,21 @@ export default function WatchProviders({ providers, title }: WatchProvidersProps
   };
 
   return (
-    <div className="mt-8 p-6 glass-morphism rounded-2xl border border-white/5 shadow-2xl relative overflow-hidden">
-        {/* Decorative accent */}
-        <div className="absolute top-0 left-0 w-1 h-full bg-accent"></div>
-        
-        <div className="flex items-center justify-between mb-2">
-            <h3 className="text-xl font-bold text-white flex items-center gap-2">
-                🎬 Where to Watch
-            </h3>
-        </div>
-        
-        <div className="mt-5 space-y-1">
-            {renderGroup("Stream", providers.stream)}
-            {renderGroup("Rent", providers.rent)}
-            {renderGroup("Buy", providers.buy)}
-        </div>
+    <div className="p-6 bg-[#0c0c14] rounded-2xl border border-white/10 shadow-xl relative overflow-hidden">
+      {/* Decorative accent bar */}
+      <div className="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-[#e50914] to-[#ff414d]" />
+      
+      <div className="flex items-center justify-between mb-2">
+        <h3 className="text-xl font-bold text-white flex items-center gap-2">
+          <span>Where to Watch</span>
+        </h3>
+      </div>
+      
+      <div className="mt-4 space-y-1">
+        {renderGroup("Stream", providers.stream)}
+        {renderGroup("Rent", providers.rent)}
+        {renderGroup("Buy", providers.buy)}
+      </div>
     </div>
   );
 }

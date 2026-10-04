@@ -61,71 +61,103 @@ export default function HeroSlider({ movies }: { movies: any[] }) {
       <AnimatePresence mode="wait">
         <motion.div
           key={currentMovie.id}
-          initial={{ opacity: 0, scale: 1.06 }}
+          initial={{ opacity: 0, scale: 1.05 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 1.4, ease: "easeOut" }}
+          transition={{ duration: 1.2, ease: "easeOut" }}
           className="absolute inset-0"
         >
           {currentMovie.backdrop_path && (
             <Image
               src={getImageUrl(currentMovie.backdrop_path, "original")}
-              alt=""
+              alt={currentMovie.title || currentMovie.name || "Hero backdrop"}
               className="w-full h-full object-cover object-center"
               fill
               priority
               sizes="100vw"
             />
           )}
-          {/* Cinematic overlays */}
-          <div className="absolute inset-0 bg-gradient-to-r from-[#060608] via-[#060608]/70 to-transparent" />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#060608] via-transparent to-[#060608]/30" />
-          <div className="absolute inset-0 bg-gradient-to-b from-[#060608]/40 via-transparent to-transparent" />
-          {/* Subtle vignette */}
-          <div className="absolute inset-0" style={{ background: "radial-gradient(ellipse at center, transparent 40%, rgba(6,6,8,0.6) 100%)" }} />
+
+          {/* Multi-layered cinematic overlays */}
+          {/* Deep left-to-right fade for text legibility */}
+          <div className="absolute inset-0 bg-gradient-to-r from-[#060608] via-[#060608]/85 via-45% to-transparent" />
+          
+          {/* Bottom fade into page background */}
+          <div className="absolute inset-0 bg-gradient-to-t from-[#060608] via-[#060608]/50 via-25% to-transparent" />
+          
+          {/* Top fade for navbar readability */}
+          <div className="absolute inset-0 bg-gradient-to-b from-[#060608]/80 via-transparent to-transparent h-32" />
+          
+          {/* Atmospheric warm cinema glow on bottom left */}
+          <div 
+            className="absolute -bottom-24 -left-24 w-96 h-96 rounded-full pointer-events-none opacity-25 blur-3xl"
+            style={{ background: "radial-gradient(circle, #e50914 0%, transparent 70%)" }}
+          />
+
+          {/* Subtle perimeter vignette */}
+          <div 
+            className="absolute inset-0 pointer-events-none" 
+            style={{ background: "radial-gradient(ellipse at 70% 30%, transparent 40%, rgba(6,6,8,0.7) 100%)" }} 
+          />
         </motion.div>
       </AnimatePresence>
 
-      {/* Content */}
+      {/* Hero Content */}
       <div className="relative z-10 h-full flex items-center">
-        <div className="max-w-7xl mx-auto px-4 sm:px-8 lg:px-12 w-full pt-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pt-16 sm:pt-20">
           <AnimatePresence mode="wait">
             <motion.div
               key={currentMovie.id}
-              initial={{ opacity: 0, x: -40 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: 20 }}
-              transition={{ duration: 0.7, ease: "easeOut" }}
-              className="max-w-2xl"
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.6, ease: "easeOut" }}
+              className="max-w-2xl lg:max-w-3xl"
             >
-              {/* Badges */}
+              {/* Badges & Meta Row (Vivarium / ShuttleTV Style) */}
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2 }}
-                className="flex flex-wrap items-center gap-2 mb-4"
+                transition={{ delay: 0.15 }}
+                className="flex items-center gap-2.5 sm:gap-3 mb-4 text-xs sm:text-sm font-semibold text-zinc-300"
               >
-                <span className="badge badge-accent">
-                  <Star className="w-3 h-3 fill-current" />
-                  {currentMovie.vote_average?.toFixed(1)}
-                </span>
-                <span className="badge badge-indigo">
-                  {currentMovie.media_type === "tv" ? "Series" : "Film"}
-                </span>
+                {/* Circular Rating Badge */}
+                {currentMovie.vote_average > 0 && (
+                  <span className="w-7 h-7 sm:w-8 sm:h-8 rounded-full border-2 border-emerald-400 text-emerald-400 flex items-center justify-center font-bold text-xs bg-black/50 shadow-sm shrink-0">
+                    {currentMovie.vote_average.toFixed(1)}
+                  </span>
+                )}
+
+                {/* Dot */}
+                <span className="text-zinc-500 font-bold">•</span>
+
+                {/* Release Year */}
                 {(currentMovie.release_date || currentMovie.first_air_date) && (
-                  <span className="text-xs text-zinc-400 font-medium">
+                  <span className="text-white font-bold">
                     {(currentMovie.release_date || currentMovie.first_air_date).substring(0, 4)}
                   </span>
                 )}
+
+                {/* Dot */}
+                <span className="text-zinc-500 font-bold">•</span>
+
+                {/* Media Type / Genre */}
+                <span className="text-zinc-300">
+                  {currentMovie.media_type === "tv" ? "TV Series" : "Movie"}
+                </span>
+
+                {/* Age Rating Circle Pill */}
+                <span className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-pink-500/20 border border-pink-500/40 text-pink-300 text-[10px] font-black flex items-center justify-center shrink-0">
+                  15
+                </span>
               </motion.div>
 
               {/* Title */}
               <motion.h1
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3, duration: 0.7 }}
-                className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-white tracking-tight leading-[1.05] mb-4"
-                style={{ textShadow: "0 4px 40px rgba(0,0,0,0.8)" }}
+                transition={{ delay: 0.25, duration: 0.6 }}
+                className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-white tracking-tight leading-[1.05] mb-4 drop-shadow-[0_4px_30px_rgba(0,0,0,0.9)]"
               >
                 {currentMovie.title || currentMovie.name}
               </motion.h1>
@@ -134,36 +166,36 @@ export default function HeroSlider({ movies }: { movies: any[] }) {
               <motion.p
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.5 }}
-                className="text-base md:text-lg text-zinc-300 line-clamp-3 leading-relaxed mb-8 max-w-xl"
+                transition={{ delay: 0.35 }}
+                className="text-sm sm:text-base md:text-lg text-zinc-200 line-clamp-2 md:line-clamp-3 leading-relaxed mb-8 max-w-xl text-shadow-sm font-normal"
               >
                 {currentMovie.overview}
               </motion.p>
 
-              {/* CTAs */}
+              {/* Action Buttons (Play & Details Pills) */}
               <motion.div
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.65 }}
-                className="flex flex-wrap gap-3"
+                transition={{ delay: 0.45 }}
+                className="flex items-center gap-3.5"
               >
+                {/* Play Pill Button */}
                 <Link
                   href={href}
                   prefetch={false}
-                  className="flex items-center gap-2.5 px-7 py-3.5 rounded-xl bg-white text-black font-bold text-sm hover:bg-zinc-100 hover:scale-105 active:scale-95 transition-all shadow-2xl shadow-white/10"
+                  className="flex items-center gap-2 px-8 py-3.5 rounded-full bg-white text-black font-extrabold text-sm hover:bg-zinc-200 hover:scale-105 active:scale-95 transition-all duration-200 shadow-2xl"
                 >
-                  <div className="w-7 h-7 rounded-full bg-black flex items-center justify-center">
-                    <Play className="w-3.5 h-3.5 text-white fill-white ml-0.5" />
-                  </div>
-                  Watch Now
+                  <Play className="w-4 h-4 fill-black text-black ml-0.5" />
+                  <span>Play</span>
                 </Link>
+
+                {/* Details Pill Button */}
                 <Link
                   href={href}
                   prefetch={false}
-                  className="flex items-center gap-2.5 px-7 py-3.5 rounded-xl glass text-white font-bold text-sm hover:bg-white/10 hover:scale-105 active:scale-95 transition-all"
+                  className="flex items-center gap-2 px-8 py-3.5 rounded-full bg-black/40 hover:bg-black/70 border border-white/20 backdrop-blur-md text-white font-bold text-sm hover:scale-105 active:scale-95 transition-all duration-200"
                 >
-                  <Info className="w-4 h-4 opacity-80" />
-                  More Info
+                  <span>Details</span>
                 </Link>
               </motion.div>
             </motion.div>
@@ -171,39 +203,36 @@ export default function HeroSlider({ movies }: { movies: any[] }) {
         </div>
       </div>
 
-      {/* Navigation arrows */}
+      {/* Floating Navigation Controls */}
       <button
         onClick={goPrev}
-        className="absolute left-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full glass flex items-center justify-center text-white/70 hover:text-white hover:bg-white/10 transition-all hidden md:flex"
+        aria-label="Previous slide"
+        className="absolute left-4 sm:left-6 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-black/40 hover:bg-black/70 backdrop-blur-md border border-white/15 text-white/80 hover:text-white items-center justify-center transition-all duration-200 hidden md:flex shadow-xl cursor-pointer hover:scale-110 active:scale-95"
       >
         <ChevronLeft className="w-5 h-5" />
       </button>
+
       <button
         onClick={goNext}
-        className="absolute right-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full glass flex items-center justify-center text-white/70 hover:text-white hover:bg-white/10 transition-all hidden md:flex"
+        aria-label="Next slide"
+        className="absolute right-4 sm:right-6 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-black/40 hover:bg-black/70 backdrop-blur-md border border-white/15 text-white/80 hover:text-white items-center justify-center transition-all duration-200 hidden md:flex shadow-xl cursor-pointer hover:scale-110 active:scale-95"
       >
         <ChevronRight className="w-5 h-5" />
       </button>
 
-      {/* Progress indicators */}
-      <div className="absolute bottom-5 sm:bottom-8 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2">
+      {/* Slide Indicator Dots (Centered at bottom) */}
+      <div className="absolute bottom-6 sm:bottom-8 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2.5">
         {movies.map((_, i) => (
           <button
             key={i}
             onClick={() => { setCurrentIndex(i); setProgress(0); }}
-            className="relative h-0.5 rounded-full overflow-hidden transition-all duration-500"
-            style={{ width: i === currentIndex ? 48 : 16, background: "rgba(255,255,255,0.2)" }}
-          >
-            {i === currentIndex && (
-              <motion.div
-                className="absolute inset-0 rounded-full gradient-accent"
-                initial={{ scaleX: 0, originX: 0 }}
-                animate={{ scaleX: progress / 100 }}
-                transition={{ duration: 0.1 }}
-                style={{ transformOrigin: "left" }}
-              />
-            )}
-          </button>
+            aria-label={`Go to slide ${i + 1}`}
+            className={`rounded-full transition-all duration-300 cursor-pointer ${
+              i === currentIndex
+                ? "w-2.5 h-2.5 bg-white shadow-[0_0_8px_rgba(255,255,255,0.8)]"
+                : "w-2 h-2 bg-white/30 hover:bg-white/60"
+            }`}
+          />
         ))}
       </div>
     </div>
